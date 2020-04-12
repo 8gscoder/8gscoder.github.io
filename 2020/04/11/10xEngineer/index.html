@@ -192,56 +192,84 @@
 
         <div class="post-content">
             <h1 id="10xEngineer"><a href="#10xEngineer" class="headerlink" title="10xEngineer"></a>10xEngineer</h1><p>额..因为清明节去浪去了，16号的团队微分享原定的200+p的书籍都没来及看，只能这俩天周末好好补一下豆瓣书评了…But从书评上看，感觉这本书还是值得刷一下的</p>
-<h3 id="主要资料："><a href="#主要资料：" class="headerlink" title="主要资料："></a>主要资料：</h3><p><a href="https://book.douban.com/subject/26360716/" target="_blank" rel="noopener">《The Effective Engineer》</a></p>
-<p><a href="https://time.geekbang.org/column/intro/148" target="_blank" rel="noopener">《10x程序员》极客时间专栏</a></p>
+<h3 id="主要资料："><a href="#主要资料：" class="headerlink" title="主要资料："></a>主要资料：</h3><p>《The Effective Engineer》</p>
 <p><a href="https://www.youtube.com/watch?v=BnIz7H5ruy0" target="_blank" rel="noopener">Edmond Lau: “The Effective Engineer” Talks at Google</a></p>
-<h3 id="《The-Effective-Engineer》"><a href="#《The-Effective-Engineer》" class="headerlink" title="《The Effective Engineer》"></a>《The Effective Engineer》</h3><h4 id="some-terms"><a href="#some-terms" class="headerlink" title="some terms"></a>some terms</h4><p>leverage： 杠杆，单位时间内的影响力，比如面试招聘、入职培训</p>
+<h3 id="《The-Effective-Engineer》"><a href="#《The-Effective-Engineer》" class="headerlink" title="《The Effective Engineer》"></a>《The Effective Engineer》</h3><blockquote>
+<p>“How to Leverage Your Efforts In Software Engineering to Make a Disproportionate and Meaningful Impact”</p>
+</blockquote>
+<h4 id="some-terms"><a href="#some-terms" class="headerlink" title="some terms"></a>some terms</h4><p>leverage： 杠杆，单位时间内的影响力，比如面试招聘、入职培训</p>
 <p>Compound Interest：复利，一种计算利息的方法。把前一期的本金和利息加在一起作本金，再计算下一期的利息</p>
-<h4 id="Important-view-points"><a href="#Important-view-points" class="headerlink" title="Important view points"></a>Important view points</h4><ol>
-<li>they can produce 10 times the impact of other engineers, but they’re not working 10 times the hours. 能够造成其他工程师十倍影响力的事情，但是却没有用十倍的时间，是因为他们做了更有leverage的事情</li>
-<li>Time is our most finite asset, and leverage—the value we produce per unit time—allows us to direct our time toward what matters most</li>
-<li>DRY Principle（Don’t Repeat Yourself），避免重复工作，如果一件工作你考量以后可能会做超过两次，就实现工具去做，这也是在造杠杆</li>
-<li>做你自己的PM，对自己负责的项目要有目标、里程碑（Milestones），项目必须是可评估、可质量进度、可测量的</li>
-<li>不要欠债，遇到一次的知识点、盲区，就要搞明白，不然一知半解，下次遇到还不会</li>
+<h4 id="Important-view-points"><a href="#Important-view-points" class="headerlink" title="Important view points"></a>Important view points</h4><p><strong>0. Effort ≠ Impact</strong>：they can produce 10 times the impact of other engineers, but they’re not working 10 times the hours. 能够造成其他工程师十倍影响力的事情，但是却没有用十倍的时间，是因为他们做了更有leverage的事情</p>
+<p><strong>1. Optimise for learning</strong></p>
+<p>   <img src="/2020/04/11/10xEngineer/image-20200412201426847.png" alt="image-20200412201426847"></p>
+<p>   <img src="/2020/04/11/10xEngineer/image-20200412201509572.png" alt="image-20200412201509572"></p>
+<ol>
+<li>带来的收益和时间指数增长的、随着时间的迁移，收货的总量就会越多，也就是说需要坚持时间、每个周期你能够提升学到的知识的比例，都会更高的影响带来收益（指数比例）</li>
 </ol>
+<p><strong>2. Invest in iteration speed</strong></p>
+<ol>
+<li><p>DRY Principle（Don’t Repeat Yourself），避免重复工作，如果一件工作你考量以后可能会做超过两次，就实现工具去做，这也是在造杠杆，重视在写Time-Saving Tools上的时间投资（监控工具、调试工具、CI/CD、发布工具… ）</p>
+<blockquote>
+<p>1分钟 x 10次 x 1000 人 = 30 人日 = 1人月</p>
+</blockquote>
+</li>
+<li><p>做你自己的PM，对自己负责的项目要有目标、里程碑（Milestones），项目必须是可评估、可质量进度、可测量的</p>
+</li>
+<li><p>不要欠债，遇到一次的知识点、盲区，就要搞明白，不然一知半解，下次遇到还不会</p>
+</li>
+</ol>
+<p><strong>3. Validate your ideas aggressively and iteratively</strong></p>
+<ol>
+<li>需求评审阶段<ul>
+<li>以始为终：在开发之前思考好是否是用户真正想要的</li>
+<li>试验驱动的产品设计：把一个大的feature拆分成多个小的feature测试假设，分阶段评估，从而验证是否需要进一步实施和执行</li>
+</ul>
+</li>
+<li>方案评审阶段<ul>
+<li>优先思考风险性高的部分：验证危险部分方案至少可行</li>
+<li>小步骤验证可行：花费10%的前期工作时间验证有效性</li>
+</ul>
+</li>
+</ol>
+<p><strong>4. Minimize operational burden</strong></p>
+<ol>
+<li><p><em>Instagram Principle</em>：Do the Simple Thing first. 减少复杂性，任何一个复杂性的add on，都可能会引发一场potential fire</p>
+<blockquote>
+<p>Instagram在2012年被FaceBook收购的时候，只有13名员工，其中只有5名是技术人员，当时Instagram有着40M的用户</p>
+</blockquote>
+</li>
+<li><p>减少复杂性</p>
+<ul>
+<li>代码复杂性：很多技术人员喜欢写很复杂的代码来体现自己的专业性</li>
+<li>系统复杂性：有时候加台机器可能比选择各种复杂的存储或者中间件更低成本</li>
+<li>产品复杂性：没有明确愿景的需求，增加产品的复杂性导致代码的复杂性<ol>
+<li>没有明确愿景的需求，增加产品的复杂性导致代码的复杂性</li>
+</ol>
+</li>
+<li>组织复杂性：当系统复杂性很高的时候，组织的发展也提升复杂性，新人上手难度高，按功能拆分组织后，各功能模块之间无法互助。</li>
+</ul>
+</li>
+<li><p>时刻问自己，这是否是解决问题最简单的方式</p>
+</li>
+</ol>
+<p><strong>5. Building a great engineering culture</strong></p>
+<ul>
+<li>工程师们往往喜欢在可以做高杠杆活动的团队中工作，优秀的团队文化是吸引新人加入有效杠杆<ul>
+<li>优化学习</li>
+<li>有效的工具减少迭代投资</li>
+<li>产品策略明确，有明确的分支假设</li>
+<li>往往喜欢在新团队中开发新功能而不是维护旧债</li>
+</ul>
+</li>
+</ul>
 <h4 id="Other-view-points"><a href="#Other-view-points" class="headerlink" title="Other view points"></a>Other view points</h4><ol>
-<li>复利：<a href="https://mp.weixin.qq.com/s?__biz=MzAxNzI4MTMwMw==&amp;mid=401199907&amp;idx=1&amp;sn=0d5395ca0f0737afefc72a48c7ecd278&amp;scene=21#wechat_redirect" target="_blank" rel="noopener">https://mp.weixin.qq.com/s?__biz=MzAxNzI4MTMwMw==&amp;mid=401199907&amp;idx=1&amp;sn=0d5395ca0f0737afefc72a48c7ecd278&amp;scene=21#wechat_redirect</a></li>
-<li></li>
+<li>学习是一个复利的过程：<a href="https://mp.weixin.qq.com/s?__biz=MzAxNzI4MTMwMw==&mid=401199907&idx=1&sn=0d5395ca0f0737afefc72a48c7ecd278&scene=21#wechat_redirect" target="_blank" rel="noopener">点这里</a></li>
 </ol>
-<h3 id="《10x程序员》"><a href="#《10x程序员》" class="headerlink" title="《10x程序员》"></a>《10x程序员》</h3><h3 id="About-PPT-points"><a href="#About-PPT-points" class="headerlink" title="About PPT points"></a>About PPT points</h3><p>程序员鸡汤分享</p>
-<p>作为T4工程师入职不到一年在这里给各位T10分享十倍程序员？hh</p>
-<p>但是本着微分享的愿景是注重分享者，所以我也就斗胆在这里给各位大佬卖弄卖弄哈</p>
+<h3 id="About-PPT-thoughts"><a href="#About-PPT-thoughts" class="headerlink" title="About PPT thoughts"></a>About PPT thoughts</h3><p>属于程序员鸡汤分享但是真香，作为T4工程师入职不到一年在这里给各位T10分享十倍程序员？hh，但是本着微分享的愿景是注重分享者，所以我也就斗胆在这里给各位大佬卖弄卖弄哈</p>
+<p>主要内容来自《The Effective Engineer》，PPT内容主要是copy的Google Talk作者的，也算是对书籍的摘录。借鉴下作者的思路^~^</p>
 
         </div>
 
-        
-            <section class="post-copyright">
-                
-                    <p class="copyright-item">
-                        <span>Author:</span>
-                        <span>8gscoder</span>
-                    </p>
-                
-                
-                    <p class="copyright-item">
-                        <span>Permalink:</span>
-                        <span><a href="https://8gscoder.github.io/2020/04/11/10xEngineer/">https://8gscoder.github.io/2020/04/11/10xEngineer/</a></span>
-                    </p>
-                
-                
-                    <p class="copyright-item">
-                        <span>License:</span>
-                        <span>Copyright (c) 2019 <a href="http://creativecommons.org/licenses/by-nc/4.0/" target="_blank" rel="noopener">CC-BY-NC-4.0</a> LICENSE</span>
-                    </p>
-                
-                
-                     <p class="copyright-item">
-                         <span>Slogan:</span>
-                         <span>Do you believe in <strong>DESTINY</strong>?</span>
-                     </p>
-                
-
-            </section>
         
         <section class="post-tags">
             <div>

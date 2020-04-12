@@ -107,6 +107,68 @@
             <div class="container">
     
     
+        <div class="post-toc">
+    <div class="tocbot-list">
+    </div>
+    <div class="tocbot-list-menu">
+        <a class="tocbot-toc-expand" onclick="expand_toc()">Expand all</a>
+        <a onclick="go_top()">Back to top</a>
+        <a onclick="go_bottom()">Go to bottom</a>
+    </div>
+</div>
+
+<script>
+    document.ready(
+        function () {
+            tocbot.init({
+                tocSelector: '.tocbot-list',
+                contentSelector: '.post-content',
+                headingSelector: 'h1, h2, h3, h4, h5',
+                collapseDepth: 1,
+                orderedList: false,
+                scrollSmooth: true,
+            })
+        }
+    )
+
+    function expand_toc() {
+        var b = document.querySelector(".tocbot-toc-expand");
+        tocbot.init({
+            tocSelector: '.tocbot-list',
+            contentSelector: '.post-content',
+            headingSelector: 'h1, h2, h3, h4, h5',
+            collapseDepth: 6,
+            orderedList: false,
+            scrollSmooth: true,
+        });
+        b.setAttribute("onclick", "collapse_toc()");
+        b.innerHTML = "Collapse all"
+    }
+
+    function collapse_toc() {
+        var b = document.querySelector(".tocbot-toc-expand");
+        tocbot.init({
+            tocSelector: '.tocbot-list',
+            contentSelector: '.post-content',
+            headingSelector: 'h1, h2, h3, h4, h5',
+            collapseDepth: 1,
+            orderedList: false,
+            scrollSmooth: true,
+        });
+        b.setAttribute("onclick", "expand_toc()");
+        b.innerHTML = "Expand all"
+    }
+
+    function go_top() {
+        window.scrollTo(0, 0);
+    }
+
+    function go_bottom() {
+        window.scrollTo(0, document.body.scrollHeight);
+    }
+
+</script>
+    
 
     
     <article class="post-wrap">
@@ -129,38 +191,41 @@
         </header>
 
         <div class="post-content">
-            <p>Start to record sth in gh pages.</p>
+            <h1 id="杂"><a href="#杂" class="headerlink" title="杂"></a>杂</h1><p>周末无聊，感觉最近事情有点多，不管是生活上，还是工作上的，很多事情没有什么思绪，或者有思绪但是没有好的地方，也没有动力去梳理，记录。于是打算搞个gh-pages来enrich my weekend</p>
+<p>思考了下搞blog的收益：</p>
+<ol>
+<li>欺骗自己是写给别人看的…这样会稍微认真对待每次记录</li>
+<li>同样，em..因为可能以为别人会看，所以会有点动力去写些东西</li>
+<li>把乱七八糟的事情慢慢梳理起来，recorded</li>
+</ol>
+<p>同时在这里持续记录下使用hexo和gh pages搭建blog过程中遇到的坑吧</p>
+<h1 id="Hexo-Record"><a href="#Hexo-Record" class="headerlink" title="Hexo Record"></a>Hexo Record</h1><h4 id="1-Set-up"><a href="#1-Set-up" class="headerlink" title="1. Set up"></a>1. Set up</h4><p>​    基本上搭建起来不是很难，按照官网文档走就可以了</p>
+<h4 id="2-theme使用的是Chric"><a href="#2-theme使用的是Chric" class="headerlink" title="2. theme使用的是Chric"></a>2. theme使用的是Chric</h4><p>​    懒得记录Chric有啥自己改的地方了，所以直接把hexo的整个工程文件push到gh private repo上去了..把Chric主题作为submoudule搞到里面去了，隔一段时间就push一下吧，以后电脑出问题，就直接pull下来</p>
+<h4 id="3-markdown工具"><a href="#3-markdown工具" class="headerlink" title="3. markdown工具"></a>3. markdown工具</h4><p>​    直接撸markdown还是比较烦的，mac下搞了个工具来写markdown还是挺方便的</p>
+<p><img src="/2020/04/11/hello-world/image-20200412214913034.png" alt="image-20200412214913034"></p>
+<h4 id="4-图片问题"><a href="#4-图片问题" class="headerlink" title="4. 图片问题"></a>4. 图片问题</h4><p><strong>hexo要引用图片的话</strong></p>
+<ol>
+<li>先开参数</li>
+</ol>
+<figure class="highlight yaml"><figcaption><span>_config.yaml</span></figcaption><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="attr">post_asset_folder:</span> <span class="literal">true</span></span><br></pre></td></tr></table></figure>
+
+<ol start="2">
+<li>使用的时候需要把资源文件放到_posts下，同md文件名的目录下置放，就可直接路径名引用</li>
+</ol>
+<p><strong>相对路径</strong></p>
+<ol>
+<li>装plugin</li>
+</ol>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">npm i --save hexo-asset-link</span><br></pre></td></tr></table></figure>
+
+<ol start="2">
+<li>相对source路径引用</li>
+</ol>
+<p><strong>相对路径 + post folder参数</strong></p>
+<p>可以直接以文件名引用</p>
 
         </div>
 
-        
-            <section class="post-copyright">
-                
-                    <p class="copyright-item">
-                        <span>Author:</span>
-                        <span>8gscoder</span>
-                    </p>
-                
-                
-                    <p class="copyright-item">
-                        <span>Permalink:</span>
-                        <span><a href="https://8gscoder.github.io/2020/04/11/hello-world/">https://8gscoder.github.io/2020/04/11/hello-world/</a></span>
-                    </p>
-                
-                
-                    <p class="copyright-item">
-                        <span>License:</span>
-                        <span>Copyright (c) 2019 <a href="http://creativecommons.org/licenses/by-nc/4.0/" target="_blank" rel="noopener">CC-BY-NC-4.0</a> LICENSE</span>
-                    </p>
-                
-                
-                     <p class="copyright-item">
-                         <span>Slogan:</span>
-                         <span>Do you believe in <strong>DESTINY</strong>?</span>
-                     </p>
-                
-
-            </section>
         
         <section class="post-tags">
             <div>
