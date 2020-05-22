@@ -12,7 +12,7 @@
 
 
 
-<title>Archives: 2020/5 | 8gscoder&#39;s Blog</title>
+<title>Tag: golang | 8gscoder&#39;s Blog</title>
 
 
 
@@ -104,40 +104,33 @@
     }
 </script>
         <div class="main">
-            <div class="post-wrap archive">
-    
-    
+            <div class="container">
+    <article class="post-wrap page">
         
-
+        <h2 class="post-title">go-restful</h2>
         
-            <h3>2020</h3>
-        
-
-        <article class="archive-item">
-            <a class="archive-item-link" href="/2020/05/21/SPDY/">SPDY</a>
-            <span class="archive-item-date">May 21, 2020</span>
-        </article>
-    
-        
-
-        
-
-        <article class="archive-item">
-            <a class="archive-item-link" href="/2020/05/12/mac/">Mac操作</a>
-            <span class="archive-item-date">May 12, 2020</span>
-        </article>
-    
-        
-
-        
-
-        <article class="archive-item">
-            <a class="archive-item-link" href="/2020/05/10/database/">DB高负载</a>
-            <span class="archive-item-date">May 10, 2020</span>
-        </article>
-    
-    
+        <section class="post-content">
+            <h1 id="Go-Restful"><a href="#Go-Restful" class="headerlink" title="Go-Restful"></a>Go-Restful</h1><h2 id="What’s-Restful"><a href="#What’s-Restful" class="headerlink" title="What’s Restful"></a>What’s Restful</h2><p>什么是REST？</p>
+<blockquote>
+<p>Representational State Transfer：表现层状态转化</p>
+</blockquote>
+<p>REST是HTTP协议的作者、Apache服务器软件作者Fielding的一篇博士论文提出的</p>
+<p>　　（1）每一个URI代表一种资源；</p>
+<p>　　（2）客户端和服务器之间，传递这种资源的某种表现层；</p>
+<p>　　（3）客户端通过四个HTTP动词，对服务器端资源进行操作，实现”表现层状态转化”。</p>
+<p>主要特点就是URI里不能有动词，动作应该交给HTTP Verb，URI直接标志资源</p>
+<p>参考链接：<a href="http://www.ruanyifeng.com/blog/2014/05/restful_api.html" target="_blank" rel="noopener">http://www.ruanyifeng.com/blog/2014/05/restful_api.html</a></p>
+<p>结合Kube-apiserver的API设计思考，什么是Restful API</p>
+<h2 id="Go-Resful"><a href="#Go-Resful" class="headerlink" title="Go-Resful"></a>Go-Resful</h2><h3 id="三个概念："><a href="#三个概念：" class="headerlink" title="三个概念："></a>三个概念：</h3><ol>
+<li>Container：一个容器里面，有多个WebServe和一个ServeMux</li>
+<li>WebService：一个WebService里面有多个Route</li>
+<li>Route：一个Route有一个RouteFunction，RouteFunction是函数签名和Handler签名一样</li>
+</ol>
+<h3 id="一个Demo："><a href="#一个Demo：" class="headerlink" title="一个Demo："></a>一个Demo：</h3>
+        </section>
+    </article>
 </div>
+
         </div>
         <footer id="footer" class="footer">
     <div class="copyright">

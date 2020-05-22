@@ -12,7 +12,7 @@
 
 
 
-<title>Archives: 2020/5 | 8gscoder&#39;s Blog</title>
+<title>8gscoder&#39;s Blog</title>
 
 
 
@@ -104,40 +104,50 @@
     }
 </script>
         <div class="main">
-            <div class="post-wrap archive">
-    
-    
+            <div class="container">
+    <article class="post-wrap page">
         
+        <h2 class="post-title"></h2>
+        
+        <section class="post-content">
+            <p>代码命名中有一些常见的单词，有特别的意思，在这里记录一下</p>
+<ol>
+<li><p>Legacy：遗留，即将废弃的意思</p>
+</li>
+<li><p>Generic：通用的，比如GenericAPIServer，即是通用的APIServer服务，不是仅适用于K8s Apiserver的，比如tke-apiserver就是基于这个做的，底层都是go-restful和http框架</p>
+</li>
+<li><p>Delegation：委派、代理模型</p>
+</li>
+<li><p>Paritcular：特定的，指定的，特例化后的</p>
+</li>
+</ol>
+<p>k8s常用的数据结构</p>
+<ol>
+<li>XX-Storage： 存储对象，比如apiserver的各种Storage封装了对后端etcd的操作</li>
+<li>Option、Config、Server：Option分装命令行参数，Config分装配置参数，Server分装服务端对象</li>
+<li>Aggregator：聚合</li>
+<li>Extensions：扩展的</li>
+<li></li>
+</ol>
+<p>k8s常用的设计模式：</p>
+<ol>
+<li>工厂模式<ol>
+<li>以New为开头的接收器方法，基本上都是运用了工厂模式</li>
+<li>New一个Factory，Factory有CreateXX(opt *Options)方法，依据传入不同的Option，生产出不通的类型，比如RESTGetter、StorageGetter，传入不通的resource schema，产生不同的server/storage..</li>
+<li>其他参数options可能会有ApplyTo(c *generic.Config)方法，会把自己赋值到generic.Config上</li>
+<li>最后生产出来一个particular的产物</li>
+</ol>
+</li>
+<li>装饰器模式<ol>
+<li>WithAudit、WithXXX，都是用到了装饰器模式</li>
+</ol>
+</li>
+</ol>
 
-        
-            <h3>2020</h3>
-        
-
-        <article class="archive-item">
-            <a class="archive-item-link" href="/2020/05/21/SPDY/">SPDY</a>
-            <span class="archive-item-date">May 21, 2020</span>
-        </article>
-    
-        
-
-        
-
-        <article class="archive-item">
-            <a class="archive-item-link" href="/2020/05/12/mac/">Mac操作</a>
-            <span class="archive-item-date">May 12, 2020</span>
-        </article>
-    
-        
-
-        
-
-        <article class="archive-item">
-            <a class="archive-item-link" href="/2020/05/10/database/">DB高负载</a>
-            <span class="archive-item-date">May 10, 2020</span>
-        </article>
-    
-    
+        </section>
+    </article>
 </div>
+
         </div>
         <footer id="footer" class="footer">
     <div class="copyright">

@@ -1,0 +1,145 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+<meta name="viewport"
+      content="width=device-width, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0">
+<meta http-equiv="X-UA-Compatible" content="ie=edge">
+
+    <meta name="author" content="8gscoder">
+
+
+
+
+
+<title>8gscoder&#39;s Blog</title>
+
+
+
+    <link rel="icon" href="/favicon.ico">
+
+
+
+
+    <!-- stylesheets list from _config.yml -->
+    
+    <link rel="stylesheet" href="/css/style.css">
+    
+
+
+
+    <!-- scripts list from _config.yml -->
+    
+    <script src="/js/script.js"></script>
+    
+    <script src="/js/tocbot.min.js"></script>
+    
+
+
+
+    
+    
+        
+    
+
+
+<meta name="generator" content="Hexo 4.2.0"></head>
+<body>
+    <div class="wrapper">
+        <header>
+    <nav class="navbar">
+        <div class="container">
+            <div class="navbar-header header-logo"><a href="/">8gsCoder&#39;s Blog</a></div>
+            <div class="menu navbar-right">
+                
+                    <a class="menu-item" href="/archives">Posts</a>
+                
+                    <a class="menu-item" href="/category">Categories</a>
+                
+                    <a class="menu-item" href="/tag">Tags</a>
+                
+                    <a class="menu-item" href="/about">About</a>
+                
+                <input id="switch_default" type="checkbox" class="switch_default">
+                <label for="switch_default" class="toggleBtn"></label>
+            </div>
+        </div>
+    </nav>
+
+    
+    <nav class="navbar-mobile" id="nav-mobile">
+        <div class="container">
+            <div class="navbar-header">
+                <div>
+                    <a href="/">8gsCoder&#39;s Blog</a><a id="mobile-toggle-theme">·&nbsp;Light</a>
+                </div>
+                <div class="menu-toggle" onclick="mobileBtn()">&#9776; Menu</div>
+            </div>
+            <div class="menu" id="mobile-menu">
+                
+                    <a class="menu-item" href="/archives">Posts</a>
+                
+                    <a class="menu-item" href="/category">Categories</a>
+                
+                    <a class="menu-item" href="/tag">Tags</a>
+                
+                    <a class="menu-item" href="/about">About</a>
+                
+            </div>
+        </div>
+    </nav>
+
+</header>
+<script>
+    var mobileBtn = function f() {
+        var toggleMenu = document.getElementsByClassName("menu-toggle")[0];
+        var mobileMenu = document.getElementById("mobile-menu");
+        if(toggleMenu.classList.contains("active")){
+           toggleMenu.classList.remove("active")
+            mobileMenu.classList.remove("active")
+        }else{
+            toggleMenu.classList.add("active")
+            mobileMenu.classList.add("active")
+        }
+    }
+</script>
+        <div class="main">
+            <div class="container">
+    <article class="post-wrap page">
+        
+        <h2 class="post-title"></h2>
+        
+        <section class="post-content">
+            <h1 id="scheme"><a href="#scheme" class="headerlink" title="scheme"></a>scheme</h1><h3 id="一、前言"><a href="#一、前言" class="headerlink" title="一、前言"></a>一、前言</h3><p>k8s 有一篇proposal介绍了Kubernetes API是有apigroup的观念的，即不同group的版本是不断变化的，分开管理，以适应不通的迭代速度（k8s的资源都是有gh SIG进行分开迭代管理的）。这也导致了k8s apiserver的版本管理是神tm复杂，比如k8s的release，可能会导致一些资源的version进行变化，比如1.7的rbac是v1beta1，而1.8之后rbac默认就是v1了，你给1.8版本的apiserver提交v1beta1的rbac资源，k8s apiserver会怎么处理呢？因为高版本肯定要像低版本兼容，所以1.8的apiserver肯定也要能兼容v1beta1，毕竟v1beta1也是个beta，你不能突然搞个破坏性的向前不兼容，这样会在集群升级的时候，会有很大的问题，比如之前etcd里面用protobuf存了v1beta1版本的资源，突然apiserver升级了，rbac的版本变成v1，你怎么搞？你总不能读出来不识别吧，搞出问题来吧，所以肯定是要有兼容机制来处理这些可能是必要的更新问题。，总而言之，apiserver的版本管理很复杂，如何来实现API的多版本需要面临的兼容、不兼容机制呢？</p>
+<p>考虑以下问题点：</p>
+<ol>
+<li>apiserver run起来的时候，该把资源的当前版本从结构体对象版本转到URL的路径上的呢？</li>
+<li>apiserver处理client来的http请求的时候，如何将请求的资源body转换成对应的版本的资源对象的呢？</li>
+<li>不同release版本的apiserver如何支持不同版本的api的呢？不同api又是如何转换的呢？</li>
+</ol>
+<blockquote>
+<h6 id="1-关于Schema"><a href="#1-关于Schema" class="headerlink" title="1. 关于Schema"></a>1. 关于Schema</h6><p>Schema：其实来源于数据库里面的概念，在SQL中，Schema在逻辑上表示的是一组有关联的数据对象，在物理上其实是和Database是同义，例如Create Database又可以写成Create Schema，在DB中经常会见到Schema这个单词。Schema更注重概要，而且一般都是做图表之间的联系。</p>
+<p>在k8s里面，主要是定义了vk、gv、gvk三种类型，三种之间的转换关系。他是scheme的基础</p>
+<h6 id="2-关于Scheme"><a href="#2-关于Scheme" class="headerlink" title="2. 关于Scheme"></a>2. 关于Scheme</h6><p>Scheme ：定义了资源序列化和反序列化的方法以及资源类型和版本的对应关系，这里我们可以理解成一张纪录表。定义在 k8s.io/apimachinery/pkg/runtime/scheme.go 中。</p>
+<h6 id="3-两者的区别"><a href="#3-两者的区别" class="headerlink" title="3. 两者的区别"></a>3. 两者的区别</h6><p>在计算机数据描述领域，Scheme由于原意为“主题”，“方案”，“构想”等，因此一般指比较明确的（具体的）“方案”、“体系”，例如一个术语词表、分类表等，而Schema通常翻译成“模式”，比较强调形式化（formalized或normalized），多指一套编码规范（如XML Schema，RDF Schema）等，也可以指一套完整的数据规范。</p>
+<p>两个词现在已经几乎没有区别了。如果一定要区分的话，scheme比schema更具体一些，指的是一套方案，而schema则是概要（而且这个词和图表很有关系）。</p>
+</blockquote>
+<h3 id="二、Codec-解编码器"><a href="#二、Codec-解编码器" class="headerlink" title="二、Codec-解编码器"></a>二、Codec-解编码器</h3><h3 id="三、Convert-兼容转换"><a href="#三、Convert-兼容转换" class="headerlink" title="三、Convert-兼容转换"></a>三、Convert-兼容转换</h3><h2 id="二、结构体走读"><a href="#二、结构体走读" class="headerlink" title="二、结构体走读"></a>二、结构体走读</h2><figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// Scheme defines methods for serializing and deserializing API objects, a type</span></span><br><span class="line"><span class="comment">// registry for converting group, version, and kind information to and from Go</span></span><br><span class="line"><span class="comment">// schemas, and mappings between Go schemas of different versions. A scheme is the</span></span><br><span class="line"><span class="comment">// foundation for a versioned API and versioned configuration over time.</span></span><br><span class="line"><span class="comment">//</span></span><br><span class="line"><span class="comment">// In a Scheme, a Type is a particular Go struct, a Version is a point-in-time</span></span><br><span class="line"><span class="comment">// identifier for a particular representation of that Type (typically backwards</span></span><br><span class="line"><span class="comment">// compatible), a Kind is the unique name for that Type within the Version, and a</span></span><br><span class="line"><span class="comment">// Group identifies a set of Versions, Kinds, and Types that evolve over time. An</span></span><br><span class="line"><span class="comment">// Unversioned Type is one that is not yet formally bound to a type and is promised</span></span><br><span class="line"><span class="comment">// to be backwards compatible (effectively a "v1" of a Type that does not expect</span></span><br><span class="line"><span class="comment">// to break in the future).</span></span><br><span class="line"><span class="comment">//</span></span><br><span class="line"><span class="comment">// Schemes are not expected to change at runtime and are only threadsafe after</span></span><br><span class="line"><span class="comment">// registration is complete.</span></span><br><span class="line"><span class="keyword">type</span> Scheme <span class="keyword">struct</span> &#123;</span><br><span class="line">   <span class="comment">// versionMap allows one to figure out the go type of an object with</span></span><br><span class="line">   <span class="comment">// the given version and name.</span></span><br><span class="line">   gvkToType <span class="keyword">map</span>[schema.GroupVersionKind]reflect.Type</span><br><span class="line"></span><br><span class="line">   <span class="comment">// typeToGroupVersion allows one to find metadata for a given go object.</span></span><br><span class="line">   <span class="comment">// The reflect.Type we index by should *not* be a pointer.</span></span><br><span class="line">   typeToGVK <span class="keyword">map</span>[reflect.Type][]schema.GroupVersionKind</span><br><span class="line"></span><br><span class="line">   <span class="comment">// unversionedTypes are transformed without conversion in ConvertToVersion.</span></span><br><span class="line">   unversionedTypes <span class="keyword">map</span>[reflect.Type]schema.GroupVersionKind</span><br><span class="line"></span><br><span class="line">   <span class="comment">// unversionedKinds are the names of kinds that can be created in the context of any group</span></span><br><span class="line">   <span class="comment">// or version</span></span><br><span class="line">   <span class="comment">// <span class="doctag">TODO:</span> resolve the status of unversioned types.</span></span><br><span class="line">   unversionedKinds <span class="keyword">map</span>[<span class="keyword">string</span>]reflect.Type</span><br><span class="line"></span><br><span class="line">   <span class="comment">// Map from version and resource to the corresponding func to convert</span></span><br><span class="line">   <span class="comment">// resource field labels in that version to internal version.</span></span><br><span class="line">   fieldLabelConversionFuncs <span class="keyword">map</span>[schema.GroupVersionKind]FieldLabelConversionFunc</span><br><span class="line"></span><br><span class="line">   <span class="comment">// defaulterFuncs is an array of interfaces to be called with an object to provide defaulting</span></span><br><span class="line">   <span class="comment">// the provided object must be a pointer.</span></span><br><span class="line">   defaulterFuncs <span class="keyword">map</span>[reflect.Type]<span class="function"><span class="keyword">func</span><span class="params">(<span class="keyword">interface</span>&#123;&#125;)</span></span></span><br><span class="line"></span><br><span class="line">   <span class="comment">// converter stores all registered conversion functions. It also has</span></span><br><span class="line">   <span class="comment">// default converting behavior.</span></span><br><span class="line">   converter *conversion.Converter</span><br><span class="line"></span><br><span class="line">   <span class="comment">// versionPriority is a map of groups to ordered lists of versions for those groups indicating the</span></span><br><span class="line">   <span class="comment">// default priorities of these versions as registered in the scheme</span></span><br><span class="line">   versionPriority <span class="keyword">map</span>[<span class="keyword">string</span>][]<span class="keyword">string</span></span><br><span class="line"></span><br><span class="line">   <span class="comment">// observedVersions keeps track of the order we've seen versions during type registration</span></span><br><span class="line">   observedVersions []schema.GroupVersion</span><br><span class="line"></span><br><span class="line">   <span class="comment">// schemeName is the name of this scheme.  If you don't specify a name, the stack of the NewScheme caller will be used.</span></span><br><span class="line">   <span class="comment">// This is useful for error reporting to indicate the origin of the scheme.</span></span><br><span class="line">   schemeName <span class="keyword">string</span></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p><img src="image-20200514004912962.png" alt="image-20200514004912962"></p>
+<p>实现的方法很多….</p>
+
+        </section>
+    </article>
+</div>
+
+        </div>
+        <footer id="footer" class="footer">
+    <div class="copyright">
+        <span>© 8gscoder | Powered by <a href="https://hexo.io" target="_blank">Hexo</a> & <a href="https://github.com/Siricee/hexo-theme-Chic" target="_blank">Chic</a></span>
+    </div>
+</footer>
+
+    </div>
+</body>
+</html>

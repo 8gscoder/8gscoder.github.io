@@ -12,7 +12,7 @@
 
 
 
-<title>Archives: 2020/5 | 8gscoder&#39;s Blog</title>
+<title>8gscoder&#39;s Blog</title>
 
 
 
@@ -104,40 +104,29 @@
     }
 </script>
         <div class="main">
-            <div class="post-wrap archive">
-    
-    
+            <div class="container">
+    <article class="post-wrap page">
         
+        <h2 class="post-title"></h2>
+        
+        <section class="post-content">
+            <h1 id="Adapter-适配器模式"><a href="#Adapter-适配器模式" class="headerlink" title="Adapter-适配器模式"></a>Adapter-适配器模式</h1><blockquote>
+<p>适配器适合用于解决新旧系统（或新旧接口）之间的兼容问题，而不建议在一开始就直接使用</p>
+</blockquote>
+<h3 id="一、引子"><a href="#一、引子" class="headerlink" title="一、引子"></a>一、引子</h3><p>如何将一个旧的接口转换为新接口？</p>
+<p><img src="wKiom1MB7T3x_RE4AAROTBX8dOk215.jpg" alt="wKiom1MB7T3x_RE4AAROTBX8dOk215"></p>
+<h3 id="二、net-http包"><a href="#二、net-http包" class="headerlink" title="二、net/http包"></a>二、net/http包</h3><p>HandleFunc</p>
+<ol>
+<li>HandleFunc</li>
+</ol>
+<figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// The HandlerFunc type is an adapter to allow the use of</span></span><br><span class="line"><span class="comment">// ordinary functions as HTTP handlers. If f is a function</span></span><br><span class="line"><span class="comment">// with the appropriate signature, HandlerFunc(f) is a</span></span><br><span class="line"><span class="comment">// Handler that calls f.</span></span><br><span class="line"><span class="keyword">type</span> HandlerFunc <span class="function"><span class="keyword">func</span><span class="params">(ResponseWriter, *Request)</span></span></span><br><span class="line"></span><br><span class="line"><span class="comment">// ServeHTTP calls f(w, r).</span></span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="params">(f HandlerFunc)</span> <span class="title">ServeHTTP</span><span class="params">(w ResponseWriter, r *Request)</span></span> &#123;</span><br><span class="line">   f(w, r)</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
 
-        
-            <h3>2020</h3>
-        
-
-        <article class="archive-item">
-            <a class="archive-item-link" href="/2020/05/21/SPDY/">SPDY</a>
-            <span class="archive-item-date">May 21, 2020</span>
-        </article>
-    
-        
-
-        
-
-        <article class="archive-item">
-            <a class="archive-item-link" href="/2020/05/12/mac/">Mac操作</a>
-            <span class="archive-item-date">May 12, 2020</span>
-        </article>
-    
-        
-
-        
-
-        <article class="archive-item">
-            <a class="archive-item-link" href="/2020/05/10/database/">DB高负载</a>
-            <span class="archive-item-date">May 10, 2020</span>
-        </article>
-    
-    
+<p><strong>适配器模式</strong>，HandlerFunc把任何入参是<code>(w ResponseWriter, r *Request)</code>无出参的函数，适配成一个handler对象</p>
+<h3 id="三、Kubernetes"><a href="#三、Kubernetes" class="headerlink" title="三、Kubernetes"></a>三、Kubernetes</h3>
+        </section>
+    </article>
 </div>
+
         </div>
         <footer id="footer" class="footer">
     <div class="copyright">

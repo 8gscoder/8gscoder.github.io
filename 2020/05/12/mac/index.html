@@ -12,7 +12,7 @@
 
 
 
-<title>DB高负载 | 8gscoder&#39;s Blog</title>
+<title>Mac操作 | 8gscoder&#39;s Blog</title>
 
 
 
@@ -173,7 +173,7 @@
     
     <article class="post-wrap">
         <header class="post-header">
-            <h1 class="post-title">DB高负载</h1>
+            <h1 class="post-title">Mac操作</h1>
             
                 <div class="post-meta">
                     
@@ -182,14 +182,14 @@
 
                     
                         <span class="post-time">
-                        Date: <a href="#">May 10, 2020&nbsp;&nbsp;2:42:32</a>
+                        Date: <a href="#">May 12, 2020&nbsp;&nbsp;12:15:09</a>
                         </span>
                     
                     
                         <span class="post-category">
                     Category:
                             
-                                <a href="/categorie/Database/">Database</a>
+                                <a href="/categorie/work/">work</a>
                             
                         </span>
                     
@@ -198,79 +198,40 @@
         </header>
 
         <div class="post-content">
-            <h1 id="DB-高负载"><a href="#DB-高负载" class="headerlink" title="DB 高负载"></a>DB 高负载</h1><ul>
-<li>连接数超限</li>
-<li>流量大</li>
-<li>cpu高负载</li>
-<li>慢查询</li>
-</ul>
-<p>常用命令：</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br></pre></td><td class="code"><pre><span class="line"># mysql的进程和变量信息都存在information_schema下的不同表中：</span><br><span class="line"># 进程状态在information_schema.processlist</span><br><span class="line">select * from information_schema.processlist;</span><br><span class="line"># 全局配置在information_schema.global_variables</span><br><span class="line">select * from information_schema.global_variables;</span><br><span class="line"># 查看当前连接进程</span><br><span class="line">show processlist;</span><br><span class="line"># 查看连接进程的详细信息(完整sql)</span><br><span class="line">show full processlist;</span><br><span class="line"># kill连接（一般慢查询过多影响服务无法恢复时可能需要kill）</span><br><span class="line">kill 12345(show processlist中获取的id)</span><br><span class="line"># 批量kill进程(可根据where条件进行过滤)</span><br><span class="line">select concat(&#39;kill &#39;,id,&#39;;&#39;) from information_schema.processlist where host like &#39;192.168.0.1%&#39; into outfile &#39;&#x2F;tmp&#x2F;kill.sql&#39;;</span><br><span class="line">source &#x2F;tmp&#x2F;kill.sql</span><br><span class="line"># 按照连接来源ip排序</span><br><span class="line">select SUBSTRING_INDEX(host, &#39;:&#39;, 1) as ip, count(*) as count from information_schema.processlist group by ip order by count desc;</span><br><span class="line"># 按照db和sql排序</span><br><span class="line">select user, db, command, count(*) as count from information_schema.PROCESSLIST group by db,command order by count desc;</span><br><span class="line"># 查看最大连接数</span><br><span class="line">show variables like &#39;max_connections&#39;;</span><br><span class="line"># 修改最大连接数</span><br><span class="line">set GLOBAL max_connections&#x3D;2000;</span><br><span class="line"># mysql常用函数: https:#www.w3schools.com&#x2F;sql&#x2F;sql_ref_mysql.asp</span><br></pre></td></tr></table></figure>
-
-
-
-
-
-<h2 id="慢查询"><a href="#慢查询" class="headerlink" title="慢查询"></a>慢查询</h2><h3 id="一、特征"><a href="#一、特征" class="headerlink" title="一、特征"></a>一、特征</h3><ol>
-<li><p>CPU负载高</p>
-</li>
-<li><p>Server端读写DB的IO负载高，Server端阻塞</p>
-</li>
-<li><p>SQL延迟高</p>
-</li>
-</ol>
-<h3 id="二、相关配置"><a href="#二、相关配置" class="headerlink" title="二、相关配置"></a>二、相关配置</h3><ol>
-<li>查询mysql配置： <code>show variables like %query%;</code></li>
-<li>临时开启慢查询配置：<ol>
-<li><code>set global slow_query_log = on;</code>打开开关</li>
-<li><code>set long_query_time = 1;</code> 慢查询阈值</li>
-<li><code>set globle log_output = file;</code>慢查询存储方式</li>
-<li><code>show variables like &#39;max_connections&#39;;</code></li>
-<li>永久开起，需在配置文件中开启</li>
-</ol>
-</li>
-</ol>
-<h3 id="二、排查思路"><a href="#二、排查思路" class="headerlink" title="二、排查思路"></a>二、排查思路</h3><ol>
-<li><p>现网的DB都是默认开启来慢查询log的（mysql.cnf：slow_query_log，long_query_time)</p>
-</li>
-<li><p>查看慢查询日志</p>
+            <h2 id="1-MAC通用快捷键"><a href="#1-MAC通用快捷键" class="headerlink" title="1. MAC通用快捷键"></a>1. MAC通用快捷键</h2><p>mac的编辑文档、选中时、iterm操作时有通用的快捷键，包括在Goland中、sublime、vs code中</p>
 <ol>
-<li><p><strong>mysqldumpslow</strong></p>
-<ol>
-<li><p>mysqldumpslow -s c -t 10 -a -l</p>
-<ol>
-<li><p>-s指定排序模式</p>
-<ol>
-<li><pre><code class="bash">al: average lock time
-ar: average rows sent
-at: average query time
-c: count
-l: lock time
-r: rows sent
-t: query time</code></pre>
-</li>
+<li>ctrl+e、ctrl+a：快速移动到行首行尾</li>
+<li>ctrl+f、ctrl+b、ctrl+p、ctrl+n：左移右移上下一行，相当于方向键，但是方向键要右手离开键盘</li>
+<li>ctrl+d、ctrl+h：在iterm中光标左删右删，等同于删除键和fn+退格键，goland不适用会和其他键冲突</li>
+<li>ctrl+u、ctrl+k：iterm，删除光标之前所以字幕、删除光标之后所有字幕</li>
+<li>command+shift+w：企业微信</li>
 </ol>
-</li>
-<li><p>-t  <topN></p>
-</li>
-<li><p>-a 显示具体sql</p>
-</li>
-<li><p>-g 过滤</p>
-</li>
-<li><p>-l 总时间中包括锁的时间</p>
-</li>
+<h2 id="2-Goland快捷键记录"><a href="#2-Goland快捷键记录" class="headerlink" title="2. Goland快捷键记录"></a>2. Goland快捷键记录</h2><ol>
+<li>command+[ ：上一跳，常用的command+←手要离开键盘不太爽</li>
+<li>command+] ：下一跳</li>
+<li>command+shift+F：在目录下搜索，如果要在指定某个目录，command+1唤出文件列表，点击指定的目录后，再执行此键</li>
+<li>command+shift+O：按文件名搜索文件</li>
+<li>shift+F6：重构，重命名某个变量、包名，在变量的定义的地方按下，Goland会自动替换所有引用的地方（包括注释中同名，Goland会请求确认）</li>
+<li>可以单独设置goland默认bar显示F1-F12，在perferrence中自己找下</li>
+<li>command+n：新建，在目录下也可用如下</li>
+<li>在菜单栏搜索：如下在pkg下新建目录，可以command+n，然后按ctrl+n往下移，找到directory，或者直接输入dir来搜索到Diectory</li>
 </ol>
-</li>
+<h2 id="3-Alfred"><a href="#3-Alfred" class="headerlink" title="3. Alfred"></a>3. Alfred</h2><h3 id="1-clipboard"><a href="#1-clipboard" class="headerlink" title="1. clipboard"></a>1. clipboard</h3><h3 id="2-snippets"><a href="#2-snippets" class="headerlink" title="2. snippets"></a>2. snippets</h3><p>使用方式：</p>
+<p>可以记录一些经常需要查的账号、一组shell命令等</p>
+<p>支持直接文本替换</p>
+<p>比如经常需要输入–all-namespaces</p>
+<p>可以设置如下</p>
+<p>则在命令行输入“an..”的时候即可自动替换成–all-namespaces</p>
+<h3 id="3-搜索"><a href="#3-搜索" class="headerlink" title="3. 搜索"></a>3. 搜索</h3><p>除了基本的搜索文件功能，alfred还可以搜索chrome的书签，自定义搜索</p>
+<p>比如：</p>
+<p><strong>搜索书签</strong></p>
+<p><strong>自定义搜索</strong></p>
+<h3 id="4-打开goland-project"><a href="#4-打开goland-project" class="headerlink" title="4. 打开goland project"></a>4. 打开goland project</h3><ol>
+<li>alfred付费功能，破解版</li>
+<li>安装jetbrains的workflow（JetBrains - Open project.alfredworkflow）</li>
+<li>配置goland</li>
 </ol>
-</li>
-</ol>
-</li>
-</ol>
-<h3 id="三、如何优化"><a href="#三、如何优化" class="headerlink" title="三、如何优化"></a>三、如何优化</h3><p>排查如果是因为未建索引导致，根据业务需要加上索引</p>
-<h3 id="四、case记录"><a href="#四、case记录" class="headerlink" title="四、case记录"></a>四、case记录</h3><ol>
-<li>内部用户并发删除资源，上层逻辑没有限频，导致DB慢查询，而由于一个旁路业务连接数异常较高，导致连接数较高，慢查询导致并发连接数升高，导致达到连接数最大值，导致无法建立新连接，从而导致雪崩。</li>
-</ol>
-<h2 id=""><a href="#" class="headerlink" title=""></a></h2>
+
         </div>
 
         
@@ -280,9 +241,9 @@ t: query time</code></pre>
                 <span class="tag">
                     
                     
-                        <a href="/tag/mysql/"># mysql</a>
+                        <a href="/tag/work/"># work</a>
                     
-                        <a href="/tag/sql/"># sql</a>
+                        <a href="/tag/Mac/"># Mac</a>
                     
                         
                 </span>
@@ -295,10 +256,10 @@ t: query time</code></pre>
         </section>
         <section class="post-nav">
             
-                <a class="prev" rel="prev" href="/2020/05/12/mac/">Mac操作</a>
+                <a class="prev" rel="prev" href="/2020/05/21/SPDY/">SPDY</a>
             
             
-            <a class="next" rel="next" href="/2020/04/19/kube-controller-manager/">kube-controller-manager</a>
+            <a class="next" rel="next" href="/2020/05/10/database/">DB高负载</a>
             
         </section>
 

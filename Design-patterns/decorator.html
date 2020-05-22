@@ -1,0 +1,166 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+<meta name="viewport"
+      content="width=device-width, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0">
+<meta http-equiv="X-UA-Compatible" content="ie=edge">
+
+    <meta name="author" content="8gscoder">
+
+
+
+
+
+<title>8gscoder&#39;s Blog</title>
+
+
+
+    <link rel="icon" href="/favicon.ico">
+
+
+
+
+    <!-- stylesheets list from _config.yml -->
+    
+    <link rel="stylesheet" href="/css/style.css">
+    
+
+
+
+    <!-- scripts list from _config.yml -->
+    
+    <script src="/js/script.js"></script>
+    
+    <script src="/js/tocbot.min.js"></script>
+    
+
+
+
+    
+    
+        
+    
+
+
+<meta name="generator" content="Hexo 4.2.0"></head>
+<body>
+    <div class="wrapper">
+        <header>
+    <nav class="navbar">
+        <div class="container">
+            <div class="navbar-header header-logo"><a href="/">8gsCoder&#39;s Blog</a></div>
+            <div class="menu navbar-right">
+                
+                    <a class="menu-item" href="/archives">Posts</a>
+                
+                    <a class="menu-item" href="/category">Categories</a>
+                
+                    <a class="menu-item" href="/tag">Tags</a>
+                
+                    <a class="menu-item" href="/about">About</a>
+                
+                <input id="switch_default" type="checkbox" class="switch_default">
+                <label for="switch_default" class="toggleBtn"></label>
+            </div>
+        </div>
+    </nav>
+
+    
+    <nav class="navbar-mobile" id="nav-mobile">
+        <div class="container">
+            <div class="navbar-header">
+                <div>
+                    <a href="/">8gsCoder&#39;s Blog</a><a id="mobile-toggle-theme">·&nbsp;Light</a>
+                </div>
+                <div class="menu-toggle" onclick="mobileBtn()">&#9776; Menu</div>
+            </div>
+            <div class="menu" id="mobile-menu">
+                
+                    <a class="menu-item" href="/archives">Posts</a>
+                
+                    <a class="menu-item" href="/category">Categories</a>
+                
+                    <a class="menu-item" href="/tag">Tags</a>
+                
+                    <a class="menu-item" href="/about">About</a>
+                
+            </div>
+        </div>
+    </nav>
+
+</header>
+<script>
+    var mobileBtn = function f() {
+        var toggleMenu = document.getElementsByClassName("menu-toggle")[0];
+        var mobileMenu = document.getElementById("mobile-menu");
+        if(toggleMenu.classList.contains("active")){
+           toggleMenu.classList.remove("active")
+            mobileMenu.classList.remove("active")
+        }else{
+            toggleMenu.classList.add("active")
+            mobileMenu.classList.add("active")
+        }
+    }
+</script>
+        <div class="main">
+            <div class="container">
+    <article class="post-wrap page">
+        
+        <h2 class="post-title"></h2>
+        
+        <section class="post-content">
+            <h1 id="Decorator-装饰器模式"><a href="#Decorator-装饰器模式" class="headerlink" title="Decorator-装饰器模式"></a>Decorator-装饰器模式</h1><blockquote>
+<p>装饰器本质上允许您包装现有功能并在开始或结尾处添加您自己的自定义功能。</p>
+</blockquote>
+<p>golang在http包、go-restful包中频繁运用装饰器模式，不得已了解一下</p>
+<h3 id="一、引子"><a href="#一、引子" class="headerlink" title="一、引子"></a>一、引子</h3><ol>
+<li><p>python中的装饰器：@check_token</p>
+</li>
+<li><p>如何不修改函数的内容，而在函数执行之前和之后分别打印时间戳？</p>
+</li>
+</ol>
+<figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">package</span> main</span><br><span class="line"></span><br><span class="line"><span class="keyword">import</span> (</span><br><span class="line">	<span class="string">"fmt"</span></span><br><span class="line">	<span class="string">"time"</span></span><br><span class="line">)</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">myFunc</span><span class="params">()</span></span> &#123;</span><br><span class="line">	fmt.Println(<span class="string">"Hello World"</span>)</span><br><span class="line">	time.Sleep(<span class="number">1</span> * time.Second)</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">coolFunc</span><span class="params">(a <span class="keyword">func</span>()</span>)</span> &#123;</span><br><span class="line">	fmt.Printf(<span class="string">"Starting function execution: %s\n"</span>, time.Now())</span><br><span class="line">	a()</span><br><span class="line">	fmt.Printf(<span class="string">"End of function execution: %s\n"</span>, time.Now())</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">main</span><span class="params">()</span></span> &#123;</span><br><span class="line">	fmt.Printf(<span class="string">"Type: %T\n"</span>, myFunc)</span><br><span class="line">	coolFunc(myFunc)</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<h3 id="二、Http包"><a href="#二、Http包" class="headerlink" title="二、Http包"></a>二、Http包</h3><ol>
+<li>HandleFunc</li>
+</ol>
+<figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// The HandlerFunc type is an adapter to allow the use of</span></span><br><span class="line"><span class="comment">// ordinary functions as HTTP handlers. If f is a function</span></span><br><span class="line"><span class="comment">// with the appropriate signature, HandlerFunc(f) is a</span></span><br><span class="line"><span class="comment">// Handler that calls f.</span></span><br><span class="line"><span class="keyword">type</span> HandlerFunc <span class="function"><span class="keyword">func</span><span class="params">(ResponseWriter, *Request)</span></span></span><br><span class="line"></span><br><span class="line"><span class="comment">// ServeHTTP calls f(w, r).</span></span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="params">(f HandlerFunc)</span> <span class="title">ServeHTTP</span><span class="params">(w ResponseWriter, r *Request)</span></span> &#123;</span><br><span class="line">   f(w, r)</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>思考<strong>适配器模式</strong>，HandlerFunc把任何入参是<code>(w ResponseWriter, r *Request)</code>无出参的函数，适配成一个handler对象</p>
+<ol start="2">
+<li>ServeMux</li>
+</ol>
+<p>ServeMux在Http包里面，这是一个多路复用器</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">type ServeMux struct &#123;&#125;</span><br><span class="line">	func (mux *ServeMux) Handler(r *Request) (h Handler, pattern string) &#123;&#125;</span><br><span class="line">	func (mux *ServeMux) ServeHTTP(w ResponseWriter, r *Request) &#123;&#125;</span><br><span class="line">	func (mux *ServeMux) Handle(pattern string, handler Handler) &#123;&#125;</span><br><span class="line">	func (mux *ServeMux) HandleFunc(pattern string, handler func(ResponseWriter, *Request)) &#123;&#125;</span><br></pre></td></tr></table></figure>
+<p>其中：</p>
+<ol>
+<li>Handler方法接口接收Request，返回对应的handler</li>
+<li>ServeHTTP运用<strong>装饰器</strong></li>
+<li>Handle，注册pattern和handler之间的关系，给ServeHTTP用</li>
+<li>HandleFunc和Handle一样，不过HandleFunc是个适配器，接收一个handler的func即可，内部通过HandleFunc适配成一个handler调用Handle方法注册</li>
+</ol>
+<figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// ServeHTTP dispatches the request to the handler whose</span></span><br><span class="line"><span class="comment">// pattern most closely matches the request URL.</span></span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="params">(mux *ServeMux)</span> <span class="title">ServeHTTP</span><span class="params">(w ResponseWriter, r *Request)</span></span> &#123;</span><br><span class="line">	<span class="keyword">if</span> r.RequestURI == <span class="string">"*"</span> &#123;</span><br><span class="line">		<span class="keyword">if</span> r.ProtoAtLeast(<span class="number">1</span>, <span class="number">1</span>) &#123;</span><br><span class="line">			w.Header().Set(<span class="string">"Connection"</span>, <span class="string">"close"</span>)</span><br><span class="line">		&#125;</span><br><span class="line">		w.WriteHeader(StatusBadRequest)</span><br><span class="line">		<span class="keyword">return</span></span><br><span class="line">	&#125;</span><br><span class="line">	h, _ := mux.Handler(r)</span><br><span class="line">	h.ServeHTTP(w, r)</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+
+
+<figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br><span class="line">66</span><br><span class="line">67</span><br><span class="line">68</span><br><span class="line">69</span><br><span class="line">70</span><br><span class="line">71</span><br><span class="line">72</span><br><span class="line">73</span><br><span class="line">74</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// Serve accepts incoming connections on the Listener l, creating a</span></span><br><span class="line"><span class="comment">// new service goroutine for each. The service goroutines read requests and</span></span><br><span class="line"><span class="comment">// then call srv.Handler to reply to them.</span></span><br><span class="line"><span class="comment">//</span></span><br><span class="line"><span class="comment">// HTTP/2 support is only enabled if the Listener returns *tls.Conn</span></span><br><span class="line"><span class="comment">// connections and they were configured with "h2" in the TLS</span></span><br><span class="line"><span class="comment">// Config.NextProtos.</span></span><br><span class="line"><span class="comment">//</span></span><br><span class="line"><span class="comment">// Serve always returns a non-nil error and closes l.</span></span><br><span class="line"><span class="comment">// After Shutdown or Close, the returned error is ErrServerClosed.</span></span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="params">(srv *Server)</span> <span class="title">Serve</span><span class="params">(l net.Listener)</span> <span class="title">error</span></span> &#123;</span><br><span class="line">   <span class="keyword">if</span> fn := testHookServerServe; fn != <span class="literal">nil</span> &#123;</span><br><span class="line">      fn(srv, l) <span class="comment">// call hook with unwrapped listener</span></span><br><span class="line">   &#125;</span><br><span class="line"></span><br><span class="line">   origListener := l</span><br><span class="line">   l = &amp;onceCloseListener&#123;Listener: l&#125;</span><br><span class="line">   <span class="keyword">defer</span> l.Close()</span><br><span class="line"></span><br><span class="line">   <span class="keyword">if</span> err := srv.setupHTTP2_Serve(); err != <span class="literal">nil</span> &#123;</span><br><span class="line">      <span class="keyword">return</span> err</span><br><span class="line">   &#125;</span><br><span class="line"></span><br><span class="line">   <span class="keyword">if</span> !srv.trackListener(&amp;l, <span class="literal">true</span>) &#123;</span><br><span class="line">      <span class="keyword">return</span> ErrServerClosed</span><br><span class="line">   &#125;</span><br><span class="line">   <span class="keyword">defer</span> srv.trackListener(&amp;l, <span class="literal">false</span>)</span><br><span class="line"></span><br><span class="line">   <span class="keyword">var</span> tempDelay time.Duration <span class="comment">// how long to sleep on accept failure</span></span><br><span class="line"></span><br><span class="line">   baseCtx := context.Background()</span><br><span class="line">   <span class="keyword">if</span> srv.BaseContext != <span class="literal">nil</span> &#123;</span><br><span class="line">      baseCtx = srv.BaseContext(origListener)</span><br><span class="line">      <span class="keyword">if</span> baseCtx == <span class="literal">nil</span> &#123;</span><br><span class="line">         <span class="built_in">panic</span>(<span class="string">"BaseContext returned a nil context"</span>)</span><br><span class="line">      &#125;</span><br><span class="line">   &#125;</span><br><span class="line"></span><br><span class="line">   ctx := context.WithValue(baseCtx, ServerContextKey, srv)</span><br><span class="line">   <span class="keyword">for</span> &#123;</span><br><span class="line">      rw, e := l.Accept()</span><br><span class="line">      <span class="keyword">if</span> e != <span class="literal">nil</span> &#123;</span><br><span class="line">         <span class="keyword">select</span> &#123;</span><br><span class="line">         <span class="keyword">case</span> &lt;-srv.getDoneChan():</span><br><span class="line">            <span class="keyword">return</span> ErrServerClosed</span><br><span class="line">         <span class="keyword">default</span>:</span><br><span class="line">         &#125;</span><br><span class="line">         <span class="keyword">if</span> ne, ok := e.(net.Error); ok &amp;&amp; ne.Temporary() &#123;</span><br><span class="line">            <span class="keyword">if</span> tempDelay == <span class="number">0</span> &#123;</span><br><span class="line">               tempDelay = <span class="number">5</span> * time.Millisecond</span><br><span class="line">            &#125; <span class="keyword">else</span> &#123;</span><br><span class="line">               tempDelay *= <span class="number">2</span></span><br><span class="line">            &#125;</span><br><span class="line">            <span class="keyword">if</span> max := <span class="number">1</span> * time.Second; tempDelay &gt; max &#123;</span><br><span class="line">               tempDelay = max</span><br><span class="line">            &#125;</span><br><span class="line">            srv.logf(<span class="string">"http: Accept error: %v; retrying in %v"</span>, e, tempDelay)</span><br><span class="line">            time.Sleep(tempDelay)</span><br><span class="line">            <span class="keyword">continue</span></span><br><span class="line">         &#125;</span><br><span class="line">         <span class="keyword">return</span> e</span><br><span class="line">      &#125;</span><br><span class="line">      <span class="keyword">if</span> cc := srv.ConnContext; cc != <span class="literal">nil</span> &#123;</span><br><span class="line">         ctx = cc(ctx, rw)</span><br><span class="line">         <span class="keyword">if</span> ctx == <span class="literal">nil</span> &#123;</span><br><span class="line">            <span class="built_in">panic</span>(<span class="string">"ConnContext returned nil"</span>)</span><br><span class="line">         &#125;</span><br><span class="line">      &#125;</span><br><span class="line">      tempDelay = <span class="number">0</span></span><br><span class="line">      c := srv.newConn(rw)</span><br><span class="line">      c.setState(c.rwc, StateNew) <span class="comment">// before Serve can return</span></span><br><span class="line">      <span class="keyword">go</span> c.serve(ctx)</span><br><span class="line">   &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<h3 id="三、Go-Restful"><a href="#三、Go-Restful" class="headerlink" title="三、Go-Restful"></a>三、Go-Restful</h3><h3 id="四、Kubernetes-API-Server"><a href="#四、Kubernetes-API-Server" class="headerlink" title="四、Kubernetes API Server"></a>四、Kubernetes API Server</h3><p>各种WithXXX函数，都是把自己的一些类似中间件的处理方法add到handler的处理链路之上，其实就是类似在处理handler函数执行之前执行一些操作，比如WithAudit，就是进行做审计用</p>
+<figure class="highlight go"><figcaption><span>pkg/kubeapiserver/server/insecure_handler.go</span></figcaption><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// DeprecatedInsecureServingInfo is required to serve http.  HTTP does NOT include authentication or authorization.</span></span><br><span class="line"><span class="comment">// You shouldn't be using this.  It makes sig-auth sad.</span></span><br><span class="line"><span class="comment">// DeprecatedInsecureServingInfo *ServingInfo</span></span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">BuildInsecureHandlerChain</span><span class="params">(apiHandler http.Handler, c *server.Config)</span> <span class="title">http</span>.<span class="title">Handler</span></span> &#123;</span><br><span class="line">   handler := apiHandler</span><br><span class="line">   handler = genericapifilters.WithAudit(handler, c.AuditBackend, c.AuditPolicyChecker, c.LongRunningFunc)</span><br><span class="line">   handler = genericapifilters.WithAuthentication(handler, server.InsecureSuperuser&#123;&#125;, <span class="literal">nil</span>)</span><br><span class="line">   handler = genericfilters.WithCORS(handler, c.CorsAllowedOriginList, <span class="literal">nil</span>, <span class="literal">nil</span>, <span class="literal">nil</span>, <span class="string">"true"</span>)</span><br><span class="line">   handler = genericfilters.WithTimeoutForNonLongRunningRequests(handler, c.LongRunningFunc, c.RequestTimeout)</span><br><span class="line">   handler = genericfilters.WithMaxInFlightLimit(handler, c.MaxRequestsInFlight, c.MaxMutatingRequestsInFlight, c.LongRunningFunc)</span><br><span class="line">   handler = genericfilters.WithWaitGroup(handler, c.LongRunningFunc, c.HandlerChainWaitGroup)</span><br><span class="line">   handler = genericapifilters.WithRequestInfo(handler, server.NewRequestInfoResolver(c))</span><br><span class="line">   handler = genericfilters.WithPanicRecovery(handler)</span><br><span class="line"></span><br><span class="line">   <span class="keyword">return</span> handler</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+
+        </section>
+    </article>
+</div>
+
+        </div>
+        <footer id="footer" class="footer">
+    <div class="copyright">
+        <span>© 8gscoder | Powered by <a href="https://hexo.io" target="_blank">Hexo</a> & <a href="https://github.com/Siricee/hexo-theme-Chic" target="_blank">Chic</a></span>
+    </div>
+</footer>
+
+    </div>
+</body>
+</html>

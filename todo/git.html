@@ -114,17 +114,40 @@
 <li><p>reset</p>
 <p>reset单个文件：</p>
 </li>
-<li><p>stash区</p>
-<p>Git checkout – xx.go 可以取消未保存文件的修改</p>
+<li><p>stash</p>
+<p>git checkout – xx.go 可以取消未保存文件的修改</p>
 </li>
 <li><p>tag</p>
-<p>Git push origin [tagname] 推送单个tag</p>
+<p>git push origin [tagname] 推送单个tag</p>
 </li>
-<li><p>分支操作</p>
+<li><p>branch</p>
 <ol>
+<li><p>新建分支</p>
+<ol>
+<li><p>git checkout -b [branch name] [commit id]</p>
+<ol>
+<li></li>
+</ol>
+</li>
+</ol>
+</li>
+</ol>
+</li>
+</ol>
+<ol start="2">
 <li><p>拉取远程分支到本地</p>
-<figure class="highlight plain"><figcaption><span>clone -b [branch] [remote repo addr].git```</span></figcaption><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line"></span><br><span class="line">2. 设置本地分支追踪远程分支</span><br><span class="line"></span><br><span class="line">   </span><br><span class="line"></span><br><span class="line">3. 强制本地分支合远程一致</span><br><span class="line"></span><br><span class="line">   &#96;&#96;&#96;git fetch --all &amp;&amp; git reset --hard orgin&#x2F;master &amp;&amp; git pull</span><br></pre></td></tr></table></figure>
+<figure class="highlight plain"><figcaption><span>clone -b [branch] [remote repo addr].git```</span></figcaption><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line"></span><br><span class="line">3. 设置本地分支追踪远程分支</span><br><span class="line"></span><br><span class="line">   </span><br><span class="line"></span><br><span class="line">4. 强制本地分支合远程一致</span><br><span class="line"></span><br><span class="line">   &#96;&#96;&#96;git fetch --all &amp;&amp; git reset --hard orgin&#x2F;master &amp;&amp; git pull</span><br></pre></td></tr></table></figure>
 
+
+
+</li>
+</ol>
+<ol start="5">
+<li><p>config</p>
+<ol>
+<li><p>–global全局配置，不加的话，默认会修改.git路径下面的config</p>
+</li>
+<li><p>需要保存密码的话，可以设置git config credential.helper store</p>
 </li>
 </ol>
 </li>
