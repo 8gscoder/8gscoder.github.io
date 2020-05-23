@@ -1,162 +1,1124 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-<meta name="viewport"
-      content="width=device-width, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0">
-<meta http-equiv="X-UA-Compatible" content="ie=edge">
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=2">
+<meta name="theme-color" content="#222">
+<meta name="generator" content="Hexo 4.2.0">
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png">
+  <link rel="mask-icon" href="/images/logo.svg" color="#222">
 
-    <meta name="author" content="8gscoder">
-
-
-
-
-
-<title>8gscoder&#39;s Blog</title>
+<link rel="stylesheet" href="/css/main.css">
 
 
+<link rel="stylesheet" href="/lib/font-awesome/css/all.min.css">
 
-    <link rel="icon" href="/favicon.ico">
+<script id="hexo-configurations">
+    var NexT = window.NexT || {};
+    var CONFIG = {"hostname":"qmloong.github.io","root":"/","scheme":"Muse","version":"8.0.0-rc.2","exturl":false,"sidebar":{"position":"left","display":"post","padding":18,"offset":12,"onmobile":false},"copycode":{"enable":false,"show_result":false,"style":null},"back2top":{"enable":true,"sidebar":false,"scrollpercent":false},"bookmark":{"enable":false,"color":"#222","save":"auto"},"fancybox":false,"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"algolia":{"hits":{"per_page":10},"labels":{"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}},"localsearch":{"enable":false,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false},"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}}};
+  </script>
 
+  <meta property="og:type" content="website">
+<meta property="og:title" content="qmloong&#39;s Blog">
+<meta property="og:url" content="https://qmloong.github.io/index.html">
+<meta property="og:site_name" content="qmloong&#39;s Blog">
+<meta property="og:locale" content="en_US">
+<meta property="article:author" content="8gscoder">
+<meta name="twitter:card" content="summary">
 
-
-
-    <!-- stylesheets list from _config.yml -->
-    
-    <link rel="stylesheet" href="/css/style.css">
-    
-
-
-
-    <!-- scripts list from _config.yml -->
-    
-    <script src="/js/script.js"></script>
-    
-    <script src="/js/tocbot.min.js"></script>
-    
+<link rel="canonical" href="https://qmloong.github.io/">
 
 
-
-    
-    
-        
-    
-
-
-<meta name="generator" content="Hexo 4.2.0"></head>
-<body>
-    <div class="wrapper">
-        <header>
-    <nav class="navbar">
-        <div class="container">
-            <div class="navbar-header header-logo"><a href="/">8gsCoder&#39;s Blog</a></div>
-            <div class="menu navbar-right">
-                
-                    <a class="menu-item" href="/archives">Posts</a>
-                
-                    <a class="menu-item" href="/category">Categories</a>
-                
-                    <a class="menu-item" href="/tag">Tags</a>
-                
-                    <a class="menu-item" href="/about">About</a>
-                
-                <input id="switch_default" type="checkbox" class="switch_default">
-                <label for="switch_default" class="toggleBtn"></label>
-            </div>
-        </div>
-    </nav>
-
-    
-    <nav class="navbar-mobile" id="nav-mobile">
-        <div class="container">
-            <div class="navbar-header">
-                <div>
-                    <a href="/">8gsCoder&#39;s Blog</a><a id="mobile-toggle-theme">·&nbsp;Light</a>
-                </div>
-                <div class="menu-toggle" onclick="mobileBtn()">&#9776; Menu</div>
-            </div>
-            <div class="menu" id="mobile-menu">
-                
-                    <a class="menu-item" href="/archives">Posts</a>
-                
-                    <a class="menu-item" href="/category">Categories</a>
-                
-                    <a class="menu-item" href="/tag">Tags</a>
-                
-                    <a class="menu-item" href="/about">About</a>
-                
-            </div>
-        </div>
-    </nav>
-
-</header>
-<script>
-    var mobileBtn = function f() {
-        var toggleMenu = document.getElementsByClassName("menu-toggle")[0];
-        var mobileMenu = document.getElementById("mobile-menu");
-        if(toggleMenu.classList.contains("active")){
-           toggleMenu.classList.remove("active")
-            mobileMenu.classList.remove("active")
-        }else{
-            toggleMenu.classList.add("active")
-            mobileMenu.classList.add("active")
-        }
-    }
+<script id="page-configurations">
+  // https://hexo.io/docs/variables.html
+  CONFIG.page = {
+    sidebar: "",
+    isHome : true,
+    isPost : false,
+    lang   : 'en'
+  };
 </script>
-        <div class="main">
-            
-    <div class="container">
-    <div class="intro">
-        <div class="avatar">
-            <a href="/archives"><img src="/image/avatar.jpeg"></a>
-        </div>
-        <div class="nickname">8gsCoder</div>
-        <div class="description"><p>My soul? So cynical.</p>
+
+  <title>qmloong's Blog</title>
+  
+
+
+
+
+
+
+  <noscript>
+  <style>
+  .use-motion .brand,
+  .use-motion .menu-item,
+  .sidebar-inner,
+  .use-motion .post-block,
+  .use-motion .pagination,
+  .use-motion .comments,
+  .use-motion .post-header,
+  .use-motion .post-body,
+  .use-motion .collection-header { opacity: initial; }
+
+  .use-motion .site-title,
+  .use-motion .site-subtitle {
+    opacity: initial;
+    top: initial;
+  }
+
+  .use-motion .logo-line-before i { left: initial; }
+  .use-motion .logo-line-after i { right: initial; }
+  </style>
+</noscript>
+
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage">
+  <div class="container use-motion">
+    <div class="headband"></div>
+
+    <header class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-container">
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="Toggle navigation bar">
+    </div>
+  </div>
+
+  <div class="site-meta">
+
+    <a href="/" class="brand" rel="start">
+      <span class="logo-line-before"><i></i></span>
+      <h1 class="site-title">qmloong's Blog</h1>
+      <span class="logo-line-after"><i></i></span>
+    </a>
+  </div>
+
+  <div class="site-nav-right">
+    <div class="toggle popup-trigger">
+    </div>
+  </div>
 </div>
-        <div class="links">
+
+
+
+
+
+
+
+</div>
+    </header>
+
+    
+  <div class="back-to-top">
+    <i class="fa fa-arrow-up"></i>
+    <span>0%</span>
+  </div>
+
+
+    <main class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          
+
+          <div class="content index posts-expand">
             
-                
-                    <a class="link-item" title="Blog" href="/archives">
-                        
-                        
-                            <i class="iconfont icon-blog"></i>
-                        
-                    </a>
-                
-                    <a class="link-item" title="Category" href="/tag">
-                        
-                        
-                            <i class="iconfont icon-category"></i>
-                        
-                    </a>
-                
-                    <a class="link-item" title="Tags" href="/category">
-                        
-                        
-                            <i class="iconfont icon-tags"></i>
-                        
-                    </a>
-                
-                    <a class="link-item" title="Github" href="https://github.com/8gscoder" target="_blank" rel="noopener">
-                        
-                        
-                            <i class="iconfont icon-github"></i>
-                        
-                    </a>
-                
-            
+      
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="en">
+    <link itemprop="mainEntityOfPage" href="https://qmloong.github.io/2020/05/22/kubernetes/catalogue/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.gif">
+      <meta itemprop="name" content="8gscoder">
+      <meta itemprop="description" content="">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="qmloong's Blog">
+    </span>
+      <header class="post-header">
+        <h2 class="post-title" itemprop="name headline">
+          
+            <a href="/2020/05/22/kubernetes/catalogue/" class="post-title-link" itemprop="url">kubernetes/catalogue</a>
+        </h2>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-calendar"></i>
+              </span>
+              <span class="post-meta-item-text">Posted on</span>
+              
+
+              <time title="Created: 2020-05-22 01:25:30 / Modified: 01:48:01" itemprop="dateCreated datePublished" datetime="2020-05-22T01:25:30+08:00">2020-05-22</time>
+            </span>
+
+          
+
         </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+          <h1 id="目录"><a href="#目录" class="headerlink" title="目录"></a>目录</h1><p>k8s代码目录结构介绍</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">#</span><span class="bash"> tree k8s.io/kubernetes</span></span><br><span class="line">├── api                   # API文档</span><br><span class="line">├── build									# 构建的脚本</span><br><span class="line">├── cluster								# 配置的脚本</span><br><span class="line">├── cmd										# 二进制入口代码</span><br><span class="line">├── docs									# 各种文档</span><br><span class="line">├── hack									# 工具箱，各种编译，构建，校验的脚本都在这</span><br><span class="line">├── pkg										# 核心代码</span><br><span class="line">├── plugin								# 插件，admission/auth</span><br><span class="line">├── staging								# api的暂存区，是k8s.io下的软连接，代码中所有import k8s.io/xx都会被引用到该目录下</span><br><span class="line">├── test									# 测试文件</span><br><span class="line">├── third_party						# 第三方库</span><br><span class="line">├── translations					# 翻译文件</span><br><span class="line">└── vendor</span><br></pre></td></tr></table></figure>
+
+
+
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">#</span><span class="bash"> k8s.io/kubernetes/pkg</span></span><br><span class="line">├── BUILD</span><br><span class="line">├── OWNERS</span><br><span class="line">├── api                   # API可能会用到的一些工具包</span><br><span class="line">├── apis									# kubernetes api主要包括最新版本的Rest API接口的类，并提供数据格式验证转换工具类，对应版本号文件夹下的文件描述了特定的版本如何序列化存储和网络</span><br><span class="line">├── auth</span><br><span class="line">├── capabilities</span><br><span class="line">├── client</span><br><span class="line">├── cloudprovider</span><br><span class="line">├── controller</span><br><span class="line">├── credentialprovider</span><br><span class="line">├── features</span><br><span class="line">├── fieldpath</span><br><span class="line">├── generated</span><br><span class="line">├── kubeapiserver</span><br><span class="line">├── kubectl</span><br><span class="line">├── kubelet</span><br><span class="line">├── kubemark</span><br><span class="line">├── master</span><br><span class="line">├── printers</span><br><span class="line">├── probe</span><br><span class="line">├── proxy</span><br><span class="line">├── quota</span><br><span class="line">├── registry</span><br><span class="line">├── routes</span><br><span class="line">├── scheduler</span><br><span class="line">├── security</span><br><span class="line">├── securitycontext</span><br><span class="line">├── serviceaccount</span><br><span class="line">├── ssh</span><br><span class="line">├── util</span><br><span class="line">├── version</span><br><span class="line">├── volume</span><br><span class="line">├── watch</span><br><span class="line">└── windows</span><br></pre></td></tr></table></figure>
+
+
+      
     </div>
+
+    
+    
+    
+      <footer class="post-footer">
+        <div class="post-eof"></div>
+      </footer>
+  </article>
+  
+  
+  
+
+      
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="en">
+    <link itemprop="mainEntityOfPage" href="https://qmloong.github.io/2020/05/21/SPDY/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.gif">
+      <meta itemprop="name" content="8gscoder">
+      <meta itemprop="description" content="">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="qmloong's Blog">
+    </span>
+      <header class="post-header">
+        <h2 class="post-title" itemprop="name headline">
+          
+            <a href="/2020/05/21/SPDY/" class="post-title-link" itemprop="url">SPDY</a>
+        </h2>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-calendar"></i>
+              </span>
+              <span class="post-meta-item-text">Posted on</span>
+
+              <time title="Created: 2020-05-21 13:19:50" itemprop="dateCreated datePublished" datetime="2020-05-21T13:19:50+08:00">2020-05-21</time>
+            </span>
+              <span class="post-meta-item">
+                <span class="post-meta-item-icon">
+                  <i class="far fa-calendar-check"></i>
+                </span>
+                <span class="post-meta-item-text">Edited on</span>
+                <time title="Modified: 2020-05-22 19:38:46" itemprop="dateModified" datetime="2020-05-22T19:38:46+08:00">2020-05-22</time>
+              </span>
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-folder"></i>
+              </span>
+              <span class="post-meta-item-text">In</span>
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categorie/network/" itemprop="url" rel="index"><span itemprop="name">network</span></a>
+                </span>
+            </span>
+
+          
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+          <h1 id="SPDY协议"><a href="#SPDY协议" class="headerlink" title="SPDY协议"></a>SPDY协议</h1><p>SPDY：Speedy快速的，Google研究出的基于TCP协议的应用层协议，旨在通过压缩、多路复用和优先级来缩短网页的加载时间和提高安全性。增强HTTP协议，即在HTTP协议的基础上，修改HTTP协议部分内容，以实现更好的传输。SPDY也是HTTP2.0的基础。</p>
+<p><img src="/2020/05/21/SPDY/image-20200521134023245.png" alt="image-20200412214913034"></p>
+<p>HTTP的不足：</p>
+<ol>
+<li>单链接，请求低效</li>
+<li>HTTP头部冗余，body可能只有几个字节，但是头部却可能过重（Http2.0有了头部压缩算法）</li>
+<li>服务端只能被动回包，无法主动推送Client</li>
+</ol>
+<p>SPDY的特性：</p>
+<ol>
+<li><p>头部压缩</p>
+</li>
+<li><p>支持多路复用：复用连接，参考下图</p>
+</li>
+<li><p><img src="/2020/05/21/SPDY/image-20200521135048966.png" alt="image-20200412214913034"></p>
+</li>
+</ol>
+<ol start="4">
+<li><p>数据流优先级：多路复用就会有阻塞问题，可以设置请求优先级，例如这样能够保证主页先显示</p>
+</li>
+<li><p>加密，强制接入SSL协议</p>
+</li>
+<li><p>服务端推送：遵循SPDY协议的CS、BS，保持长连接且客户端也会保持监听端口队列接受服务端请求，比如服务端会反向推送一些logo/css文件，给浏览器缓存下来</p>
+</li>
+</ol>
+<p>和HTTP2.0的不同：</p>
+<ol>
+<li><p>头部压缩算法不同，SPDY：HPACK，HTTP2.0 </p>
+</li>
+<li><p>HTTP2.0非强制HTTPS，支持明文传输</p>
+</li>
+<li><p>HTTP2.0支持二进制分帧，多了一个分帧层</p>
+<p><img src="/2020/05/21/SPDY/image-20200521134909156.png" alt="image-20200521134909156"></p>
+</li>
+</ol>
+
+      
+    </div>
+
+    
+    
+    
+      <footer class="post-footer">
+        <div class="post-eof"></div>
+      </footer>
+  </article>
+  
+  
+  
+
+      
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="en">
+    <link itemprop="mainEntityOfPage" href="https://qmloong.github.io/2020/05/14/kubernetes/proposal/api/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.gif">
+      <meta itemprop="name" content="8gscoder">
+      <meta itemprop="description" content="">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="qmloong's Blog">
+    </span>
+      <header class="post-header">
+        <h2 class="post-title" itemprop="name headline">
+          
+            <a href="/2020/05/14/kubernetes/proposal/api/" class="post-title-link" itemprop="url">kubernetes/proposal/api</a>
+        </h2>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-calendar"></i>
+              </span>
+              <span class="post-meta-item-text">Posted on</span>
+
+              <time title="Created: 2020-05-14 00:59:15" itemprop="dateCreated datePublished" datetime="2020-05-14T00:59:15+08:00">2020-05-14</time>
+            </span>
+              <span class="post-meta-item">
+                <span class="post-meta-item-icon">
+                  <i class="far fa-calendar-check"></i>
+                </span>
+                <span class="post-meta-item-text">Edited on</span>
+                <time title="Modified: 2020-05-22 01:11:24" itemprop="dateModified" datetime="2020-05-22T01:11:24+08:00">2020-05-22</time>
+              </span>
+
+          
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+          <h1 id="API"><a href="#API" class="headerlink" title="API"></a>API</h1><h2 id="前言"><a href="#前言" class="headerlink" title="前言"></a>前言</h2><p>Conventions: n. [法] 惯例；会议；[计] 约定（convention的复数）是kuberntes apiserver的API规范约定，或者说是开发者协议</p>
+<h2 id="API-Versioning（API版本控制）"><a href="#API-Versioning（API版本控制）" class="headerlink" title="API Versioning（API版本控制）"></a>API Versioning（API版本控制）</h2><p>Kubernetes的API版本控制是分API进行控制的，即每个API都有自己的版本，落实到RESTful路径上：/apis/</p>
+<ol>
+<li>API级别版本化</li>
+<li>支持实验性API</li>
+<li>支持JSON和Protobuf</li>
+</ol>
+<p>Alpha特性：例如v1alpha1，可能是有缺陷的，默认关闭，兼容性会有问题，试验版的api，随时可能被删除的</p>
+<p>Beta：代码测过，功能安全，默认启用的，功能不会被删除，兼容性会有问题</p>
+<p>stable：版本名：vX</p>
+<p>可以通过–runtime-config=group/version=false来开关某个api</p>
+<h2 id="API-Group"><a href="#API-Group" class="headerlink" title="API Group"></a>API Group</h2><p>proposals：<a href="https://github.com/kubernetes/community/blob/master/contributors/design-proposals/api-machinery/api-group.md" target="_blank" rel="noopener">https://github.com/kubernetes/community/blob/master/contributors/design-proposals/api-machinery/api-group.md</a></p>
+<p>解读：</p>
+<ol>
+<li><p>API Group实现的目标</p>
+<ol>
+<li><p>API分组有利于后续将API模块化，后续可能会将某个组单独搞个组件</p>
+</li>
+<li><p>分组之后，不同的API可以分组进行版本迭代升级，以解决不同API迭代速度不一致的情况</p>
+</li>
+<li><p>dynamic client需要APIServer暴露不通的API Groups和Version </p>
+<p>​    注：dynamic client是client-go的一种client实现方式，类似一种通用的API client工具，可以用dynamic-cleint直接访问thirdpartresource，而不依赖第三方资源的api包导入，</p>
+</li>
+<li><p>API Plugin基础（TODO)</p>
+</li>
+<li><p>尽可能保证kubectl时候可以省略group，直接resource</p>
+</li>
+</ol>
+</li>
+<li><p>API-Server端实现</p>
+<ol>
+<li><p>Group-Version在URL路由上，用/group/version的方式实现</p>
+</li>
+<li><p>Group和Version中不允许包含”/“</p>
+</li>
+<li><p>支持API服务发现，比如/apis可以返回当前APIServer当前支持的所有API</p>
+<ol>
+<li>访问/$groups返回groups下的APIGroup信息，内含version</li>
+<li>访问/$group/$versions，返回APIResourceList</li>
+</ol>
+<figure class="highlight json"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// kubectl get apiservice 查看当前apiservice信息</span></span><br><span class="line"><span class="comment">// curl -k -v -XGET  -H "Authorization: Bearer [redacted]" -H "Accept: application/json;as=Table;v=v1beta1;g=meta.k8s.io, application/json" -H "User-Agent: kubectl/v1.14.3 (linux/amd64) kubernetes/dc3cffd" 'https://169.254.128.26:60002/apis/apps'</span></span><br><span class="line">&#123;</span><br><span class="line">  <span class="attr">"kind"</span>: <span class="string">"APIGroup"</span>,</span><br><span class="line">  <span class="attr">"apiVersion"</span>: <span class="string">"v1"</span>,</span><br><span class="line">  <span class="attr">"name"</span>: <span class="string">"apps"</span>,</span><br><span class="line">  <span class="attr">"versions"</span>: [</span><br><span class="line">    &#123;</span><br><span class="line">      <span class="attr">"groupVersion"</span>: <span class="string">"apps/v1"</span>,</span><br><span class="line">      <span class="attr">"version"</span>: <span class="string">"v1"</span></span><br><span class="line">    &#125;,</span><br><span class="line">    &#123;</span><br><span class="line">      <span class="attr">"groupVersion"</span>: <span class="string">"apps/v1beta2"</span>,</span><br><span class="line">      <span class="attr">"version"</span>: <span class="string">"v1beta2"</span></span><br><span class="line">    &#125;,</span><br><span class="line">    &#123;</span><br><span class="line">      <span class="attr">"groupVersion"</span>: <span class="string">"apps/v1beta1"</span>,</span><br><span class="line">      <span class="attr">"version"</span>: <span class="string">"v1beta1"</span></span><br><span class="line">    &#125;</span><br><span class="line">  ],</span><br><span class="line">  <span class="attr">"preferredVersion"</span>: &#123;</span><br><span class="line">    <span class="attr">"groupVersion"</span>: <span class="string">"apps/v1"</span>,</span><br><span class="line">    <span class="attr">"version"</span>: <span class="string">"v1"</span></span><br><span class="line">  &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+</li>
+<li><p>访问/swaggerapi路径，将返回swagger规范的接口文档</p>
+<p>注：1.10之前是swagger，比如/swagger.json，1.10之后是openapi，比如/open/2020/05/14/kubernetes/proposal/api/v2，详情：<a href="https://kubernetes.io/zh/docs/concepts/overview/kubernetes-/2020/05/14/kubernetes/proposal/api/" target="_blank" rel="noopener">https://kubernetes.io/zh/docs/concepts/overview/kubernetes-/2020/05/14/kubernetes/proposal/api/</a></p>
+</li>
+<li><p>top-level common api object：顶级通用api，不在普通的api之下，无法group的，比如支持上面第3点的，API discovery获取到的资源。如何解决？以下两种方案</p>
+<ol>
+<li>注册到所有的scheme，TODO，不太懂</li>
+<li>不编排到version内，放到一个unversioned新包内，包内将没有APIVersion字段，但是可以有kind字段</li>
+</ol>
+</li>
+<li><p>Non-top-level common api object：</p>
+</li>
+</ol>
+</li>
+</ol>
+<img src="image-20200515012508671.png" alt="image-20200515012508671" style="zoom: 67%;" />
+
+
+
+<p>API Group Overview: <a href="https://kubernetes.io/docs/reference/generated/kubernetes-/2020/05/14/kubernetes/proposal/api/v1.18/" target="_blank" rel="noopener">https://kubernetes.io/docs/reference/generated/kubernetes-/2020/05/14/kubernetes/proposal/api/v1.18/</a></p>
+<ol>
+<li>预设Group</li>
+<li>自定Group<ol>
+<li>CRD </li>
+<li>AggregationAPI</li>
+</ol>
+</li>
+</ol>
+<h2 id="自定义APIServer"><a href="#自定义APIServer" class="headerlink" title="自定义APIServer"></a>自定义APIServer</h2><h2 id="参考文档"><a href="#参考文档" class="headerlink" title="参考文档"></a>参考文档</h2><p>Kubernetes API 概念介绍：<a href="https://kubernetes.io/zh/docs/concepts/overview/kubernetes-/2020/05/14/kubernetes/proposal/api/" target="_blank" rel="noopener">https://kubernetes.io/zh/docs/concepts/overview/kubernetes-/2020/05/14/kubernetes/proposal/api/</a></p>
+<p>Kubernetes API 详细文档：<a href="https://kubernetes.io/docs/reference/using-/2020/05/14/kubernetes/proposal/api/api-overview/" target="_blank" rel="noopener">https://kubernetes.io/docs/reference/using-/2020/05/14/kubernetes/proposal/api/api-overview/</a></p>
+<p>API Convention官方文档：<a href="https://github.com/kubernetes/community/blob/master/contributors/devel/sig-architecture/api-conventions.md" target="_blank" rel="noopener">https://github.com/kubernetes/community/blob/master/contributors/devel/sig-architecture/api-conventions.md</a></p>
+<p>API废弃规范：<a href="https://kubernetes.io/docs/reference/using-/2020/05/14/kubernetes/proposal/api/deprecation-policy/" target="_blank" rel="noopener">https://kubernetes.io/docs/reference/using-/2020/05/14/kubernetes/proposal/api/deprecation-policy/</a></p>
+<p>API变更规范：<a href="https://github.com/kubernetes/community/blob/master/contributors/devel/sig-architecture/api_changes.md" target="_blank" rel="noopener">https://github.com/kubernetes/community/blob/master/contributors/devel/sig-architecture/api_changes.md</a></p>
+
+      
+    </div>
+
+    
+    
+    
+      <footer class="post-footer">
+        <div class="post-eof"></div>
+      </footer>
+  </article>
+  
+  
+  
+
+      
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="en">
+    <link itemprop="mainEntityOfPage" href="https://qmloong.github.io/2020/05/14/kubernetes/runtime/serializer/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.gif">
+      <meta itemprop="name" content="8gscoder">
+      <meta itemprop="description" content="">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="qmloong's Blog">
+    </span>
+      <header class="post-header">
+        <h2 class="post-title" itemprop="name headline">
+          
+            <a href="/2020/05/14/kubernetes/runtime/serializer/" class="post-title-link" itemprop="url">kubernetes/runtime/serializer</a>
+        </h2>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-calendar"></i>
+              </span>
+              <span class="post-meta-item-text">Posted on</span>
+
+              <time title="Created: 2020-05-14 00:42:47" itemprop="dateCreated datePublished" datetime="2020-05-14T00:42:47+08:00">2020-05-14</time>
+            </span>
+              <span class="post-meta-item">
+                <span class="post-meta-item-icon">
+                  <i class="far fa-calendar-check"></i>
+                </span>
+                <span class="post-meta-item-text">Edited on</span>
+                <time title="Modified: 2020-05-15 01:02:23" itemprop="dateModified" datetime="2020-05-15T01:02:23+08:00">2020-05-15</time>
+              </span>
+
+          
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+          <h1 id="serialization"><a href="#serialization" class="headerlink" title="serialization"></a>serialization</h1><p>serialization: n. 序列化；串行化；连载长篇</p>
+
+      
+    </div>
+
+    
+    
+    
+      <footer class="post-footer">
+        <div class="post-eof"></div>
+      </footer>
+  </article>
+  
+  
+  
+
+      
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="en">
+    <link itemprop="mainEntityOfPage" href="https://qmloong.github.io/2020/05/14/kubernetes/runtime/storage/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.gif">
+      <meta itemprop="name" content="8gscoder">
+      <meta itemprop="description" content="">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="qmloong's Blog">
+    </span>
+      <header class="post-header">
+        <h2 class="post-title" itemprop="name headline">
+          
+            <a href="/2020/05/14/kubernetes/runtime/storage/" class="post-title-link" itemprop="url">kubernetes/runtime/storage</a>
+        </h2>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-calendar"></i>
+              </span>
+              <span class="post-meta-item-text">Posted on</span>
+
+              <time title="Created: 2020-05-14 00:38:41" itemprop="dateCreated datePublished" datetime="2020-05-14T00:38:41+08:00">2020-05-14</time>
+            </span>
+
+          
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+          
+      
+    </div>
+
+    
+    
+    
+      <footer class="post-footer">
+        <div class="post-eof"></div>
+      </footer>
+  </article>
+  
+  
+  
+
+      
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="en">
+    <link itemprop="mainEntityOfPage" href="https://qmloong.github.io/2020/05/14/kubernetes/runtime/option&config/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.gif">
+      <meta itemprop="name" content="8gscoder">
+      <meta itemprop="description" content="">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="qmloong's Blog">
+    </span>
+      <header class="post-header">
+        <h2 class="post-title" itemprop="name headline">
+          
+            <a href="/2020/05/14/kubernetes/runtime/option&config/" class="post-title-link" itemprop="url">kubernetes/runtime/option&config</a>
+        </h2>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-calendar"></i>
+              </span>
+              <span class="post-meta-item-text">Posted on</span>
+              
+
+              <time title="Created: 2020-05-14 00:38:26 / Modified: 00:38:37" itemprop="dateCreated datePublished" datetime="2020-05-14T00:38:26+08:00">2020-05-14</time>
+            </span>
+
+          
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+          
+      
+    </div>
+
+    
+    
+    
+      <footer class="post-footer">
+        <div class="post-eof"></div>
+      </footer>
+  </article>
+  
+  
+  
+
+      
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="en">
+    <link itemprop="mainEntityOfPage" href="https://qmloong.github.io/2020/05/14/kubernetes/runtime/scheme/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.gif">
+      <meta itemprop="name" content="8gscoder">
+      <meta itemprop="description" content="">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="qmloong's Blog">
+    </span>
+      <header class="post-header">
+        <h2 class="post-title" itemprop="name headline">
+          
+            <a href="/2020/05/14/kubernetes/runtime/scheme/" class="post-title-link" itemprop="url">kubernetes/runtime/scheme</a>
+        </h2>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-calendar"></i>
+              </span>
+              <span class="post-meta-item-text">Posted on</span>
+
+              <time title="Created: 2020-05-14 00:36:52" itemprop="dateCreated datePublished" datetime="2020-05-14T00:36:52+08:00">2020-05-14</time>
+            </span>
+              <span class="post-meta-item">
+                <span class="post-meta-item-icon">
+                  <i class="far fa-calendar-check"></i>
+                </span>
+                <span class="post-meta-item-text">Edited on</span>
+                <time title="Modified: 2020-05-23 17:19:31" itemprop="dateModified" datetime="2020-05-23T17:19:31+08:00">2020-05-23</time>
+              </span>
+
+          
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+          <h1 id="scheme"><a href="#scheme" class="headerlink" title="scheme"></a>scheme</h1><h3 id="一、前言"><a href="#一、前言" class="headerlink" title="一、前言"></a>一、前言</h3><p>k8s 有一篇proposal介绍了Kubernetes API是有apigroup的观念的，即不同group的版本是不断变化的，分开管理，以适应不通的迭代速度（k8s的资源都是有gh SIG进行分开迭代管理的）。这也导致了k8s apiserver的版本管理是神tm复杂，比如k8s的一个版本的release，可能会导致一些资源的version进行变化，比如1.7的rbac是v1beta1，而1.8之后rbac默认就是v1了，你给1.8版本的apiserver提交v1beta1的rbac资源，k8s apiserver会怎么处理呢？因为高版本肯定要像低版本兼容，所以1.8的apiserver肯定也要能兼容v1beta1，毕竟v1beta1也是个beta，你不能突然搞个破坏性的向前不兼容，这样会在集群升级的时候，会有很大的问题，比如之前etcd里面用protobuf存了v1beta1版本的资源，突然apiserver升级了，rbac的版本变成v1，你怎么搞？你总不能读出来不识别吧，搞出问题来吧，所以肯定是要有兼容机制来处理这些可能是必要的更新问题。总而言之，apiserver的版本管理很复杂，如何来实现API的多版本需要面临的兼容、不兼容机制呢？</p>
+<p>所以需要考虑以下问题点：</p>
+<ol>
+<li>不同release版本的apiserver如何支持不同版本的api的呢？不同api又是如何转换的呢？</li>
+<li>apiserver run起来的时候，如何把资源的当前版本从结构体对象版本转到URL的路径上去Serve的呢？</li>
+<li>apiserver处理client来的http请求的时候，如何将请求的资源body转换成对应的版本的资源对象的呢？</li>
+</ol>
+<blockquote>
+<h6 id="1-关于Schema"><a href="#1-关于Schema" class="headerlink" title="1. 关于Schema"></a>1. 关于Schema</h6><p>Schema：其实来源于数据库里面的概念，在SQL中，Schema在逻辑上表示的是一组有关联的数据对象，在物理上其实是和Database是同义，例如Create Database又可以写成Create Schema，在DB中经常会见到Schema这个单词。Schema更注重概要，而且一般都是做图表之间的联系。</p>
+<p>在k8s里面，主要是定义了vk、gv、gvk三种类型，三种之间的转换关系。他是scheme的基础</p>
+<h6 id="2-关于Scheme"><a href="#2-关于Scheme" class="headerlink" title="2. 关于Scheme"></a>2. 关于Scheme</h6><p>Scheme ：定义了资源序列化和反序列化的方法以及资源类型和版本的对应关系，这里我们可以理解成一张纪录表。定义在 k8s.io/apimachinery/pkg/runtime/scheme.go 中。</p>
+<h6 id="3-两者的区别"><a href="#3-两者的区别" class="headerlink" title="3. 两者的区别"></a>3. 两者的区别</h6><p>在计算机数据描述领域，Scheme由于原意为“主题”，“方案”，“构想”等，因此一般指比较明确的（具体的）“方案”、“体系”，例如一个术语词表、分类表等，而Schema通常翻译成“模式”，比较强调形式化（formalized或normalized），多指一套编码规范（如XML Schema，RDF Schema）等，也可以指一套完整的数据规范。</p>
+<p>两个词现在已经几乎没有区别了。如果一定要区分的话，scheme比schema更具体一些，指的是一套方案，而schema则是概要（而且这个词和图表很有关系）。</p>
+</blockquote>
+<h3 id="二、处理流程分析"><a href="#二、处理流程分析" class="headerlink" title="二、处理流程分析"></a>二、处理流程分析</h3><p>curl </p>
+<h3 id="二、Codec-解编码器"><a href="#二、Codec-解编码器" class="headerlink" title="二、Codec-解编码器"></a>二、Codec-解编码器</h3><h3 id="三、Convert-兼容转换"><a href="#三、Convert-兼容转换" class="headerlink" title="三、Convert-兼容转换"></a>三、Convert-兼容转换</h3><h2 id="二、结构体走读"><a href="#二、结构体走读" class="headerlink" title="二、结构体走读"></a>二、结构体走读</h2><figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// Scheme defines methods for serializing and deserializing API objects, a type</span></span><br><span class="line"><span class="comment">// registry for converting group, version, and kind information to and from Go</span></span><br><span class="line"><span class="comment">// schemas, and mappings between Go schemas of different versions. A scheme is the</span></span><br><span class="line"><span class="comment">// foundation for a versioned API and versioned configuration over time.</span></span><br><span class="line"><span class="comment">//</span></span><br><span class="line"><span class="comment">// In a Scheme, a Type is a particular Go struct, a Version is a point-in-time</span></span><br><span class="line"><span class="comment">// identifier for a particular representation of that Type (typically backwards</span></span><br><span class="line"><span class="comment">// compatible), a Kind is the unique name for that Type within the Version, and a</span></span><br><span class="line"><span class="comment">// Group identifies a set of Versions, Kinds, and Types that evolve over time. An</span></span><br><span class="line"><span class="comment">// Unversioned Type is one that is not yet formally bound to a type and is promised</span></span><br><span class="line"><span class="comment">// to be backwards compatible (effectively a "v1" of a Type that does not expect</span></span><br><span class="line"><span class="comment">// to break in the future).</span></span><br><span class="line"><span class="comment">//</span></span><br><span class="line"><span class="comment">// Schemes are not expected to change at runtime and are only threadsafe after</span></span><br><span class="line"><span class="comment">// registration is complete.</span></span><br><span class="line"><span class="keyword">type</span> Scheme <span class="keyword">struct</span> &#123;</span><br><span class="line">   <span class="comment">// versionMap allows one to figure out the go type of an object with</span></span><br><span class="line">   <span class="comment">// the given version and name.</span></span><br><span class="line">   gvkToType <span class="keyword">map</span>[schema.GroupVersionKind]reflect.Type</span><br><span class="line"></span><br><span class="line">   <span class="comment">// typeToGroupVersion allows one to find metadata for a given go object.</span></span><br><span class="line">   <span class="comment">// The reflect.Type we index by should *not* be a pointer.</span></span><br><span class="line">   typeToGVK <span class="keyword">map</span>[reflect.Type][]schema.GroupVersionKind</span><br><span class="line"></span><br><span class="line">   <span class="comment">// unversionedTypes are transformed without conversion in ConvertToVersion.</span></span><br><span class="line">   unversionedTypes <span class="keyword">map</span>[reflect.Type]schema.GroupVersionKind</span><br><span class="line"></span><br><span class="line">   <span class="comment">// unversionedKinds are the names of kinds that can be created in the context of any group</span></span><br><span class="line">   <span class="comment">// or version</span></span><br><span class="line">   <span class="comment">// <span class="doctag">TODO:</span> resolve the status of unversioned types.</span></span><br><span class="line">   unversionedKinds <span class="keyword">map</span>[<span class="keyword">string</span>]reflect.Type</span><br><span class="line"></span><br><span class="line">   <span class="comment">// Map from version and resource to the corresponding func to convert</span></span><br><span class="line">   <span class="comment">// resource field labels in that version to internal version.</span></span><br><span class="line">   fieldLabelConversionFuncs <span class="keyword">map</span>[schema.GroupVersionKind]FieldLabelConversionFunc</span><br><span class="line"></span><br><span class="line">   <span class="comment">// defaulterFuncs is an array of interfaces to be called with an object to provide defaulting</span></span><br><span class="line">   <span class="comment">// the provided object must be a pointer.</span></span><br><span class="line">   defaulterFuncs <span class="keyword">map</span>[reflect.Type]<span class="function"><span class="keyword">func</span><span class="params">(<span class="keyword">interface</span>&#123;&#125;)</span></span></span><br><span class="line"></span><br><span class="line">   <span class="comment">// converter stores all registered conversion functions. It also has</span></span><br><span class="line">   <span class="comment">// default converting behavior.</span></span><br><span class="line">   converter *conversion.Converter</span><br><span class="line"></span><br><span class="line">   <span class="comment">// versionPriority is a map of groups to ordered lists of versions for those groups indicating the</span></span><br><span class="line">   <span class="comment">// default priorities of these versions as registered in the scheme</span></span><br><span class="line">   versionPriority <span class="keyword">map</span>[<span class="keyword">string</span>][]<span class="keyword">string</span></span><br><span class="line"></span><br><span class="line">   <span class="comment">// observedVersions keeps track of the order we've seen versions during type registration</span></span><br><span class="line">   observedVersions []schema.GroupVersion</span><br><span class="line"></span><br><span class="line">   <span class="comment">// schemeName is the name of this scheme.  If you don't specify a name, the stack of the NewScheme caller will be used.</span></span><br><span class="line">   <span class="comment">// This is useful for error reporting to indicate the origin of the scheme.</span></span><br><span class="line">   schemeName <span class="keyword">string</span></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p><img src="image-20200514004912962.png" alt="image-20200514004912962"></p>
+<p>实现的方法很多….</p>
+
+      
+    </div>
+
+    
+    
+    
+      <footer class="post-footer">
+        <div class="post-eof"></div>
+      </footer>
+  </article>
+  
+  
+  
+
+      
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="en">
+    <link itemprop="mainEntityOfPage" href="https://qmloong.github.io/2020/05/14/kubernetes/basic/go-restful/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.gif">
+      <meta itemprop="name" content="8gscoder">
+      <meta itemprop="description" content="">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="qmloong's Blog">
+    </span>
+      <header class="post-header">
+        <h2 class="post-title" itemprop="name headline">
+          
+            <a href="/2020/05/14/kubernetes/basic/go-restful/" class="post-title-link" itemprop="url">go-restful</a>
+        </h2>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-calendar"></i>
+              </span>
+              <span class="post-meta-item-text">Posted on</span>
+
+              <time title="Created: 2020-05-14 00:36:16" itemprop="dateCreated datePublished" datetime="2020-05-14T00:36:16+08:00">2020-05-14</time>
+            </span>
+              <span class="post-meta-item">
+                <span class="post-meta-item-icon">
+                  <i class="far fa-calendar-check"></i>
+                </span>
+                <span class="post-meta-item-text">Edited on</span>
+                <time title="Modified: 2020-05-22 00:48:02" itemprop="dateModified" datetime="2020-05-22T00:48:02+08:00">2020-05-22</time>
+              </span>
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-folder"></i>
+              </span>
+              <span class="post-meta-item-text">In</span>
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categorie/golang/" itemprop="url" rel="index"><span itemprop="name">golang</span></a>
+                </span>
+            </span>
+
+          
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+          <h1 id="Go-Restful"><a href="#Go-Restful" class="headerlink" title="Go-Restful"></a>Go-Restful</h1><h2 id="What’s-Restful"><a href="#What’s-Restful" class="headerlink" title="What’s Restful"></a>What’s Restful</h2><p>什么是REST？</p>
+<blockquote>
+<p>Representational State Transfer：表现层状态转化</p>
+</blockquote>
+<p>REST是HTTP协议的作者、Apache服务器软件作者Fielding的一篇博士论文提出的</p>
+<p>　　（1）每一个URI代表一种资源；</p>
+<p>　　（2）客户端和服务器之间，传递这种资源的某种表现层；</p>
+<p>　　（3）客户端通过四个HTTP动词，对服务器端资源进行操作，实现”表现层状态转化”。</p>
+<p>主要特点就是URI里不能有动词，动作应该交给HTTP Verb，URI直接标志资源</p>
+<p>参考链接：<a href="http://www.ruanyifeng.com/blog/2014/05/restful_api.html" target="_blank" rel="noopener">http://www.ruanyifeng.com/blog/2014/05/restful_api.html</a></p>
+<p>结合Kube-apiserver的API设计思考，什么是Restful API</p>
+<h2 id="Go-Resful"><a href="#Go-Resful" class="headerlink" title="Go-Resful"></a>Go-Resful</h2><h3 id="三个概念："><a href="#三个概念：" class="headerlink" title="三个概念："></a>三个概念：</h3><ol>
+<li>Container：一个容器里面，有多个WebServe和一个ServeMux</li>
+<li>WebService：一个WebService里面有多个Route</li>
+<li>Route：一个Route有一个RouteFunction，RouteFunction是函数签名和Handler签名一样</li>
+</ol>
+<h3 id="一个Demo："><a href="#一个Demo：" class="headerlink" title="一个Demo："></a>一个Demo：</h3>
+      
+    </div>
+
+    
+    
+    
+      <footer class="post-footer">
+        <div class="post-eof"></div>
+      </footer>
+  </article>
+  
+  
+  
+
+      
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="en">
+    <link itemprop="mainEntityOfPage" href="https://qmloong.github.io/2020/05/12/mac/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.gif">
+      <meta itemprop="name" content="8gscoder">
+      <meta itemprop="description" content="">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="qmloong's Blog">
+    </span>
+      <header class="post-header">
+        <h2 class="post-title" itemprop="name headline">
+          
+            <a href="/2020/05/12/mac/" class="post-title-link" itemprop="url">Mac操作</a>
+        </h2>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-calendar"></i>
+              </span>
+              <span class="post-meta-item-text">Posted on</span>
+
+              <time title="Created: 2020-05-12 12:15:09" itemprop="dateCreated datePublished" datetime="2020-05-12T12:15:09+08:00">2020-05-12</time>
+            </span>
+              <span class="post-meta-item">
+                <span class="post-meta-item-icon">
+                  <i class="far fa-calendar-check"></i>
+                </span>
+                <span class="post-meta-item-text">Edited on</span>
+                <time title="Modified: 2020-05-21 01:14:25" itemprop="dateModified" datetime="2020-05-21T01:14:25+08:00">2020-05-21</time>
+              </span>
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-folder"></i>
+              </span>
+              <span class="post-meta-item-text">In</span>
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categorie/work/" itemprop="url" rel="index"><span itemprop="name">work</span></a>
+                </span>
+            </span>
+
+          
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+          <h2 id="1-MAC通用快捷键"><a href="#1-MAC通用快捷键" class="headerlink" title="1. MAC通用快捷键"></a>1. MAC通用快捷键</h2><p>mac的编辑文档、选中时、iterm操作时有通用的快捷键，包括在Goland中、sublime、vs code中</p>
+<ol>
+<li>ctrl+e、ctrl+a：快速移动到行首行尾</li>
+<li>ctrl+f、ctrl+b、ctrl+p、ctrl+n：左移右移上下一行，相当于方向键，但是方向键要右手离开键盘</li>
+<li>ctrl+d、ctrl+h：在iterm中光标左删右删，等同于删除键和fn+退格键，goland不适用会和其他键冲突</li>
+<li>ctrl+u、ctrl+k：iterm，删除光标之前所以字幕、删除光标之后所有字幕</li>
+<li>command+shift+w：企业微信</li>
+</ol>
+<h2 id="2-Goland快捷键记录"><a href="#2-Goland快捷键记录" class="headerlink" title="2. Goland快捷键记录"></a>2. Goland快捷键记录</h2><ol>
+<li>command+[ ：上一跳，常用的command+←手要离开键盘不太爽</li>
+<li>command+] ：下一跳</li>
+<li>command+shift+F：在目录下搜索，如果要在指定某个目录，command+1唤出文件列表，点击指定的目录后，再执行此键</li>
+<li>command+shift+O：按文件名搜索文件</li>
+<li>shift+F6：重构，重命名某个变量、包名，在变量的定义的地方按下，Goland会自动替换所有引用的地方（包括注释中同名，Goland会请求确认）</li>
+<li>可以单独设置goland默认bar显示F1-F12，在perferrence中自己找下</li>
+<li>command+n：新建，在目录下也可用如下</li>
+<li>在菜单栏搜索：如下在pkg下新建目录，可以command+n，然后按ctrl+n往下移，找到directory，或者直接输入dir来搜索到Diectory</li>
+</ol>
+<h2 id="3-Alfred"><a href="#3-Alfred" class="headerlink" title="3. Alfred"></a>3. Alfred</h2><h3 id="1-clipboard"><a href="#1-clipboard" class="headerlink" title="1. clipboard"></a>1. clipboard</h3><h3 id="2-snippets"><a href="#2-snippets" class="headerlink" title="2. snippets"></a>2. snippets</h3><p>使用方式：</p>
+<p>可以记录一些经常需要查的账号、一组shell命令等</p>
+<p>支持直接文本替换</p>
+<p>比如经常需要输入–all-namespaces</p>
+<p>可以设置如下</p>
+<p>则在命令行输入“an..”的时候即可自动替换成–all-namespaces</p>
+<h3 id="3-搜索"><a href="#3-搜索" class="headerlink" title="3. 搜索"></a>3. 搜索</h3><p>除了基本的搜索文件功能，alfred还可以搜索chrome的书签，自定义搜索</p>
+<p>比如：</p>
+<p><strong>搜索书签</strong></p>
+<p><strong>自定义搜索</strong></p>
+<h3 id="4-打开goland-project"><a href="#4-打开goland-project" class="headerlink" title="4. 打开goland project"></a>4. 打开goland project</h3><ol>
+<li>alfred付费功能，破解版</li>
+<li>安装jetbrains的workflow（JetBrains - Open project.alfredworkflow）</li>
+<li>配置goland</li>
+</ol>
+
+      
+    </div>
+
+    
+    
+    
+      <footer class="post-footer">
+        <div class="post-eof"></div>
+      </footer>
+  </article>
+  
+  
+  
+
+      
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="en">
+    <link itemprop="mainEntityOfPage" href="https://qmloong.github.io/2020/05/12/kubernetes/runtime/store/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.gif">
+      <meta itemprop="name" content="8gscoder">
+      <meta itemprop="description" content="">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="qmloong's Blog">
+    </span>
+      <header class="post-header">
+        <h2 class="post-title" itemprop="name headline">
+          
+            <a href="/2020/05/12/kubernetes/runtime/store/" class="post-title-link" itemprop="url">kubernetes/runtime/store</a>
+        </h2>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-calendar"></i>
+              </span>
+              <span class="post-meta-item-text">Posted on</span>
+
+              <time title="Created: 2020-05-12 01:10:15" itemprop="dateCreated datePublished" datetime="2020-05-12T01:10:15+08:00">2020-05-12</time>
+            </span>
+              <span class="post-meta-item">
+                <span class="post-meta-item-icon">
+                  <i class="far fa-calendar-check"></i>
+                </span>
+                <span class="post-meta-item-text">Edited on</span>
+                <time title="Modified: 2020-05-14 00:38:55" itemprop="dateModified" datetime="2020-05-14T00:38:55+08:00">2020-05-14</time>
+              </span>
+
+          
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+          <h1 id="读写后端存储ETCD"><a href="#读写后端存储ETCD" class="headerlink" title="读写后端存储ETCD"></a>读写后端存储ETCD</h1>
+      
+    </div>
+
+    
+    
+    
+      <footer class="post-footer">
+        <div class="post-eof"></div>
+      </footer>
+  </article>
+  
+  
+  
+
+
+  
+  <nav class="pagination">
+    <span class="page-number current">1</span><a class="page-number" href="/page/2/">2</a><a class="extend next" rel="next" href="/page/2/"><i class="fa fa-angle-right" aria-label="Next page"></i></a>
+  </nav>
+
+
+
+          </div>
+          
+
+<script>
+  window.addEventListener('tabs:register', () => {
+    let { activeClass } = CONFIG.comments;
+    if (CONFIG.comments.storage) {
+      activeClass = localStorage.getItem('comments_active') || activeClass;
+    }
+    if (activeClass) {
+      let activeTab = document.querySelector(`a[href="#comment-${activeClass}"]`);
+      if (activeTab) {
+        activeTab.click();
+      }
+    }
+  });
+  if (CONFIG.comments.storage) {
+    window.addEventListener('tabs:click', event => {
+      if (!event.target.matches('.tabs-comment .tab-content .tab-pane')) return;
+      let commentClass = event.target.classList[1];
+      localStorage.setItem('comments_active', commentClass);
+    });
+  }
+</script>
+
+        </div>
+          
+  
+  <div class="toggle sidebar-toggle">
+    <span class="toggle-line toggle-line-first"></span>
+    <span class="toggle-line toggle-line-middle"></span>
+    <span class="toggle-line toggle-line-last"></span>
+  </div>
+
+  <aside class="sidebar">
+    <div class="sidebar-inner">
+
+      <ul class="sidebar-nav motion-element">
+        <li class="sidebar-nav-toc">
+          Table of Contents
+        </li>
+        <li class="sidebar-nav-overview">
+          Overview
+        </li>
+      </ul>
+
+      <!--noindex-->
+      <div class="post-toc-wrap sidebar-panel">
+      </div>
+      <!--/noindex-->
+
+      <div class="site-overview-wrap sidebar-panel">
+        <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+  <p class="site-author-name" itemprop="name">8gscoder</p>
+  <div class="site-description" itemprop="description"></div>
+</div>
+<div class="site-state-wrap motion-element">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+          <a href="/archives">
+          <span class="site-state-item-count">16</span>
+          <span class="site-state-item-name">posts</span>
+        </a>
+      </div>
+      <div class="site-state-item site-state-categories">
+        <span class="site-state-item-count">8</span>
+        <span class="site-state-item-name">categories</span>
+      </div>
+      <div class="site-state-item site-state-tags">
+        <span class="site-state-item-count">12</span>
+        <span class="site-state-item-name">tags</span>
+      </div>
+  </nav>
 </div>
 
 
-        </div>
-        <footer id="footer" class="footer">
-    <div class="copyright">
-        <span>© 8gscoder | Powered by <a href="https://hexo.io" target="_blank">Hexo</a> & <a href="https://github.com/Siricee/hexo-theme-Chic" target="_blank">Chic</a></span>
-    </div>
-</footer>
+
+      </div>
 
     </div>
+  </aside>
+  <div id="sidebar-dimmer"></div>
+
+
+      </div>
+    </main>
+
+    <footer class="footer">
+      <div class="footer-inner">
+        
+
+        
+
+<div class="copyright">
+  
+  &copy; 
+  <span itemprop="copyrightYear">2020</span>
+  <span class="with-love">
+    <i class="fa fa-heart"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">8gscoder</span>
+</div>
+  <div class="powered-by">Powered by <a href="https://hexo.io/" class="theme-link" rel="noopener" target="_blank">Hexo</a> & <a href="https://theme-next.js.org/muse/" class="theme-link" rel="noopener" target="_blank">NexT.Muse</a>
+  </div>
+
+        
+
+
+
+
+
+
+
+
+      </div>
+    </footer>
+  </div>
+
+  
+  <script src="/lib/anime.min.js"></script>
+  <script src="/lib/velocity/velocity.min.js"></script>
+  <script src="/lib/velocity/velocity.ui.min.js"></script>
+
+<script src="/js/utils.js"></script>
+
+<script src="/js/motion.js"></script>
+
+
+<script src="/js/schemes/muse.js"></script>
+
+
+<script src="/js/next-boot.js"></script>
+
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+  
+
 </body>
 </html>
