@@ -17,23 +17,28 @@
 
 <script id="hexo-configurations">
     var NexT = window.NexT || {};
-    var CONFIG = {"hostname":"qmloong.github.io","root":"/","scheme":"Pisces","version":"8.0.0-rc.2","exturl":false,"sidebar":{"position":"left","display":"post","padding":18,"offset":12,"onmobile":false},"copycode":{"enable":false,"show_result":false,"style":null},"back2top":{"enable":true,"sidebar":true,"scrollpercent":true},"bookmark":{"enable":true,"color":"#222","save":"auto"},"fancybox":false,"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"algolia":{"hits":{"per_page":10},"labels":{"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}},"localsearch":{"enable":false,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false},"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}}};
+    var CONFIG = {"hostname":"qmloong.github.io","root":"/","scheme":"Pisces","version":"8.0.0-rc.2","exturl":false,"sidebar":{"position":"left","display":"post","padding":18,"offset":12,"onmobile":false},"copycode":{"enable":true,"show_result":false,"style":"mac"},"back2top":{"enable":true,"sidebar":true,"scrollpercent":true},"bookmark":{"enable":true,"color":"#222","save":"manual"},"fancybox":false,"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"algolia":{"hits":{"per_page":10},"labels":{"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}},"localsearch":{"enable":false,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false},"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}}};
   </script>
 
-  <meta name="description" content="房地产、政治经济入门一、记最近突然对房地产行业感起兴趣来，疯狂下载了一大波相关的app，知乎也是一下关注各种房产相关的问题，「中国房价行情」付费看了看南京和老家一些地方的房价趋势，也关注起来一些国家政策调整、GDP、人口增长率、挂售比等等。 偶尔通勤路上、吃饭时间、睡前时间的时候刷一刷，后来发现，房地产其实和国家政策有很大的关系，比如政治经济，然后又陆续了解起一些相关的国家政策呀，比如户籍制度、分">
+  <meta name="description" content="SPDY协议SPDY：Speedy快速的，Google研究出的基于TCP协议的应用层协议，旨在通过压缩、多路复用和优先级来缩短网页的加载时间和提高安全性。增强HTTP协议，即在HTTP协议的基础上，修改HTTP协议部分内容，以实现更好的传输。SPDY也是HTTP2.0的基础。">
 <meta property="og:type" content="article">
-<meta property="og:title" content="房地产、政治经济入门">
-<meta property="og:url" content="https://qmloong.github.io/2020/04/19/the-real-estate/index.html">
+<meta property="og:title" content="network&#x2F;SPDY">
+<meta property="og:url" content="https://qmloong.github.io/2020/05/21/network/SPDY/index.html">
 <meta property="og:site_name" content="qmloong&#39;s Blog">
-<meta property="og:description" content="房地产、政治经济入门一、记最近突然对房地产行业感起兴趣来，疯狂下载了一大波相关的app，知乎也是一下关注各种房产相关的问题，「中国房价行情」付费看了看南京和老家一些地方的房价趋势，也关注起来一些国家政策调整、GDP、人口增长率、挂售比等等。 偶尔通勤路上、吃饭时间、睡前时间的时候刷一刷，后来发现，房地产其实和国家政策有很大的关系，比如政治经济，然后又陆续了解起一些相关的国家政策呀，比如户籍制度、分">
+<meta property="og:description" content="SPDY协议SPDY：Speedy快速的，Google研究出的基于TCP协议的应用层协议，旨在通过压缩、多路复用和优先级来缩短网页的加载时间和提高安全性。增强HTTP协议，即在HTTP协议的基础上，修改HTTP协议部分内容，以实现更好的传输。SPDY也是HTTP2.0的基础。">
 <meta property="og:locale" content="zh_CN">
-<meta property="article:published_time" content="2020-04-19T10:25:45.457Z">
-<meta property="article:modified_time" content="2020-05-23T11:09:08.474Z">
-<meta property="article:author" content="qml">
-<meta property="article:tag" content="life">
+<meta property="og:image" content="https://qmloong.github.io/2020/05/21/network/SPDY/image-20200521134023245.png">
+<meta property="og:image" content="https://qmloong.github.io/2020/05/21/network/SPDY/image-20200521135048966.png">
+<meta property="og:image" content="https://qmloong.github.io/2020/05/21/network/SPDY/image-20200521134909156.png">
+<meta property="article:published_time" content="2020-05-21T05:19:50.086Z">
+<meta property="article:modified_time" content="2020-05-23T11:49:07.081Z">
+<meta property="article:author" content="menglong">
+<meta property="article:tag" content="network">
+<meta property="article:tag" content="protocol">
 <meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="https://qmloong.github.io/2020/05/21/network/SPDY/image-20200521134023245.png">
 
-<link rel="canonical" href="https://qmloong.github.io/2020/04/19/the-real-estate/">
+<link rel="canonical" href="https://qmloong.github.io/2020/05/21/network/SPDY/">
 
 
 <script id="page-configurations">
@@ -46,7 +51,7 @@
   };
 </script>
 
-  <title>房地产、政治经济入门 | qmloong's Blog</title>
+  <title>network/SPDY | qmloong's Blog</title>
   
 
 
@@ -158,12 +163,12 @@
   
   
   <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
-    <link itemprop="mainEntityOfPage" href="https://qmloong.github.io/2020/04/19/the-real-estate/">
+    <link itemprop="mainEntityOfPage" href="https://qmloong.github.io/2020/05/21/network/SPDY/">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
       <meta itemprop="image" content="/images/avatar.gif">
-      <meta itemprop="name" content="qml">
-      <meta itemprop="description" content="Love is a heroic dream in a tired life">
+      <meta itemprop="name" content="menglong">
+      <meta itemprop="description" content="Love is a heroic dream in a tired life.🐬">
     </span>
 
     <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
@@ -171,7 +176,7 @@
     </span>
       <header class="post-header">
         <h1 class="post-title" itemprop="name headline">
-          房地产、政治经济入门
+          network/SPDY
         </h1>
 
         <div class="post-meta">
@@ -181,14 +186,14 @@
               </span>
               <span class="post-meta-item-text">发表于</span>
 
-              <time title="创建时间：2020-04-19 18:25:45" itemprop="dateCreated datePublished" datetime="2020-04-19T18:25:45+08:00">2020-04-19</time>
+              <time title="创建时间：2020-05-21 13:19:50" itemprop="dateCreated datePublished" datetime="2020-05-21T13:19:50+08:00">2020-05-21</time>
             </span>
               <span class="post-meta-item">
                 <span class="post-meta-item-icon">
                   <i class="far fa-calendar-check"></i>
                 </span>
                 <span class="post-meta-item-text">更新于</span>
-                <time title="修改时间：2020-05-23 19:09:08" itemprop="dateModified" datetime="2020-05-23T19:09:08+08:00">2020-05-23</time>
+                <time title="修改时间：2020-05-23 19:49:07" itemprop="dateModified" datetime="2020-05-23T19:49:07+08:00">2020-05-23</time>
               </span>
             <span class="post-meta-item">
               <span class="post-meta-item-icon">
@@ -196,7 +201,7 @@
               </span>
               <span class="post-meta-item-text">分类于</span>
                 <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-                  <a href="/categories/life/" itemprop="url" rel="index"><span itemprop="name">life</span></a>
+                  <a href="/categories/network/" itemprop="url" rel="index"><span itemprop="name">network</span></a>
                 </span>
             </span>
 
@@ -218,35 +223,43 @@
     <div class="post-body" itemprop="articleBody">
 
       
-        <h1 id="房地产、政治经济入门"><a href="#房地产、政治经济入门" class="headerlink" title="房地产、政治经济入门"></a>房地产、政治经济入门</h1><h2 id="一、记"><a href="#一、记" class="headerlink" title="一、记"></a>一、记</h2><p>最近突然对房地产行业感起兴趣来，疯狂下载了一大波相关的app，知乎也是一下关注各种房产相关的问题，「中国房价行情」付费看了看南京和老家一些地方的房价趋势，也关注起来一些国家政策调整、GDP、人口增长率、挂售比等等。</p>
-<p>偶尔通勤路上、吃饭时间、睡前时间的时候刷一刷，后来发现，房地产其实和国家政策有很大的关系，比如政治经济，然后又陆续了解起一些相关的国家政策呀，比如户籍制度、分税制、土地政策、房产税。</p>
-<p>慢慢对国家政策也感兴趣起来，也正是因为慢慢研究起来，才发现之前高中的时候有专门的政治课学这些基础概念，却当时因为自己不感兴趣一点，现在基本全忘完了，和没学一样。</p>
+        <h1 id="SPDY协议"><a href="#SPDY协议" class="headerlink" title="SPDY协议"></a>SPDY协议</h1><p>SPDY：Speedy快速的，Google研究出的基于TCP协议的应用层协议，旨在通过压缩、多路复用和优先级来缩短网页的加载时间和提高安全性。增强HTTP协议，即在HTTP协议的基础上，修改HTTP协议部分内容，以实现更好的传输。SPDY也是HTTP2.0的基础。</p>
 <a id="more"></a>
 
-<h2 id="二、概念"><a href="#二、概念" class="headerlink" title="二、概念"></a>二、概念</h2><h3 id="政治："><a href="#政治：" class="headerlink" title="政治："></a>政治：</h3><ol>
-<li><p>户籍</p>
+<p><img src="/2020/05/21/network/SPDY/image-20200521134023245.png" alt="image-20200412214913034"></p>
+<p>HTTP的不足：</p>
+<ol>
+<li>单链接，请求低效</li>
+<li>HTTP头部冗余，body可能只有几个字节，但是头部却可能过重（Http2.0有了头部压缩算法）</li>
+<li>服务端只能被动回包，无法主动推送Client</li>
+</ol>
+<p>SPDY的特性：</p>
+<ol>
+<li><p>头部压缩</p>
 </li>
-<li><p>大包干</p>
+<li><p>支持多路复用：复用连接，参考下图</p>
 </li>
-<li><p>分税制</p>
-</li>
-<li><p>房产税</p>
-</li>
-<li><p>什么是国家</p>
-</li>
-<li><p>社会主义国家和资本主义国家</p>
+<li><p><img src="/2020/05/21/network/SPDY/image-20200521135048966.png" alt="image-20200412214913034"></p>
 </li>
 </ol>
-<h3 id="经济："><a href="#经济：" class="headerlink" title="经济："></a>经济：</h3><ol>
-<li>货币流通</li>
-<li>通货膨胀</li>
-<li>金融危机</li>
+<ol start="4">
+<li><p>数据流优先级：多路复用就会有阻塞问题，可以设置请求优先级，例如这样能够保证主页先显示</p>
+</li>
+<li><p>加密，强制接入SSL协议</p>
+</li>
+<li><p>服务端推送：遵循SPDY协议的CS、BS，保持长连接且客户端也会保持监听端口队列接受服务端请求，比如服务端会反向推送一些logo/css文件，给浏览器缓存下来</p>
+</li>
 </ol>
-<h3 id="地产："><a href="#地产：" class="headerlink" title="地产："></a>地产：</h3><ol>
-<li>购房流程</li>
-<li>贷款</li>
+<p>和HTTP2.0的不同：</p>
+<ol>
+<li><p>头部压缩算法不同，SPDY：HPACK，HTTP2.0 </p>
+</li>
+<li><p>HTTP2.0非强制HTTPS，支持明文传输</p>
+</li>
+<li><p>HTTP2.0支持二进制分帧，多了一个分帧层</p>
+<p><img src="/2020/05/21/network/SPDY/image-20200521134909156.png" alt="image-20200521134909156"></p>
+</li>
 </ol>
-<h2 id="三、观点"><a href="#三、观点" class="headerlink" title="三、观点"></a>三、观点</h2><p>小白入门，记录一些好的观点，学习一下别人的思路，虽然看到的观点大多数都是利益相关的。但是记录下其中有用的点，也还是不错的。</p>
 
     </div>
 
@@ -256,7 +269,8 @@
 
       <footer class="post-footer">
           <div class="post-tags">
-              <a href="/tags/life/" rel="tag"># life</a>
+              <a href="/tags/network/" rel="tag"># network</a>
+              <a href="/tags/protocol/" rel="tag"># protocol</a>
           </div>
 
         
@@ -265,12 +279,12 @@
         
     <div class="post-nav">
       <div class="post-nav-item">
-    <a href="/2020/04/19/kubernetes/kube-controller-manager/" rel="prev" title="kube-controller-manager">
-      <i class="fa fa-chevron-left"></i> kube-controller-manager
+    <a href="/2020/05/21/design-patterns/adapter/" rel="prev" title="design-patterns/adapter">
+      <i class="fa fa-chevron-left"></i> design-patterns/adapter
     </a></div>
       <div class="post-nav-item">
-    <a href="/2020/05/10/database/" rel="next" title="DB troubleshooting">
-      DB troubleshooting <i class="fa fa-chevron-right"></i>
+    <a href="/2020/05/22/kubernetes/catalogue/" rel="next" title="kubernetes/catalogue">
+      kubernetes/catalogue <i class="fa fa-chevron-right"></i>
     </a></div>
     </div>
       </footer>
@@ -330,14 +344,14 @@
 
       <!--noindex-->
       <div class="post-toc-wrap sidebar-panel">
-          <div class="post-toc motion-element"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#房地产、政治经济入门"><span class="nav-number">1.</span> <span class="nav-text">房地产、政治经济入门</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#一、记"><span class="nav-number">1.1.</span> <span class="nav-text">一、记</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#二、概念"><span class="nav-number">1.2.</span> <span class="nav-text">二、概念</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#政治："><span class="nav-number">1.2.1.</span> <span class="nav-text">政治：</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#经济："><span class="nav-number">1.2.2.</span> <span class="nav-text">经济：</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#地产："><span class="nav-number">1.2.3.</span> <span class="nav-text">地产：</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#三、观点"><span class="nav-number">1.3.</span> <span class="nav-text">三、观点</span></a></li></ol></li></ol></div>
+          <div class="post-toc motion-element"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#SPDY协议"><span class="nav-number">1.</span> <span class="nav-text">SPDY协议</span></a></li></ol></div>
       </div>
       <!--/noindex-->
 
       <div class="site-overview-wrap sidebar-panel">
         <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
-  <p class="site-author-name" itemprop="name">qml</p>
-  <div class="site-description" itemprop="description">Love is a heroic dream in a tired life</div>
+  <p class="site-author-name" itemprop="name">menglong</p>
+  <div class="site-description" itemprop="description">Love is a heroic dream in a tired life.🐬</div>
 </div>
 <div class="site-state-wrap motion-element">
   <nav class="site-state">
@@ -357,15 +371,11 @@
       <div class="site-state-item site-state-tags">
             <a href="/tags/">
           
-        <span class="site-state-item-count">19</span>
+        <span class="site-state-item-count">18</span>
         <span class="site-state-item-name">标签</span></a>
       </div>
   </nav>
 </div>
-  <div class="sidebar-button motion-element"><i class="fa fa-comment"></i>
-    Chat
-  </a>
-  </div>
   <div class="links-of-author motion-element">
       <span class="links-of-author-item">
         <a href="https://github.com/qmloong" title="GitHub → https:&#x2F;&#x2F;github.com&#x2F;qmloong" rel="noopener" target="_blank"><i class="fab fa-github fa-fw"></i>GitHub</a>
@@ -404,7 +414,7 @@
   <span class="with-love">
     <i class="fa fa-heart"></i>
   </span>
-  <span class="author" itemprop="copyrightHolder">qml</span>
+  <span class="author" itemprop="copyrightHolder">menglong</span>
 </div>
   <div class="powered-by">由 <a href="https://hexo.io/" class="theme-link" rel="noopener" target="_blank">Hexo</a> & <a href="https://theme-next.js.org/pisces/" class="theme-link" rel="noopener" target="_blank">NexT.Pisces</a> 强力驱动
   </div>
