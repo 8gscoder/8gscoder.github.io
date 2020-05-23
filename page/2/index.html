@@ -170,7 +170,7 @@
                   <i class="far fa-calendar-check"></i>
                 </span>
                 <span class="post-meta-item-text">Edited on</span>
-                <time title="Modified: 2020-05-23 18:41:37" itemprop="dateModified" datetime="2020-05-23T18:41:37+08:00">2020-05-23</time>
+                <time title="Modified: 2020-05-23 19:09:56" itemprop="dateModified" datetime="2020-05-23T19:09:56+08:00">2020-05-23</time>
               </span>
             <span class="post-meta-item">
               <span class="post-meta-item-icon">
@@ -193,24 +193,15 @@
     <div class="post-body" itemprop="articleBody">
 
       
-          <h1 id="net-http"><a href="#net-http" class="headerlink" title="net/http"></a>net/http</h1><h2 id="一、core-struct"><a href="#一、core-struct" class="headerlink" title="一、core struct"></a>一、core struct</h2><h3 id="Handler"><a href="#Handler" class="headerlink" title="Handler"></a>Handler</h3><p>handler是一个能够处理request，然后写response的抽象处理器</p>
-<figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// A Handler responds to an HTTP request.</span></span><br><span class="line"><span class="comment">//</span></span><br><span class="line"><span class="comment">// ServeHTTP should write reply headers and data to the ResponseWriter</span></span><br><span class="line"><span class="comment">// and then return. Returning signals that the request is finished; it</span></span><br><span class="line"><span class="comment">// is not valid to use the ResponseWriter or read from the</span></span><br><span class="line"><span class="comment">// Request.Body after or concurrently with the completion of the</span></span><br><span class="line"><span class="comment">// ServeHTTP call.</span></span><br><span class="line"><span class="comment">//</span></span><br><span class="line"><span class="comment">// Depending on the HTTP client software, HTTP protocol version, and</span></span><br><span class="line"><span class="comment">// any intermediaries between the client and the Go server, it may not</span></span><br><span class="line"><span class="comment">// be possible to read from the Request.Body after writing to the</span></span><br><span class="line"><span class="comment">// ResponseWriter. Cautious handlers should read the Request.Body</span></span><br><span class="line"><span class="comment">// first, and then reply.</span></span><br><span class="line"><span class="comment">//</span></span><br><span class="line"><span class="comment">// Except for reading the body, handlers should not modify the</span></span><br><span class="line"><span class="comment">// provided Request.</span></span><br><span class="line"><span class="comment">//</span></span><br><span class="line"><span class="comment">// If ServeHTTP panics, the server (the caller of ServeHTTP) assumes</span></span><br><span class="line"><span class="comment">// that the effect of the panic was isolated to the active request.</span></span><br><span class="line"><span class="comment">// It recovers the panic, logs a stack trace to the server error log,</span></span><br><span class="line"><span class="comment">// and either closes the network connection or sends an HTTP/2</span></span><br><span class="line"><span class="comment">// RST_STREAM, depending on the HTTP protocol. To abort a handler so</span></span><br><span class="line"><span class="comment">// the client sees an interrupted response but the server doesn't log</span></span><br><span class="line"><span class="comment">// an error, panic with the value ErrAbortHandler.</span></span><br><span class="line"><span class="keyword">type</span> Handler <span class="keyword">interface</span> &#123;</span><br><span class="line">   ServeHTTP(ResponseWriter, *Request)</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-
-<h3 id="ServeMux"><a href="#ServeMux" class="headerlink" title="ServeMux"></a>ServeMux</h3><p>ServeMux是一个保存着大量handler的处理器multiplexer（多路复用器，联想一下linux的epoll），能都接受request，然后按照注册好的handler进行做多路转发</p>
-<p><strong>注意</strong> ServeMux也是一个特殊的Handler，只不过他是一个多路复用的Handler</p>
-<p>先看下面的成员函数，再看下代码的成员变量</p>
-<p><img src="image-20200513025904727.png" alt="image-20200513025904727"></p>
-<figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br><span class="line">66</span><br><span class="line">67</span><br><span class="line">68</span><br><span class="line">69</span><br><span class="line">70</span><br><span class="line">71</span><br><span class="line">72</span><br><span class="line">73</span><br><span class="line">74</span><br><span class="line">75</span><br><span class="line">76</span><br><span class="line">77</span><br><span class="line">78</span><br><span class="line">79</span><br><span class="line">80</span><br><span class="line">81</span><br><span class="line">82</span><br><span class="line">83</span><br><span class="line">84</span><br><span class="line">85</span><br><span class="line">86</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// ServeMux is an HTTP request multiplexer.</span></span><br><span class="line"><span class="comment">// It matches the URL of each incoming request against a list of registered</span></span><br><span class="line"><span class="comment">// patterns and calls the handler for the pattern that</span></span><br><span class="line"><span class="comment">// most closely matches the URL.</span></span><br><span class="line"><span class="comment">//</span></span><br><span class="line"><span class="comment">// Patterns name fixed, rooted paths, like "/favicon.ico",</span></span><br><span class="line"><span class="comment">// or rooted subtrees, like "/images/" (note the trailing slash).</span></span><br><span class="line"><span class="comment">// Longer patterns take precedence over shorter ones, so that</span></span><br><span class="line"><span class="comment">// if there are handlers registered for both "/images/"</span></span><br><span class="line"><span class="comment">// and "/images/thumbnails/", the latter handler will be</span></span><br><span class="line"><span class="comment">// called for paths beginning "/images/thumbnails/" and the</span></span><br><span class="line"><span class="comment">// former will receive requests for any other paths in the</span></span><br><span class="line"><span class="comment">// "/images/" subtree.</span></span><br><span class="line"><span class="comment">//</span></span><br><span class="line"><span class="comment">// Note that since a pattern ending in a slash names a rooted subtree,</span></span><br><span class="line"><span class="comment">// the pattern "/" matches all paths not matched by other registered</span></span><br><span class="line"><span class="comment">// patterns, not just the URL with Path == "/".</span></span><br><span class="line"><span class="comment">//</span></span><br><span class="line"><span class="comment">// If a subtree has been registered and a request is received naming the</span></span><br><span class="line"><span class="comment">// subtree root without its trailing slash, ServeMux redirects that</span></span><br><span class="line"><span class="comment">// request to the subtree root (adding the trailing slash). This behavior can</span></span><br><span class="line"><span class="comment">// be overridden with a separate registration for the path without</span></span><br><span class="line"><span class="comment">// the trailing slash. For example, registering "/images/" causes ServeMux</span></span><br><span class="line"><span class="comment">// to redirect a request for "/images" to "/images/", unless "/images" has</span></span><br><span class="line"><span class="comment">// been registered separately.</span></span><br><span class="line"><span class="comment">//</span></span><br><span class="line"><span class="comment">// Patterns may optionally begin with a host name, restricting matches to</span></span><br><span class="line"><span class="comment">// URLs on that host only. Host-specific patterns take precedence over</span></span><br><span class="line"><span class="comment">// general patterns, so that a handler might register for the two patterns</span></span><br><span class="line"><span class="comment">// "/codesearch" and "codesearch.google.com/" without also taking over</span></span><br><span class="line"><span class="comment">// requests for "http://www.google.com/".</span></span><br><span class="line"><span class="comment">//</span></span><br><span class="line"><span class="comment">// ServeMux also takes care of sanitizing the URL request path and the Host</span></span><br><span class="line"><span class="comment">// header, stripping the port number and redirecting any request containing . or</span></span><br><span class="line"><span class="comment">// .. elements or repeated slashes to an equivalent, cleaner URL.</span></span><br><span class="line"><span class="keyword">type</span> ServeMux <span class="keyword">struct</span> &#123;</span><br><span class="line">   mu    sync.RWMutex</span><br><span class="line">   m     <span class="keyword">map</span>[<span class="keyword">string</span>]muxEntry</span><br><span class="line">   es    []muxEntry <span class="comment">// slice of entries sorted from longest to shortest.</span></span><br><span class="line">   hosts <span class="keyword">bool</span>       <span class="comment">// whether any patterns contain hostnames</span></span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="keyword">type</span> muxEntry <span class="keyword">struct</span> &#123;</span><br><span class="line">   h       Handler</span><br><span class="line">   pattern <span class="keyword">string</span></span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"></span><br><span class="line"><span class="comment">// Handler returns the handler to use for the given request,</span></span><br><span class="line"><span class="comment">// consulting r.Method, r.Host, and r.URL.Path. It always returns</span></span><br><span class="line"><span class="comment">// a non-nil handler. If the path is not in its canonical form, the</span></span><br><span class="line"><span class="comment">// handler will be an internally-generated handler that redirects</span></span><br><span class="line"><span class="comment">// to the canonical path. If the host contains a port, it is ignored</span></span><br><span class="line"><span class="comment">// when matching handlers.</span></span><br><span class="line"><span class="comment">//</span></span><br><span class="line"><span class="comment">// The path and host are used unchanged for CONNECT requests.</span></span><br><span class="line"><span class="comment">//</span></span><br><span class="line"><span class="comment">// Handler also returns the registered pattern that matches the</span></span><br><span class="line"><span class="comment">// request or, in the case of internally-generated redirects,</span></span><br><span class="line"><span class="comment">// the pattern that will match after following the redirect.</span></span><br><span class="line"><span class="comment">//</span></span><br><span class="line"><span class="comment">// If there is no registered handler that applies to the request,</span></span><br><span class="line"><span class="comment">// Handler returns a ``page not found'' handler and an empty pattern.</span></span><br><span class="line"><span class="comment">// Handler是一个做request到Handler的反向映射</span></span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="params">(mux *ServeMux)</span> <span class="title">Handler</span><span class="params">(r *Request)</span> <span class="params">(h Handler, pattern <span class="keyword">string</span>)</span></span> &#123;...&#125;</span><br><span class="line"></span><br><span class="line"></span><br><span class="line"><span class="comment">// ServeHTTP dispatches the request to the handler whose</span></span><br><span class="line"><span class="comment">// pattern most closely matches the request URL.</span></span><br><span class="line"><span class="comment">// ServeHTTP是依据request执行相应Handler的HanleServeHTTP方法</span></span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="params">(mux *ServeMux)</span> <span class="title">ServeHTTP</span><span class="params">(w ResponseWriter, r *Request)</span></span> &#123;...&#125;</span><br><span class="line"></span><br><span class="line"></span><br><span class="line"><span class="comment">// Handle registers the handler for the given pattern.</span></span><br><span class="line"><span class="comment">// If a handler already exists for pattern, Handle panics.</span></span><br><span class="line"><span class="comment">// 注册parrern和 Handler绑定，写到mux.m里，m是个muxEntry</span></span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="params">(mux *ServeMux)</span> <span class="title">Handle</span><span class="params">(pattern <span class="keyword">string</span>, handler Handler)</span></span> &#123;...&#125;</span><br><span class="line"></span><br><span class="line"></span><br><span class="line"><span class="comment">// HandleFunc registers the handler function for the given pattern.</span></span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="params">(mux *ServeMux)</span> <span class="title">HandleFunc</span><span class="params">(pattern <span class="keyword">string</span>, handler <span class="keyword">func</span>(ResponseWriter, *Request)</span>)</span> &#123;</span><br><span class="line">	<span class="keyword">if</span> handler == <span class="literal">nil</span> &#123;</span><br><span class="line">		<span class="built_in">panic</span>(<span class="string">"http: nil handler"</span>)</span><br><span class="line">	&#125;</span><br><span class="line">	mux.Handle(pattern, HandlerFunc(handler))</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-
-
-
-<h3 id="HandlerFunc"><a href="#HandlerFunc" class="headerlink" title="HandlerFunc"></a>HandlerFunc</h3><figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// The HandlerFunc type is an adapter to allow the use of</span></span><br><span class="line"><span class="comment">// ordinary functions as HTTP handlers. If f is a function</span></span><br><span class="line"><span class="comment">// with the appropriate signature, HandlerFunc(f) is a</span></span><br><span class="line"><span class="comment">// Handler that calls f.</span></span><br><span class="line"><span class="keyword">type</span> HandlerFunc <span class="function"><span class="keyword">func</span><span class="params">(ResponseWriter, *Request)</span></span></span><br><span class="line"></span><br><span class="line"><span class="comment">// ServeHTTP calls f(w, r).</span></span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="params">(f HandlerFunc)</span> <span class="title">ServeHTTP</span><span class="params">(w ResponseWriter, r *Request)</span></span> &#123;</span><br><span class="line">   f(w, r)</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-
-<p><strong>「适配器模式」</strong>好处是？</p>
-<h3 id="DefaultServeMux"><a href="#DefaultServeMux" class="headerlink" title="DefaultServeMux"></a>DefaultServeMux</h3><figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// DefaultServeMux is the default ServeMux used by Serve.</span></span><br><span class="line"><span class="keyword">var</span> DefaultServeMux = &amp;defaultServeMux</span><br><span class="line"></span><br><span class="line"><span class="keyword">var</span> defaultServeMux ServeMux</span><br></pre></td></tr></table></figure>
-
-<p>go的http包默认提供的ServeMux，提供全局的一个ServeMux，方便使用</p>
-
+          <h1 id="net-http"><a href="#net-http" class="headerlink" title="net/http"></a>net/http</h1>
+          <!--noindex-->
+            <div class="post-button">
+              <a class="btn" href="/2020/05/13/kubernetes/basic/http/#more" rel="contents">
+                Read more &raquo;
+              </a>
+            </div>
+          <!--/noindex-->
+        
       
     </div>
 
@@ -260,7 +251,7 @@
                   <i class="far fa-calendar-check"></i>
                 </span>
                 <span class="post-meta-item-text">Edited on</span>
-                <time title="Modified: 2020-05-23 18:48:06" itemprop="dateModified" datetime="2020-05-23T18:48:06+08:00">2020-05-23</time>
+                <time title="Modified: 2020-05-23 19:15:37" itemprop="dateModified" datetime="2020-05-23T19:15:37+08:00">2020-05-23</time>
               </span>
             <span class="post-meta-item">
               <span class="post-meta-item-icon">
@@ -291,32 +282,14 @@
 <li>ctrl+u、ctrl+k：iterm，删除光标之前所以字幕、删除光标之后所有字幕</li>
 <li>command+shift+w：企业微信</li>
 </ol>
-<h2 id="2-Goland快捷键记录"><a href="#2-Goland快捷键记录" class="headerlink" title="2. Goland快捷键记录"></a>2. Goland快捷键记录</h2><ol>
-<li>command+[ ：上一跳，常用的command+←手要离开键盘不太爽</li>
-<li>command+] ：下一跳</li>
-<li>command+shift+F：在目录下搜索，如果要在指定某个目录，command+1唤出文件列表，点击指定的目录后，再执行此键</li>
-<li>command+shift+O：按文件名搜索文件</li>
-<li>shift+F6：重构，重命名某个变量、包名，在变量的定义的地方按下，Goland会自动替换所有引用的地方（包括注释中同名，Goland会请求确认）</li>
-<li>可以单独设置goland默认bar显示F1-F12，在perferrence中自己找下</li>
-<li>command+n：新建，在目录下也可用如下</li>
-<li>在菜单栏搜索：如下在pkg下新建目录，可以command+n，然后按ctrl+n往下移，找到directory，或者直接输入dir来搜索到Diectory</li>
-</ol>
-<h2 id="3-Alfred"><a href="#3-Alfred" class="headerlink" title="3. Alfred"></a>3. Alfred</h2><h3 id="1-clipboard"><a href="#1-clipboard" class="headerlink" title="1. clipboard"></a>1. clipboard</h3><h3 id="2-snippets"><a href="#2-snippets" class="headerlink" title="2. snippets"></a>2. snippets</h3><p>使用方式：</p>
-<p>可以记录一些经常需要查的账号、一组shell命令等</p>
-<p>支持直接文本替换</p>
-<p>比如经常需要输入–all-namespaces</p>
-<p>可以设置如下</p>
-<p>则在命令行输入“an..”的时候即可自动替换成–all-namespaces</p>
-<h3 id="3-搜索"><a href="#3-搜索" class="headerlink" title="3. 搜索"></a>3. 搜索</h3><p>除了基本的搜索文件功能，alfred还可以搜索chrome的书签，自定义搜索</p>
-<p>比如：</p>
-<p><strong>搜索书签</strong></p>
-<p><strong>自定义搜索</strong></p>
-<h3 id="4-打开goland-project"><a href="#4-打开goland-project" class="headerlink" title="4. 打开goland project"></a>4. 打开goland project</h3><ol>
-<li>alfred付费功能，破解版</li>
-<li>安装jetbrains的workflow（JetBrains - Open project.alfredworkflow）</li>
-<li>配置goland</li>
-</ol>
-
+          <!--noindex-->
+            <div class="post-button">
+              <a class="btn" href="/2020/05/12/mac/#more" rel="contents">
+                Read more &raquo;
+              </a>
+            </div>
+          <!--/noindex-->
+        
       
     </div>
 
@@ -366,7 +339,7 @@
                   <i class="far fa-calendar-check"></i>
                 </span>
                 <span class="post-meta-item-text">Edited on</span>
-                <time title="Modified: 2020-05-14 00:38:55" itemprop="dateModified" datetime="2020-05-14T00:38:55+08:00">2020-05-14</time>
+                <time title="Modified: 2020-05-23 19:10:07" itemprop="dateModified" datetime="2020-05-23T19:10:07+08:00">2020-05-23</time>
               </span>
 
           
@@ -381,6 +354,14 @@
 
       
           <h1 id="读写后端存储ETCD"><a href="#读写后端存储ETCD" class="headerlink" title="读写后端存储ETCD"></a>读写后端存储ETCD</h1>
+          <!--noindex-->
+            <div class="post-button">
+              <a class="btn" href="/2020/05/12/kubernetes/runtime/store/#more" rel="contents">
+                Read more &raquo;
+              </a>
+            </div>
+          <!--/noindex-->
+        
       
     </div>
 
@@ -430,7 +411,7 @@
                   <i class="far fa-calendar-check"></i>
                 </span>
                 <span class="post-meta-item-text">Edited on</span>
-                <time title="Modified: 2020-05-23 18:46:12" itemprop="dateModified" datetime="2020-05-23T18:46:12+08:00">2020-05-23</time>
+                <time title="Modified: 2020-05-23 19:09:00" itemprop="dateModified" datetime="2020-05-23T19:09:00+08:00">2020-05-23</time>
               </span>
             <span class="post-meta-item">
               <span class="post-meta-item-icon">
@@ -464,29 +445,14 @@
 <li><p>Paritcular：特定的，指定的，特例化后的</p>
 </li>
 </ol>
-<p>k8s常用的数据结构</p>
-<ol>
-<li>XX-Storage： 存储对象，比如apiserver的各种Storage封装了对后端etcd的操作</li>
-<li>Option、Config、Server：Option分装命令行参数，Config分装配置参数，Server分装服务端对象</li>
-<li>Aggregator：聚合</li>
-<li>Extensions：扩展的</li>
-<li></li>
-</ol>
-<p>k8s常用的设计模式：</p>
-<ol>
-<li>工厂模式<ol>
-<li>以New为开头的接收器方法，基本上都是运用了工厂模式</li>
-<li>New一个Factory，Factory有CreateXX(opt *Options)方法，依据传入不同的Option，生产出不通的类型，比如RESTGetter、StorageGetter，传入不通的resource schema，产生不同的server/storage..</li>
-<li>其他参数options可能会有ApplyTo(c *generic.Config)方法，会把自己赋值到generic.Config上</li>
-<li>最后生产出来一个particular的产物</li>
-</ol>
-</li>
-<li>装饰器模式<ol>
-<li>WithAudit、WithXXX，都是用到了装饰器模式</li>
-</ol>
-</li>
-</ol>
-
+          <!--noindex-->
+            <div class="post-button">
+              <a class="btn" href="/2020/05/12/kubernetes/some-terms/#more" rel="contents">
+                Read more &raquo;
+              </a>
+            </div>
+          <!--/noindex-->
+        
       
     </div>
 
@@ -536,7 +502,7 @@
                   <i class="far fa-calendar-check"></i>
                 </span>
                 <span class="post-meta-item-text">Edited on</span>
-                <time title="Modified: 2020-05-23 18:46:47" itemprop="dateModified" datetime="2020-05-23T18:46:47+08:00">2020-05-23</time>
+                <time title="Modified: 2020-05-23 19:09:26" itemprop="dateModified" datetime="2020-05-23T19:09:26+08:00">2020-05-23</time>
               </span>
             <span class="post-meta-item">
               <span class="post-meta-item-icon">
@@ -559,7 +525,9 @@
     <div class="post-body" itemprop="articleBody">
 
       
-          <h1 id="DB-高负载"><a href="#DB-高负载" class="headerlink" title="DB 高负载"></a>DB 高负载</h1><ul>
+          <a id="more"></a>
+
+<h1 id="DB-高负载"><a href="#DB-高负载" class="headerlink" title="DB 高负载"></a>DB 高负载</h1><ul>
 <li>连接数超限</li>
 <li>流量大</li>
 <li>cpu高负载</li>
@@ -681,7 +649,7 @@ t: query time</code></pre>
                   <i class="far fa-calendar-check"></i>
                 </span>
                 <span class="post-meta-item-text">Edited on</span>
-                <time title="Modified: 2020-05-23 18:27:04" itemprop="dateModified" datetime="2020-05-23T18:27:04+08:00">2020-05-23</time>
+                <time title="Modified: 2020-05-23 19:09:08" itemprop="dateModified" datetime="2020-05-23T19:09:08+08:00">2020-05-23</time>
               </span>
             <span class="post-meta-item">
               <span class="post-meta-item-icon">
@@ -707,31 +675,14 @@ t: query time</code></pre>
           <h1 id="房地产、政治经济入门"><a href="#房地产、政治经济入门" class="headerlink" title="房地产、政治经济入门"></a>房地产、政治经济入门</h1><h2 id="一、记"><a href="#一、记" class="headerlink" title="一、记"></a>一、记</h2><p>最近突然对房地产行业感起兴趣来，疯狂下载了一大波相关的app，知乎也是一下关注各种房产相关的问题，「中国房价行情」付费看了看南京和老家一些地方的房价趋势，也关注起来一些国家政策调整、GDP、人口增长率、挂售比等等。</p>
 <p>偶尔通勤路上、吃饭时间、睡前时间的时候刷一刷，后来发现，房地产其实和国家政策有很大的关系，比如政治经济，然后又陆续了解起一些相关的国家政策呀，比如户籍制度、分税制、土地政策、房产税。</p>
 <p>慢慢对国家政策也感兴趣起来，也正是因为慢慢研究起来，才发现之前高中的时候有专门的政治课学这些基础概念，却当时因为自己不感兴趣一点，现在基本全忘完了，和没学一样。</p>
-<h2 id="二、概念"><a href="#二、概念" class="headerlink" title="二、概念"></a>二、概念</h2><h3 id="政治："><a href="#政治：" class="headerlink" title="政治："></a>政治：</h3><ol>
-<li><p>户籍</p>
-</li>
-<li><p>大包干</p>
-</li>
-<li><p>分税制</p>
-</li>
-<li><p>房产税</p>
-</li>
-<li><p>什么是国家</p>
-</li>
-<li><p>社会主义国家和资本主义国家</p>
-</li>
-</ol>
-<h3 id="经济："><a href="#经济：" class="headerlink" title="经济："></a>经济：</h3><ol>
-<li>货币流通</li>
-<li>通货膨胀</li>
-<li>金融危机</li>
-</ol>
-<h3 id="地产："><a href="#地产：" class="headerlink" title="地产："></a>地产：</h3><ol>
-<li>购房流程</li>
-<li>贷款</li>
-</ol>
-<h2 id="三、观点"><a href="#三、观点" class="headerlink" title="三、观点"></a>三、观点</h2><p>小白入门，记录一些好的观点，学习一下别人的思路，虽然看到的观点大多数都是利益相关的。但是记录下其中有用的点，也还是不错的。</p>
-
+          <!--noindex-->
+            <div class="post-button">
+              <a class="btn" href="/2020/04/19/the-real-estate/#more" rel="contents">
+                Read more &raquo;
+              </a>
+            </div>
+          <!--/noindex-->
+        
       
     </div>
 
@@ -781,7 +732,7 @@ t: query time</code></pre>
                   <i class="far fa-calendar-check"></i>
                 </span>
                 <span class="post-meta-item-text">Edited on</span>
-                <time title="Modified: 2020-05-23 18:44:17" itemprop="dateModified" datetime="2020-05-23T18:44:17+08:00">2020-05-23</time>
+                <time title="Modified: 2020-05-23 19:09:04" itemprop="dateModified" datetime="2020-05-23T19:09:04+08:00">2020-05-23</time>
               </span>
             <span class="post-meta-item">
               <span class="post-meta-item-icon">
@@ -806,24 +757,14 @@ t: query time</code></pre>
       
           <h1 id="Kube-controller-manager源码阅读"><a href="#Kube-controller-manager源码阅读" class="headerlink" title="Kube-controller-manager源码阅读"></a>Kube-controller-manager源码阅读</h1><h2 id="杂"><a href="#杂" class="headerlink" title="杂"></a>杂</h2><p>最近接手组里的两个operator，代码逻辑看完其实没什么好疑惑的，但是其实对底层用到的controller模式似懂非懂，决定还是好好看下controller-manager的代码，熟悉下controller模式的原理、informer原理。</p>
 <p>GitVersion: release-1.14</p>
-<h2 id="Kube-Controller-Manager"><a href="#Kube-Controller-Manager" class="headerlink" title="Kube-Controller-Manager"></a>Kube-Controller-Manager</h2><h3 id="一、整体框架"><a href="#一、整体框架" class="headerlink" title="一、整体框架"></a>一、整体框架</h3><h4 id=""><a href="#" class="headerlink" title=""></a></h4><h3 id="二、Informer"><a href="#二、Informer" class="headerlink" title="二、Informer"></a>二、Informer</h3><h3 id="三、k8s一些机制"><a href="#三、k8s一些机制" class="headerlink" title="三、k8s一些机制"></a>三、k8s一些机制</h3><h4 id="List-Watch"><a href="#List-Watch" class="headerlink" title="List-Watch"></a>List-Watch</h4><h4 id="Kubernetes的同步、如何保证一致性"><a href="#Kubernetes的同步、如何保证一致性" class="headerlink" title="Kubernetes的同步、如何保证一致性"></a>Kubernetes的同步、如何保证一致性</h4><h4 id="EventBroadcaster"><a href="#EventBroadcaster" class="headerlink" title="EventBroadcaster"></a>EventBroadcaster</h4><h4 id="RateLimitingQueue"><a href="#RateLimitingQueue" class="headerlink" title="RateLimitingQueue"></a>RateLimitingQueue</h4><h3 id="四、pkg"><a href="#四、pkg" class="headerlink" title="四、pkg"></a>四、pkg</h3><ol>
-<li><p>glog</p>
-</li>
-<li><p>klog</p>
-</li>
-<li><p>cobra</p>
-</li>
-<li><p>pflag</p>
-</li>
-<li><p>leaderElect</p>
-</li>
-<li><p>http/client</p>
-</li>
-<li></li>
-<li><p>metrics</p>
-</li>
-</ol>
-<h2 id="-1"><a href="#-1" class="headerlink" title=""></a></h2>
+          <!--noindex-->
+            <div class="post-button">
+              <a class="btn" href="/2020/04/19/kubernetes/kube-controller-manager/#more" rel="contents">
+                Read more &raquo;
+              </a>
+            </div>
+          <!--/noindex-->
+        
       
     </div>
 
@@ -873,7 +814,7 @@ t: query time</code></pre>
                   <i class="far fa-calendar-check"></i>
                 </span>
                 <span class="post-meta-item-text">Edited on</span>
-                <time title="Modified: 2020-05-23 18:33:42" itemprop="dateModified" datetime="2020-05-23T18:33:42+08:00">2020-05-23</time>
+                <time title="Modified: 2020-05-23 19:09:13" itemprop="dateModified" datetime="2020-05-23T19:09:13+08:00">2020-05-23</time>
               </span>
             <span class="post-meta-item">
               <span class="post-meta-item-icon">
@@ -897,100 +838,14 @@ t: query time</code></pre>
 
       
           <h1 id="10xEngineer"><a href="#10xEngineer" class="headerlink" title="10xEngineer"></a>10xEngineer</h1><p>额..因为清明节去浪去了，16号的团队微分享原定的200+p的书籍都没来及看，只能这俩天周末好好补一下豆瓣书评了…But从书评上看，感觉这本书还是值得刷一下的</p>
-<h1 id="主要资料："><a href="#主要资料：" class="headerlink" title="主要资料："></a>主要资料：</h1><p>《The Effective Engineer》</p>
-<p><a href="https://www.youtube.com/watch?v=BnIz7H5ruy0" target="_blank" rel="noopener">Edmond Lau: “The Effective Engineer” Talks at Google</a></p>
-<h2 id="《The-Effective-Engineer》"><a href="#《The-Effective-Engineer》" class="headerlink" title="《The Effective Engineer》"></a>《The Effective Engineer》</h2><blockquote>
-<p>“How to Leverage Your Efforts In Software Engineering to Make a Disproportionate and Meaningful Impact”</p>
-</blockquote>
-<h3 id="some-terms"><a href="#some-terms" class="headerlink" title="some terms"></a>some terms</h3><p>leverage： 杠杆，单位时间内的影响力，比如面试招聘、入职培训</p>
-<p>Compound Interest：复利，一种计算利息的方法。把前一期的本金和利息加在一起作本金，再计算下一期的利息</p>
-<h3 id="Important-view-points"><a href="#Important-view-points" class="headerlink" title="Important view points"></a>Important view points</h3><p><strong>0. Effort ≠ Impact</strong>：they can produce 10 times the impact of other engineers, but they’re not working 10 times the hours. 能够造成其他工程师十倍影响力的事情，但是却没有用十倍的时间，是因为他们做了更有leverage的事情</p>
-<p><strong>1. Optimise for learning</strong></p>
-<p>   <img src="/2020/04/11/10xEngineer/image-20200412201426847.png" alt="image-20200412201426847"></p>
-<p>   <img src="/2020/04/11/10xEngineer/image-20200412201509572.png" alt="image-20200412201509572"></p>
-<ol>
-<li>带来的收益和时间指数增长的、随着时间的迁移，收货的总量就会越多，也就是说需要坚持时间、每个周期你能够提升学到的知识的比例，都会更高的影响带来收益（指数比例）</li>
-</ol>
-<p><strong>2. Invest in iteration speed</strong></p>
-<ol>
-<li><p>DRY Principle（Don’t Repeat Yourself），避免重复工作，如果一件工作你考量以后可能会做超过两次，就实现工具去做，这也是在造杠杆，重视在写Time-Saving Tools上的时间投资（监控工具、调试工具、CI/CD、发布工具… ）</p>
-<blockquote>
-<p>1分钟 x 10次 x 1000 人 = 30 人日 = 1人月</p>
-</blockquote>
-</li>
-<li><p>做你自己的PM，对自己负责的项目要有目标、里程碑（Milestones），项目必须是可评估、可质量进度、可测量的</p>
-</li>
-<li><p>不要欠债，遇到一次的知识点、盲区，就要搞明白，不然一知半解，下次遇到还不会</p>
-</li>
-</ol>
-<p><strong>3. Validate your ideas aggressively and iteratively</strong></p>
-<ol>
-<li>需求评审阶段<ul>
-<li>以始为终：在开发之前思考好是否是用户真正想要的</li>
-<li>试验驱动的产品设计：把一个大的feature拆分成多个小的feature测试假设，分阶段评估，从而验证是否需要进一步实施和执行</li>
-</ul>
-</li>
-<li>方案评审阶段<ul>
-<li>优先思考风险性高的部分：验证危险部分方案至少可行</li>
-<li>小步骤验证可行：花费10%的前期工作时间验证有效性</li>
-</ul>
-</li>
-</ol>
-<p><strong>4. Minimize operational burden</strong></p>
-<ol>
-<li><p><em>Instagram Principle</em>：Do the Simple Thing first. 减少复杂性，任何一个复杂性的add on，都可能会引发一场potential fire</p>
-<blockquote>
-<p>Instagram在2012年被FaceBook收购的时候，只有13名员工，其中只有5名是技术人员，当时Instagram有着40M的用户</p>
-</blockquote>
-</li>
-<li><p>减少复杂性</p>
-<ul>
-<li>代码复杂性：很多技术人员喜欢写很复杂的代码来体现自己的专业性</li>
-<li>系统复杂性：有时候加台机器可能比选择各种复杂的存储或者中间件更低成本</li>
-<li>产品复杂性：没有明确愿景的需求，增加产品的复杂性导致代码的复杂性<ol>
-<li>没有明确愿景的需求，增加产品的复杂性导致代码的复杂性</li>
-</ol>
-</li>
-<li>组织复杂性：当系统复杂性很高的时候，组织的发展也提升复杂性，新人上手难度高，按功能拆分组织后，各功能模块之间无法互助。</li>
-</ul>
-</li>
-<li><p>时刻问自己，这是否是解决问题最简单的方式</p>
-</li>
-</ol>
-<p><strong>5. Building a great engineering culture</strong></p>
-<ul>
-<li>工程师们往往喜欢在可以做高杠杆活动的团队中工作，优秀的团队文化是吸引新人加入有效杠杆<ul>
-<li>优化学习</li>
-<li>有效的工具减少迭代投资</li>
-<li>产品策略明确，有明确的分支假设</li>
-<li>往往喜欢在新团队中开发新功能而不是维护旧债</li>
-</ul>
-</li>
-</ul>
-<h3 id="Other-view-points"><a href="#Other-view-points" class="headerlink" title="Other view points"></a>Other view points</h3><ol>
-<li>学习是一个复利的过程：<a href="https://mp.weixin.qq.com/s?__biz=MzAxNzI4MTMwMw==&mid=401199907&idx=1&sn=0d5395ca0f0737afefc72a48c7ecd278&scene=21#wechat_redirect" target="_blank" rel="noopener">点这里</a></li>
-</ol>
-<h1 id="About-PPT-thoughts"><a href="#About-PPT-thoughts" class="headerlink" title="About PPT thoughts"></a>About PPT thoughts</h1><p>属于程序员鸡汤分享但是真香，作为T4工程师入职不到一年在这里给各位T10分享十倍程序员？hh，但是本着微分享的愿景是注重分享者，所以我也就斗胆在这里给各位大佬卖弄卖弄哈</p>
-<p>主要内容来自《The Effective Engineer》，PPT内容主要是copy的Google Talk作者的，也算是对书籍的摘录。借鉴下作者的思路^~^</p>
-<ol>
-<li><p>引出问题：努力=？影响力  -&gt; 杠杆定义 -&gt; 思考在soft-engineering过程中有哪些high-leverage行为</p>
-</li>
-<li><p>投资自身学习（对应书中的Part 1）</p>
-</li>
-<li><p>投资研发效能（对应书中的Part 2）</p>
-<ol>
-<li>从迭代周期的各个部分讲述哪些高杠杆行为</li>
-<li>需求阶段、开发阶段-&gt;Do the simple thing first</li>
-<li>测试、发布、后期运维阶段-&gt;DRP</li>
-</ol>
-</li>
-<li><p>投资团队效率建设（对应书中Part 3）</p>
-<ol>
-<li>10min x 10times x 1000 engineer = 1 engineer-month</li>
-</ol>
-</li>
-</ol>
-
+          <!--noindex-->
+            <div class="post-button">
+              <a class="btn" href="/2020/04/11/10xEngineer/#more" rel="contents">
+                Read more &raquo;
+              </a>
+            </div>
+          <!--/noindex-->
+        
       
     </div>
 
@@ -1040,7 +895,7 @@ t: query time</code></pre>
                   <i class="far fa-calendar-check"></i>
                 </span>
                 <span class="post-meta-item-text">Edited on</span>
-                <time title="Modified: 2020-05-23 18:35:33" itemprop="dateModified" datetime="2020-05-23T18:35:33+08:00">2020-05-23</time>
+                <time title="Modified: 2020-05-23 19:09:21" itemprop="dateModified" datetime="2020-05-23T19:09:21+08:00">2020-05-23</time>
               </span>
             <span class="post-meta-item">
               <span class="post-meta-item-icon">
@@ -1070,30 +925,14 @@ t: query time</code></pre>
 <li>同样，em..因为可能以为别人会看，所以会有点动力去写些东西</li>
 <li>把乱七八糟的事情慢慢梳理起来</li>
 </ol>
-<h1 id="Hexo-Record"><a href="#Hexo-Record" class="headerlink" title="Hexo Record"></a>Hexo Record</h1><h4 id="1-Set-up"><a href="#1-Set-up" class="headerlink" title="1. Set up"></a>1. Set up</h4><p>​    基本上搭建起来不是很难，按照官网文档走就可以了</p>
-<h4 id="2-theme使用的是next"><a href="#2-theme使用的是next" class="headerlink" title="2. theme使用的是next"></a>2. theme使用的是next</h4><h4 id="3-markdown工具"><a href="#3-markdown工具" class="headerlink" title="3. markdown工具"></a>3. markdown工具</h4><p>​    直接撸markdown还是比较烦的，mac下搞了个工具来写markdown还是挺方便的</p>
-<p><img src="/2020/04/11/hello-world/image-20200412214913034.png" alt="image-20200412214913034"></p>
-<h4 id="4-图片问题"><a href="#4-图片问题" class="headerlink" title="4. 图片问题"></a>4. 图片问题</h4><p><strong>hexo要引用图片的话</strong></p>
-<ol>
-<li>先开参数</li>
-</ol>
-<figure class="highlight yaml"><figcaption><span>_config.yaml</span></figcaption><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="attr">post_asset_folder:</span> <span class="literal">true</span></span><br></pre></td></tr></table></figure>
-
-<ol start="2">
-<li>使用的时候需要把资源文件放到_posts下，同md文件名的目录下置放，就可直接路径名引用</li>
-</ol>
-<p><strong>相对路径</strong></p>
-<ol>
-<li>装plugin</li>
-</ol>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">npm i --save hexo-asset-link</span><br></pre></td></tr></table></figure>
-
-<ol start="2">
-<li>相对source路径引用</li>
-</ol>
-<p><strong>相对路径 + post folder参数</strong></p>
-<p>可以直接以文件名引用</p>
-
+          <!--noindex-->
+            <div class="post-button">
+              <a class="btn" href="/2020/04/11/hello-world/#more" rel="contents">
+                Read more &raquo;
+              </a>
+            </div>
+          <!--/noindex-->
+        
       
     </div>
 
@@ -1240,6 +1079,26 @@ t: query time</code></pre>
   </div>
 
         
+<div class="busuanzi-count">
+  <script async src="https://busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+    <span class="post-meta-item" id="busuanzi_container_site_uv" style="display: none;">
+      <span class="post-meta-item-icon">
+        <i class="fa fa-user"></i>
+      </span>
+      <span class="site-uv" title="Total Visitors">
+        <span id="busuanzi_value_site_uv"></span>
+      </span>
+    </span>
+    <span class="post-meta-divider">|</span>
+    <span class="post-meta-item" id="busuanzi_container_site_pv" style="display: none;">
+      <span class="post-meta-item-icon">
+        <i class="fa fa-eye"></i>
+      </span>
+      <span class="site-pv" title="Total Views">
+        <span id="busuanzi_value_site_pv"></span>
+      </span>
+    </span>
+</div>
 
 
 

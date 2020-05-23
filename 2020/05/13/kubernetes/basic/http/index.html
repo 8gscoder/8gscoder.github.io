@@ -20,16 +20,16 @@
     var CONFIG = {"hostname":"qmloong.github.io","root":"/","scheme":"Pisces","version":"8.0.0-rc.2","exturl":false,"sidebar":{"position":"left","display":"post","padding":18,"offset":12,"onmobile":false},"copycode":{"enable":false,"show_result":false,"style":null},"back2top":{"enable":true,"sidebar":true,"scrollpercent":true},"bookmark":{"enable":true,"color":"#222","save":"auto"},"fancybox":false,"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"algolia":{"hits":{"per_page":10},"labels":{"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}},"localsearch":{"enable":false,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false},"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}}};
   </script>
 
-  <meta name="description" content="net&#x2F;http一、core structHandlerhandler是一个能够处理request，然后写response的抽象处理器 123456789101112131415161718192021222324252627&#x2F;&#x2F; A Handler responds to an HTTP request.&#x2F;&#x2F;&#x2F;&#x2F; ServeHTTP should write reply headers and">
+  <meta name="description" content="net&#x2F;http">
 <meta property="og:type" content="article">
 <meta property="og:title" content="net&#x2F;http">
 <meta property="og:url" content="https://qmloong.github.io/2020/05/13/kubernetes/basic/http/index.html">
 <meta property="og:site_name" content="qmloong&#39;s Blog">
-<meta property="og:description" content="net&#x2F;http一、core structHandlerhandler是一个能够处理request，然后写response的抽象处理器 123456789101112131415161718192021222324252627&#x2F;&#x2F; A Handler responds to an HTTP request.&#x2F;&#x2F;&#x2F;&#x2F; ServeHTTP should write reply headers and">
+<meta property="og:description" content="net&#x2F;http">
 <meta property="og:locale" content="zh">
 <meta property="og:image" content="https://qmloong.github.io/2020/05/13/kubernetes/basic/http/image-20200513025904727.png">
 <meta property="article:published_time" content="2020-05-12T17:20:06.492Z">
-<meta property="article:modified_time" content="2020-05-23T10:41:37.356Z">
+<meta property="article:modified_time" content="2020-05-23T11:09:56.214Z">
 <meta property="article:author" content="qml">
 <meta property="article:tag" content="network">
 <meta property="article:tag" content="go">
@@ -177,7 +177,7 @@
                   <i class="far fa-calendar-check"></i>
                 </span>
                 <span class="post-meta-item-text">Edited on</span>
-                <time title="Modified: 2020-05-23 18:41:37" itemprop="dateModified" datetime="2020-05-23T18:41:37+08:00">2020-05-23</time>
+                <time title="Modified: 2020-05-23 19:09:56" itemprop="dateModified" datetime="2020-05-23T19:09:56+08:00">2020-05-23</time>
               </span>
             <span class="post-meta-item">
               <span class="post-meta-item-icon">
@@ -190,6 +190,13 @@
             </span>
 
           
+            <span class="post-meta-item" title="Views" id="busuanzi_container_page_pv" style="display: none;">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-eye"></i>
+              </span>
+              <span class="post-meta-item-text">Views: </span>
+              <span id="busuanzi_value_page_pv"></span>
+            </span>
 
         </div>
       </header>
@@ -200,7 +207,9 @@
     <div class="post-body" itemprop="articleBody">
 
       
-        <h1 id="net-http"><a href="#net-http" class="headerlink" title="net/http"></a>net/http</h1><h2 id="一、core-struct"><a href="#一、core-struct" class="headerlink" title="一、core struct"></a>一、core struct</h2><h3 id="Handler"><a href="#Handler" class="headerlink" title="Handler"></a>Handler</h3><p>handler是一个能够处理request，然后写response的抽象处理器</p>
+        <h1 id="net-http"><a href="#net-http" class="headerlink" title="net/http"></a>net/http</h1><a id="more"></a>
+
+<h2 id="一、core-struct"><a href="#一、core-struct" class="headerlink" title="一、core struct"></a>一、core struct</h2><h3 id="Handler"><a href="#Handler" class="headerlink" title="Handler"></a>Handler</h3><p>handler是一个能够处理request，然后写response的抽象处理器</p>
 <figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// A Handler responds to an HTTP request.</span></span><br><span class="line"><span class="comment">//</span></span><br><span class="line"><span class="comment">// ServeHTTP should write reply headers and data to the ResponseWriter</span></span><br><span class="line"><span class="comment">// and then return. Returning signals that the request is finished; it</span></span><br><span class="line"><span class="comment">// is not valid to use the ResponseWriter or read from the</span></span><br><span class="line"><span class="comment">// Request.Body after or concurrently with the completion of the</span></span><br><span class="line"><span class="comment">// ServeHTTP call.</span></span><br><span class="line"><span class="comment">//</span></span><br><span class="line"><span class="comment">// Depending on the HTTP client software, HTTP protocol version, and</span></span><br><span class="line"><span class="comment">// any intermediaries between the client and the Go server, it may not</span></span><br><span class="line"><span class="comment">// be possible to read from the Request.Body after writing to the</span></span><br><span class="line"><span class="comment">// ResponseWriter. Cautious handlers should read the Request.Body</span></span><br><span class="line"><span class="comment">// first, and then reply.</span></span><br><span class="line"><span class="comment">//</span></span><br><span class="line"><span class="comment">// Except for reading the body, handlers should not modify the</span></span><br><span class="line"><span class="comment">// provided Request.</span></span><br><span class="line"><span class="comment">//</span></span><br><span class="line"><span class="comment">// If ServeHTTP panics, the server (the caller of ServeHTTP) assumes</span></span><br><span class="line"><span class="comment">// that the effect of the panic was isolated to the active request.</span></span><br><span class="line"><span class="comment">// It recovers the panic, logs a stack trace to the server error log,</span></span><br><span class="line"><span class="comment">// and either closes the network connection or sends an HTTP/2</span></span><br><span class="line"><span class="comment">// RST_STREAM, depending on the HTTP protocol. To abort a handler so</span></span><br><span class="line"><span class="comment">// the client sees an interrupted response but the server doesn't log</span></span><br><span class="line"><span class="comment">// an error, panic with the value ErrAbortHandler.</span></span><br><span class="line"><span class="keyword">type</span> Handler <span class="keyword">interface</span> &#123;</span><br><span class="line">   ServeHTTP(ResponseWriter, *Request)</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
 
 <h3 id="ServeMux"><a href="#ServeMux" class="headerlink" title="ServeMux"></a>ServeMux</h3><p>ServeMux是一个保存着大量handler的处理器multiplexer（多路复用器，联想一下linux的epoll），能都接受request，然后按照注册好的handler进行做多路转发</p>
@@ -379,6 +388,26 @@
   </div>
 
         
+<div class="busuanzi-count">
+  <script async src="https://busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+    <span class="post-meta-item" id="busuanzi_container_site_uv" style="display: none;">
+      <span class="post-meta-item-icon">
+        <i class="fa fa-user"></i>
+      </span>
+      <span class="site-uv" title="Total Visitors">
+        <span id="busuanzi_value_site_uv"></span>
+      </span>
+    </span>
+    <span class="post-meta-divider">|</span>
+    <span class="post-meta-item" id="busuanzi_container_site_pv" style="display: none;">
+      <span class="post-meta-item-icon">
+        <i class="fa fa-eye"></i>
+      </span>
+      <span class="site-pv" title="Total Views">
+        <span id="busuanzi_value_site_pv"></span>
+      </span>
+    </span>
+</div>
 
 
 
