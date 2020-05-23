@@ -17,15 +17,17 @@
 
 <script id="hexo-configurations">
     var NexT = window.NexT || {};
-    var CONFIG = {"hostname":"qmloong.github.io","root":"/","scheme":"Muse","version":"8.0.0-rc.2","exturl":false,"sidebar":{"position":"left","display":"post","padding":18,"offset":12,"onmobile":false},"copycode":{"enable":false,"show_result":false,"style":null},"back2top":{"enable":true,"sidebar":false,"scrollpercent":false},"bookmark":{"enable":false,"color":"#222","save":"auto"},"fancybox":false,"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"algolia":{"hits":{"per_page":10},"labels":{"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}},"localsearch":{"enable":false,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false},"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}}};
+    var CONFIG = {"hostname":"qmloong.github.io","root":"/","scheme":"Pisces","version":"8.0.0-rc.2","exturl":false,"sidebar":{"position":"left","display":"post","padding":18,"offset":12,"onmobile":false},"copycode":{"enable":false,"show_result":false,"style":null},"back2top":{"enable":true,"sidebar":false,"scrollpercent":false},"bookmark":{"enable":false,"color":"#222","save":"auto"},"fancybox":false,"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"algolia":{"hits":{"per_page":10},"labels":{"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}},"localsearch":{"enable":false,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false},"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}}};
   </script>
 
-  <meta property="og:type" content="website">
+  <meta name="description" content="my soul?">
+<meta property="og:type" content="website">
 <meta property="og:title" content="qmloong&#39;s Blog">
 <meta property="og:url" content="https://qmloong.github.io/page/2/index.html">
 <meta property="og:site_name" content="qmloong&#39;s Blog">
+<meta property="og:description" content="my soul?">
 <meta property="og:locale" content="en_US">
-<meta property="article:author" content="8gscoder">
+<meta property="article:author" content="qi">
 <meta name="twitter:card" content="summary">
 
 <link rel="canonical" href="https://qmloong.github.io/page/2/">
@@ -82,6 +84,9 @@
       <div class="header-inner"><div class="site-brand-container">
   <div class="site-nav-toggle">
     <div class="toggle" aria-label="Toggle navigation bar">
+        <span class="toggle-line toggle-line-first"></span>
+        <span class="toggle-line toggle-line-middle"></span>
+        <span class="toggle-line toggle-line-last"></span>
     </div>
   </div>
 
@@ -92,6 +97,7 @@
       <h1 class="site-title">qmloong's Blog</h1>
       <span class="logo-line-after"><i></i></span>
     </a>
+      <p class="site-subtitle" itemprop="description">so cure</p>
   </div>
 
   <div class="site-nav-right">
@@ -102,6 +108,15 @@
 
 
 
+<nav class="site-nav">
+  <ul id="menu" class="main-menu menu">
+        <li class="menu-item menu-item-home">
+
+    <a href="/archives/" rel="section"><i class="fa fa-home fa-fw"></i>Home</a>
+
+  </li>
+  </ul>
+</nav>
 
 
 
@@ -127,12 +142,12 @@
   
   
   <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="en">
-    <link itemprop="mainEntityOfPage" href="https://qmloong.github.io/2020/05/12/kubernetes/some-terms/">
+    <link itemprop="mainEntityOfPage" href="https://qmloong.github.io/2020/05/13/kubernetes/basic/http/">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
       <meta itemprop="image" content="/images/avatar.gif">
-      <meta itemprop="name" content="8gscoder">
-      <meta itemprop="description" content="">
+      <meta itemprop="name" content="qi">
+      <meta itemprop="description" content="my soul?">
     </span>
 
     <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
@@ -141,7 +156,267 @@
       <header class="post-header">
         <h2 class="post-title" itemprop="name headline">
           
-            <a href="/2020/05/12/kubernetes/some-terms/" class="post-title-link" itemprop="url">kubernetes/some-terms</a>
+            <a href="/2020/05/13/kubernetes/basic/http/" class="post-title-link" itemprop="url">net/http</a>
+        </h2>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-calendar"></i>
+              </span>
+              <span class="post-meta-item-text">Posted on</span>
+
+              <time title="Created: 2020-05-13 01:20:06" itemprop="dateCreated datePublished" datetime="2020-05-13T01:20:06+08:00">2020-05-13</time>
+            </span>
+              <span class="post-meta-item">
+                <span class="post-meta-item-icon">
+                  <i class="far fa-calendar-check"></i>
+                </span>
+                <span class="post-meta-item-text">Edited on</span>
+                <time title="Modified: 2020-05-23 18:41:37" itemprop="dateModified" datetime="2020-05-23T18:41:37+08:00">2020-05-23</time>
+              </span>
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-folder"></i>
+              </span>
+              <span class="post-meta-item-text">In</span>
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/go/" itemprop="url" rel="index"><span itemprop="name">go</span></a>
+                </span>
+            </span>
+
+          
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+          <h1 id="net-http"><a href="#net-http" class="headerlink" title="net/http"></a>net/http</h1><h2 id="一、core-struct"><a href="#一、core-struct" class="headerlink" title="一、core struct"></a>一、core struct</h2><h3 id="Handler"><a href="#Handler" class="headerlink" title="Handler"></a>Handler</h3><p>handler是一个能够处理request，然后写response的抽象处理器</p>
+<figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// A Handler responds to an HTTP request.</span></span><br><span class="line"><span class="comment">//</span></span><br><span class="line"><span class="comment">// ServeHTTP should write reply headers and data to the ResponseWriter</span></span><br><span class="line"><span class="comment">// and then return. Returning signals that the request is finished; it</span></span><br><span class="line"><span class="comment">// is not valid to use the ResponseWriter or read from the</span></span><br><span class="line"><span class="comment">// Request.Body after or concurrently with the completion of the</span></span><br><span class="line"><span class="comment">// ServeHTTP call.</span></span><br><span class="line"><span class="comment">//</span></span><br><span class="line"><span class="comment">// Depending on the HTTP client software, HTTP protocol version, and</span></span><br><span class="line"><span class="comment">// any intermediaries between the client and the Go server, it may not</span></span><br><span class="line"><span class="comment">// be possible to read from the Request.Body after writing to the</span></span><br><span class="line"><span class="comment">// ResponseWriter. Cautious handlers should read the Request.Body</span></span><br><span class="line"><span class="comment">// first, and then reply.</span></span><br><span class="line"><span class="comment">//</span></span><br><span class="line"><span class="comment">// Except for reading the body, handlers should not modify the</span></span><br><span class="line"><span class="comment">// provided Request.</span></span><br><span class="line"><span class="comment">//</span></span><br><span class="line"><span class="comment">// If ServeHTTP panics, the server (the caller of ServeHTTP) assumes</span></span><br><span class="line"><span class="comment">// that the effect of the panic was isolated to the active request.</span></span><br><span class="line"><span class="comment">// It recovers the panic, logs a stack trace to the server error log,</span></span><br><span class="line"><span class="comment">// and either closes the network connection or sends an HTTP/2</span></span><br><span class="line"><span class="comment">// RST_STREAM, depending on the HTTP protocol. To abort a handler so</span></span><br><span class="line"><span class="comment">// the client sees an interrupted response but the server doesn't log</span></span><br><span class="line"><span class="comment">// an error, panic with the value ErrAbortHandler.</span></span><br><span class="line"><span class="keyword">type</span> Handler <span class="keyword">interface</span> &#123;</span><br><span class="line">   ServeHTTP(ResponseWriter, *Request)</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<h3 id="ServeMux"><a href="#ServeMux" class="headerlink" title="ServeMux"></a>ServeMux</h3><p>ServeMux是一个保存着大量handler的处理器multiplexer（多路复用器，联想一下linux的epoll），能都接受request，然后按照注册好的handler进行做多路转发</p>
+<p><strong>注意</strong> ServeMux也是一个特殊的Handler，只不过他是一个多路复用的Handler</p>
+<p>先看下面的成员函数，再看下代码的成员变量</p>
+<p><img src="image-20200513025904727.png" alt="image-20200513025904727"></p>
+<figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br><span class="line">66</span><br><span class="line">67</span><br><span class="line">68</span><br><span class="line">69</span><br><span class="line">70</span><br><span class="line">71</span><br><span class="line">72</span><br><span class="line">73</span><br><span class="line">74</span><br><span class="line">75</span><br><span class="line">76</span><br><span class="line">77</span><br><span class="line">78</span><br><span class="line">79</span><br><span class="line">80</span><br><span class="line">81</span><br><span class="line">82</span><br><span class="line">83</span><br><span class="line">84</span><br><span class="line">85</span><br><span class="line">86</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// ServeMux is an HTTP request multiplexer.</span></span><br><span class="line"><span class="comment">// It matches the URL of each incoming request against a list of registered</span></span><br><span class="line"><span class="comment">// patterns and calls the handler for the pattern that</span></span><br><span class="line"><span class="comment">// most closely matches the URL.</span></span><br><span class="line"><span class="comment">//</span></span><br><span class="line"><span class="comment">// Patterns name fixed, rooted paths, like "/favicon.ico",</span></span><br><span class="line"><span class="comment">// or rooted subtrees, like "/images/" (note the trailing slash).</span></span><br><span class="line"><span class="comment">// Longer patterns take precedence over shorter ones, so that</span></span><br><span class="line"><span class="comment">// if there are handlers registered for both "/images/"</span></span><br><span class="line"><span class="comment">// and "/images/thumbnails/", the latter handler will be</span></span><br><span class="line"><span class="comment">// called for paths beginning "/images/thumbnails/" and the</span></span><br><span class="line"><span class="comment">// former will receive requests for any other paths in the</span></span><br><span class="line"><span class="comment">// "/images/" subtree.</span></span><br><span class="line"><span class="comment">//</span></span><br><span class="line"><span class="comment">// Note that since a pattern ending in a slash names a rooted subtree,</span></span><br><span class="line"><span class="comment">// the pattern "/" matches all paths not matched by other registered</span></span><br><span class="line"><span class="comment">// patterns, not just the URL with Path == "/".</span></span><br><span class="line"><span class="comment">//</span></span><br><span class="line"><span class="comment">// If a subtree has been registered and a request is received naming the</span></span><br><span class="line"><span class="comment">// subtree root without its trailing slash, ServeMux redirects that</span></span><br><span class="line"><span class="comment">// request to the subtree root (adding the trailing slash). This behavior can</span></span><br><span class="line"><span class="comment">// be overridden with a separate registration for the path without</span></span><br><span class="line"><span class="comment">// the trailing slash. For example, registering "/images/" causes ServeMux</span></span><br><span class="line"><span class="comment">// to redirect a request for "/images" to "/images/", unless "/images" has</span></span><br><span class="line"><span class="comment">// been registered separately.</span></span><br><span class="line"><span class="comment">//</span></span><br><span class="line"><span class="comment">// Patterns may optionally begin with a host name, restricting matches to</span></span><br><span class="line"><span class="comment">// URLs on that host only. Host-specific patterns take precedence over</span></span><br><span class="line"><span class="comment">// general patterns, so that a handler might register for the two patterns</span></span><br><span class="line"><span class="comment">// "/codesearch" and "codesearch.google.com/" without also taking over</span></span><br><span class="line"><span class="comment">// requests for "http://www.google.com/".</span></span><br><span class="line"><span class="comment">//</span></span><br><span class="line"><span class="comment">// ServeMux also takes care of sanitizing the URL request path and the Host</span></span><br><span class="line"><span class="comment">// header, stripping the port number and redirecting any request containing . or</span></span><br><span class="line"><span class="comment">// .. elements or repeated slashes to an equivalent, cleaner URL.</span></span><br><span class="line"><span class="keyword">type</span> ServeMux <span class="keyword">struct</span> &#123;</span><br><span class="line">   mu    sync.RWMutex</span><br><span class="line">   m     <span class="keyword">map</span>[<span class="keyword">string</span>]muxEntry</span><br><span class="line">   es    []muxEntry <span class="comment">// slice of entries sorted from longest to shortest.</span></span><br><span class="line">   hosts <span class="keyword">bool</span>       <span class="comment">// whether any patterns contain hostnames</span></span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="keyword">type</span> muxEntry <span class="keyword">struct</span> &#123;</span><br><span class="line">   h       Handler</span><br><span class="line">   pattern <span class="keyword">string</span></span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"></span><br><span class="line"><span class="comment">// Handler returns the handler to use for the given request,</span></span><br><span class="line"><span class="comment">// consulting r.Method, r.Host, and r.URL.Path. It always returns</span></span><br><span class="line"><span class="comment">// a non-nil handler. If the path is not in its canonical form, the</span></span><br><span class="line"><span class="comment">// handler will be an internally-generated handler that redirects</span></span><br><span class="line"><span class="comment">// to the canonical path. If the host contains a port, it is ignored</span></span><br><span class="line"><span class="comment">// when matching handlers.</span></span><br><span class="line"><span class="comment">//</span></span><br><span class="line"><span class="comment">// The path and host are used unchanged for CONNECT requests.</span></span><br><span class="line"><span class="comment">//</span></span><br><span class="line"><span class="comment">// Handler also returns the registered pattern that matches the</span></span><br><span class="line"><span class="comment">// request or, in the case of internally-generated redirects,</span></span><br><span class="line"><span class="comment">// the pattern that will match after following the redirect.</span></span><br><span class="line"><span class="comment">//</span></span><br><span class="line"><span class="comment">// If there is no registered handler that applies to the request,</span></span><br><span class="line"><span class="comment">// Handler returns a ``page not found'' handler and an empty pattern.</span></span><br><span class="line"><span class="comment">// Handler是一个做request到Handler的反向映射</span></span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="params">(mux *ServeMux)</span> <span class="title">Handler</span><span class="params">(r *Request)</span> <span class="params">(h Handler, pattern <span class="keyword">string</span>)</span></span> &#123;...&#125;</span><br><span class="line"></span><br><span class="line"></span><br><span class="line"><span class="comment">// ServeHTTP dispatches the request to the handler whose</span></span><br><span class="line"><span class="comment">// pattern most closely matches the request URL.</span></span><br><span class="line"><span class="comment">// ServeHTTP是依据request执行相应Handler的HanleServeHTTP方法</span></span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="params">(mux *ServeMux)</span> <span class="title">ServeHTTP</span><span class="params">(w ResponseWriter, r *Request)</span></span> &#123;...&#125;</span><br><span class="line"></span><br><span class="line"></span><br><span class="line"><span class="comment">// Handle registers the handler for the given pattern.</span></span><br><span class="line"><span class="comment">// If a handler already exists for pattern, Handle panics.</span></span><br><span class="line"><span class="comment">// 注册parrern和 Handler绑定，写到mux.m里，m是个muxEntry</span></span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="params">(mux *ServeMux)</span> <span class="title">Handle</span><span class="params">(pattern <span class="keyword">string</span>, handler Handler)</span></span> &#123;...&#125;</span><br><span class="line"></span><br><span class="line"></span><br><span class="line"><span class="comment">// HandleFunc registers the handler function for the given pattern.</span></span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="params">(mux *ServeMux)</span> <span class="title">HandleFunc</span><span class="params">(pattern <span class="keyword">string</span>, handler <span class="keyword">func</span>(ResponseWriter, *Request)</span>)</span> &#123;</span><br><span class="line">	<span class="keyword">if</span> handler == <span class="literal">nil</span> &#123;</span><br><span class="line">		<span class="built_in">panic</span>(<span class="string">"http: nil handler"</span>)</span><br><span class="line">	&#125;</span><br><span class="line">	mux.Handle(pattern, HandlerFunc(handler))</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+
+
+<h3 id="HandlerFunc"><a href="#HandlerFunc" class="headerlink" title="HandlerFunc"></a>HandlerFunc</h3><figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// The HandlerFunc type is an adapter to allow the use of</span></span><br><span class="line"><span class="comment">// ordinary functions as HTTP handlers. If f is a function</span></span><br><span class="line"><span class="comment">// with the appropriate signature, HandlerFunc(f) is a</span></span><br><span class="line"><span class="comment">// Handler that calls f.</span></span><br><span class="line"><span class="keyword">type</span> HandlerFunc <span class="function"><span class="keyword">func</span><span class="params">(ResponseWriter, *Request)</span></span></span><br><span class="line"></span><br><span class="line"><span class="comment">// ServeHTTP calls f(w, r).</span></span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="params">(f HandlerFunc)</span> <span class="title">ServeHTTP</span><span class="params">(w ResponseWriter, r *Request)</span></span> &#123;</span><br><span class="line">   f(w, r)</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p><strong>「适配器模式」</strong>好处是？</p>
+<h3 id="DefaultServeMux"><a href="#DefaultServeMux" class="headerlink" title="DefaultServeMux"></a>DefaultServeMux</h3><figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// DefaultServeMux is the default ServeMux used by Serve.</span></span><br><span class="line"><span class="keyword">var</span> DefaultServeMux = &amp;defaultServeMux</span><br><span class="line"></span><br><span class="line"><span class="keyword">var</span> defaultServeMux ServeMux</span><br></pre></td></tr></table></figure>
+
+<p>go的http包默认提供的ServeMux，提供全局的一个ServeMux，方便使用</p>
+
+      
+    </div>
+
+    
+    
+    
+      <footer class="post-footer">
+        <div class="post-eof"></div>
+      </footer>
+  </article>
+  
+  
+  
+
+      
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="en">
+    <link itemprop="mainEntityOfPage" href="https://qmloong.github.io/2020/05/12/mac/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.gif">
+      <meta itemprop="name" content="qi">
+      <meta itemprop="description" content="my soul?">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="qmloong's Blog">
+    </span>
+      <header class="post-header">
+        <h2 class="post-title" itemprop="name headline">
+          
+            <a href="/2020/05/12/mac/" class="post-title-link" itemprop="url">Mac操作</a>
+        </h2>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-calendar"></i>
+              </span>
+              <span class="post-meta-item-text">Posted on</span>
+
+              <time title="Created: 2020-05-12 12:15:09" itemprop="dateCreated datePublished" datetime="2020-05-12T12:15:09+08:00">2020-05-12</time>
+            </span>
+              <span class="post-meta-item">
+                <span class="post-meta-item-icon">
+                  <i class="far fa-calendar-check"></i>
+                </span>
+                <span class="post-meta-item-text">Edited on</span>
+                <time title="Modified: 2020-05-23 18:48:06" itemprop="dateModified" datetime="2020-05-23T18:48:06+08:00">2020-05-23</time>
+              </span>
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-folder"></i>
+              </span>
+              <span class="post-meta-item-text">In</span>
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/work/" itemprop="url" rel="index"><span itemprop="name">work</span></a>
+                </span>
+            </span>
+
+          
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+          <h2 id="1-MAC通用快捷键"><a href="#1-MAC通用快捷键" class="headerlink" title="1. MAC通用快捷键"></a>1. MAC通用快捷键</h2><p>mac的编辑文档、选中时、iterm操作时有通用的快捷键，包括在Goland中、sublime、vs code中</p>
+<ol>
+<li>ctrl+e、ctrl+a：快速移动到行首行尾</li>
+<li>ctrl+f、ctrl+b、ctrl+p、ctrl+n：左移右移上下一行，相当于方向键，但是方向键要右手离开键盘</li>
+<li>ctrl+d、ctrl+h：在iterm中光标左删右删，等同于删除键和fn+退格键，goland不适用会和其他键冲突</li>
+<li>ctrl+u、ctrl+k：iterm，删除光标之前所以字幕、删除光标之后所有字幕</li>
+<li>command+shift+w：企业微信</li>
+</ol>
+<h2 id="2-Goland快捷键记录"><a href="#2-Goland快捷键记录" class="headerlink" title="2. Goland快捷键记录"></a>2. Goland快捷键记录</h2><ol>
+<li>command+[ ：上一跳，常用的command+←手要离开键盘不太爽</li>
+<li>command+] ：下一跳</li>
+<li>command+shift+F：在目录下搜索，如果要在指定某个目录，command+1唤出文件列表，点击指定的目录后，再执行此键</li>
+<li>command+shift+O：按文件名搜索文件</li>
+<li>shift+F6：重构，重命名某个变量、包名，在变量的定义的地方按下，Goland会自动替换所有引用的地方（包括注释中同名，Goland会请求确认）</li>
+<li>可以单独设置goland默认bar显示F1-F12，在perferrence中自己找下</li>
+<li>command+n：新建，在目录下也可用如下</li>
+<li>在菜单栏搜索：如下在pkg下新建目录，可以command+n，然后按ctrl+n往下移，找到directory，或者直接输入dir来搜索到Diectory</li>
+</ol>
+<h2 id="3-Alfred"><a href="#3-Alfred" class="headerlink" title="3. Alfred"></a>3. Alfred</h2><h3 id="1-clipboard"><a href="#1-clipboard" class="headerlink" title="1. clipboard"></a>1. clipboard</h3><h3 id="2-snippets"><a href="#2-snippets" class="headerlink" title="2. snippets"></a>2. snippets</h3><p>使用方式：</p>
+<p>可以记录一些经常需要查的账号、一组shell命令等</p>
+<p>支持直接文本替换</p>
+<p>比如经常需要输入–all-namespaces</p>
+<p>可以设置如下</p>
+<p>则在命令行输入“an..”的时候即可自动替换成–all-namespaces</p>
+<h3 id="3-搜索"><a href="#3-搜索" class="headerlink" title="3. 搜索"></a>3. 搜索</h3><p>除了基本的搜索文件功能，alfred还可以搜索chrome的书签，自定义搜索</p>
+<p>比如：</p>
+<p><strong>搜索书签</strong></p>
+<p><strong>自定义搜索</strong></p>
+<h3 id="4-打开goland-project"><a href="#4-打开goland-project" class="headerlink" title="4. 打开goland project"></a>4. 打开goland project</h3><ol>
+<li>alfred付费功能，破解版</li>
+<li>安装jetbrains的workflow（JetBrains - Open project.alfredworkflow）</li>
+<li>配置goland</li>
+</ol>
+
+      
+    </div>
+
+    
+    
+    
+      <footer class="post-footer">
+        <div class="post-eof"></div>
+      </footer>
+  </article>
+  
+  
+  
+
+      
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="en">
+    <link itemprop="mainEntityOfPage" href="https://qmloong.github.io/2020/05/12/kubernetes/runtime/store/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.gif">
+      <meta itemprop="name" content="qi">
+      <meta itemprop="description" content="my soul?">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="qmloong's Blog">
+    </span>
+      <header class="post-header">
+        <h2 class="post-title" itemprop="name headline">
+          
+            <a href="/2020/05/12/kubernetes/runtime/store/" class="post-title-link" itemprop="url">kubernetes/runtime/store</a>
+        </h2>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-calendar"></i>
+              </span>
+              <span class="post-meta-item-text">Posted on</span>
+
+              <time title="Created: 2020-05-12 01:10:15" itemprop="dateCreated datePublished" datetime="2020-05-12T01:10:15+08:00">2020-05-12</time>
+            </span>
+              <span class="post-meta-item">
+                <span class="post-meta-item-icon">
+                  <i class="far fa-calendar-check"></i>
+                </span>
+                <span class="post-meta-item-text">Edited on</span>
+                <time title="Modified: 2020-05-14 00:38:55" itemprop="dateModified" datetime="2020-05-14T00:38:55+08:00">2020-05-14</time>
+              </span>
+
+          
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+          <h1 id="读写后端存储ETCD"><a href="#读写后端存储ETCD" class="headerlink" title="读写后端存储ETCD"></a>读写后端存储ETCD</h1>
+      
+    </div>
+
+    
+    
+    
+      <footer class="post-footer">
+        <div class="post-eof"></div>
+      </footer>
+  </article>
+  
+  
+  
+
+      
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="en">
+    <link itemprop="mainEntityOfPage" href="https://qmloong.github.io/2020/05/12/kubernetes/some-terms/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.gif">
+      <meta itemprop="name" content="qi">
+      <meta itemprop="description" content="my soul?">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="qmloong's Blog">
+    </span>
+      <header class="post-header">
+        <h2 class="post-title" itemprop="name headline">
+          
+            <a href="/2020/05/12/kubernetes/some-terms/" class="post-title-link" itemprop="url">kubernetes/terms</a>
         </h2>
 
         <div class="post-meta">
@@ -158,8 +433,17 @@
                   <i class="far fa-calendar-check"></i>
                 </span>
                 <span class="post-meta-item-text">Edited on</span>
-                <time title="Modified: 2020-05-21 23:19:00" itemprop="dateModified" datetime="2020-05-21T23:19:00+08:00">2020-05-21</time>
+                <time title="Modified: 2020-05-23 18:46:12" itemprop="dateModified" datetime="2020-05-23T18:46:12+08:00">2020-05-23</time>
               </span>
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-folder"></i>
+              </span>
+              <span class="post-meta-item-text">In</span>
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/kubernetes/" itemprop="url" rel="index"><span itemprop="name">kubernetes</span></a>
+                </span>
+            </span>
 
           
 
@@ -172,7 +456,7 @@
     <div class="post-body" itemprop="articleBody">
 
       
-          <p>代码命名中有一些常见的单词，有特别的意思，在这里记录一下</p>
+          <h1 id="Terms"><a href="#Terms" class="headerlink" title="Terms"></a>Terms</h1><p>代码命名中有一些常见的单词，有特别的意思，在这里记录一下</p>
 <ol>
 <li><p>Legacy：遗留，即将废弃的意思</p>
 </li>
@@ -228,8 +512,8 @@
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
       <meta itemprop="image" content="/images/avatar.gif">
-      <meta itemprop="name" content="8gscoder">
-      <meta itemprop="description" content="">
+      <meta itemprop="name" content="qi">
+      <meta itemprop="description" content="my soul?">
     </span>
 
     <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
@@ -238,7 +522,7 @@
       <header class="post-header">
         <h2 class="post-title" itemprop="name headline">
           
-            <a href="/2020/05/10/database/" class="post-title-link" itemprop="url">DB高负载</a>
+            <a href="/2020/05/10/database/" class="post-title-link" itemprop="url">DB troubleshooting</a>
         </h2>
 
         <div class="post-meta">
@@ -255,7 +539,7 @@
                   <i class="far fa-calendar-check"></i>
                 </span>
                 <span class="post-meta-item-text">Edited on</span>
-                <time title="Modified: 2020-05-21 01:14:32" itemprop="dateModified" datetime="2020-05-21T01:14:32+08:00">2020-05-21</time>
+                <time title="Modified: 2020-05-23 18:46:47" itemprop="dateModified" datetime="2020-05-23T18:46:47+08:00">2020-05-23</time>
               </span>
             <span class="post-meta-item">
               <span class="post-meta-item-icon">
@@ -263,7 +547,7 @@
               </span>
               <span class="post-meta-item-text">In</span>
                 <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-                  <a href="/categorie/Database/" itemprop="url" rel="index"><span itemprop="name">Database</span></a>
+                  <a href="/categories/mysql/" itemprop="url" rel="index"><span itemprop="name">mysql</span></a>
                 </span>
             </span>
 
@@ -350,99 +634,7 @@ t: query time</code></pre>
 <h3 id="四、case记录"><a href="#四、case记录" class="headerlink" title="四、case记录"></a>四、case记录</h3><ol>
 <li>内部用户并发删除资源，上层逻辑没有限频，导致DB慢查询，而由于一个旁路业务连接数异常较高，导致连接数较高，慢查询导致并发连接数升高，导致达到连接数最大值，导致无法建立新连接，从而导致雪崩。</li>
 </ol>
-<h2 id=""><a href="#" class="headerlink" title=""></a></h2>
-      
-    </div>
 
-    
-    
-    
-      <footer class="post-footer">
-        <div class="post-eof"></div>
-      </footer>
-  </article>
-  
-  
-  
-
-      
-  
-  
-  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="en">
-    <link itemprop="mainEntityOfPage" href="https://qmloong.github.io/2020/04/19/kube-controller-manager/">
-
-    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="image" content="/images/avatar.gif">
-      <meta itemprop="name" content="8gscoder">
-      <meta itemprop="description" content="">
-    </span>
-
-    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="qmloong's Blog">
-    </span>
-      <header class="post-header">
-        <h2 class="post-title" itemprop="name headline">
-          
-            <a href="/2020/04/19/kube-controller-manager/" class="post-title-link" itemprop="url">kube-controller-manager</a>
-        </h2>
-
-        <div class="post-meta">
-            <span class="post-meta-item">
-              <span class="post-meta-item-icon">
-                <i class="far fa-calendar"></i>
-              </span>
-              <span class="post-meta-item-text">Posted on</span>
-
-              <time title="Created: 2020-04-19 18:25:45" itemprop="dateCreated datePublished" datetime="2020-04-19T18:25:45+08:00">2020-04-19</time>
-            </span>
-              <span class="post-meta-item">
-                <span class="post-meta-item-icon">
-                  <i class="far fa-calendar-check"></i>
-                </span>
-                <span class="post-meta-item-text">Edited on</span>
-                <time title="Modified: 2020-04-23 10:04:33" itemprop="dateModified" datetime="2020-04-23T10:04:33+08:00">2020-04-23</time>
-              </span>
-            <span class="post-meta-item">
-              <span class="post-meta-item-icon">
-                <i class="far fa-folder"></i>
-              </span>
-              <span class="post-meta-item-text">In</span>
-                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-                  <a href="/categorie/Kubernetes/" itemprop="url" rel="index"><span itemprop="name">Kubernetes</span></a>
-                </span>
-            </span>
-
-          
-
-        </div>
-      </header>
-
-    
-    
-    
-    <div class="post-body" itemprop="articleBody">
-
-      
-          <h1 id="Kube-controller-manager源码阅读"><a href="#Kube-controller-manager源码阅读" class="headerlink" title="Kube-controller-manager源码阅读"></a>Kube-controller-manager源码阅读</h1><h2 id="杂"><a href="#杂" class="headerlink" title="杂"></a>杂</h2><p>最近接手组里的两个operator，代码逻辑看完其实没什么好疑惑的，但是其实对底层用到的controller模式似懂非懂，决定还是好好看下controller-manager的代码，熟悉下controller模式的原理、informer原理。</p>
-<p>GitVersion: release-1.14</p>
-<h2 id="Kube-Controller-Manager"><a href="#Kube-Controller-Manager" class="headerlink" title="Kube-Controller-Manager"></a>Kube-Controller-Manager</h2><h3 id="一、整体框架"><a href="#一、整体框架" class="headerlink" title="一、整体框架"></a>一、整体框架</h3><h4 id=""><a href="#" class="headerlink" title=""></a></h4><h3 id="二、Informer"><a href="#二、Informer" class="headerlink" title="二、Informer"></a>二、Informer</h3><h3 id="三、k8s一些机制"><a href="#三、k8s一些机制" class="headerlink" title="三、k8s一些机制"></a>三、k8s一些机制</h3><h4 id="List-Watch"><a href="#List-Watch" class="headerlink" title="List-Watch"></a>List-Watch</h4><h4 id="Kubernetes的同步、如何保证一致性"><a href="#Kubernetes的同步、如何保证一致性" class="headerlink" title="Kubernetes的同步、如何保证一致性"></a>Kubernetes的同步、如何保证一致性</h4><h4 id="EventBroadcaster"><a href="#EventBroadcaster" class="headerlink" title="EventBroadcaster"></a>EventBroadcaster</h4><h4 id="RateLimitingQueue"><a href="#RateLimitingQueue" class="headerlink" title="RateLimitingQueue"></a>RateLimitingQueue</h4><h3 id="四、pkg"><a href="#四、pkg" class="headerlink" title="四、pkg"></a>四、pkg</h3><ol>
-<li><p>glog</p>
-</li>
-<li><p>klog</p>
-</li>
-<li><p>cobra</p>
-</li>
-<li><p>pflag</p>
-</li>
-<li><p>leaderElect</p>
-</li>
-<li><p>http/client</p>
-</li>
-<li></li>
-<li><p>metrics</p>
-</li>
-</ol>
-<h2 id="-1"><a href="#-1" class="headerlink" title=""></a></h2>
       
     </div>
 
@@ -465,8 +657,8 @@ t: query time</code></pre>
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
       <meta itemprop="image" content="/images/avatar.gif">
-      <meta itemprop="name" content="8gscoder">
-      <meta itemprop="description" content="">
+      <meta itemprop="name" content="qi">
+      <meta itemprop="description" content="my soul?">
     </span>
 
     <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
@@ -492,7 +684,7 @@ t: query time</code></pre>
                   <i class="far fa-calendar-check"></i>
                 </span>
                 <span class="post-meta-item-text">Edited on</span>
-                <time title="Modified: 2020-05-21 01:13:59" itemprop="dateModified" datetime="2020-05-21T01:13:59+08:00">2020-05-21</time>
+                <time title="Modified: 2020-05-23 18:27:04" itemprop="dateModified" datetime="2020-05-23T18:27:04+08:00">2020-05-23</time>
               </span>
             <span class="post-meta-item">
               <span class="post-meta-item-icon">
@@ -500,7 +692,7 @@ t: query time</code></pre>
               </span>
               <span class="post-meta-item-text">In</span>
                 <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-                  <a href="/categorie/life/" itemprop="url" rel="index"><span itemprop="name">life</span></a>
+                  <a href="/categories/life/" itemprop="url" rel="index"><span itemprop="name">life</span></a>
                 </span>
             </span>
 
@@ -561,12 +753,104 @@ t: query time</code></pre>
   
   
   <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="en">
+    <link itemprop="mainEntityOfPage" href="https://qmloong.github.io/2020/04/19/kubernetes/kube-controller-manager/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.gif">
+      <meta itemprop="name" content="qi">
+      <meta itemprop="description" content="my soul?">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="qmloong's Blog">
+    </span>
+      <header class="post-header">
+        <h2 class="post-title" itemprop="name headline">
+          
+            <a href="/2020/04/19/kubernetes/kube-controller-manager/" class="post-title-link" itemprop="url">kube-controller-manager</a>
+        </h2>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-calendar"></i>
+              </span>
+              <span class="post-meta-item-text">Posted on</span>
+
+              <time title="Created: 2020-04-19 18:25:45" itemprop="dateCreated datePublished" datetime="2020-04-19T18:25:45+08:00">2020-04-19</time>
+            </span>
+              <span class="post-meta-item">
+                <span class="post-meta-item-icon">
+                  <i class="far fa-calendar-check"></i>
+                </span>
+                <span class="post-meta-item-text">Edited on</span>
+                <time title="Modified: 2020-05-23 18:44:17" itemprop="dateModified" datetime="2020-05-23T18:44:17+08:00">2020-05-23</time>
+              </span>
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-folder"></i>
+              </span>
+              <span class="post-meta-item-text">In</span>
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/kubernetes/" itemprop="url" rel="index"><span itemprop="name">kubernetes</span></a>
+                </span>
+            </span>
+
+          
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+          <h1 id="Kube-controller-manager源码阅读"><a href="#Kube-controller-manager源码阅读" class="headerlink" title="Kube-controller-manager源码阅读"></a>Kube-controller-manager源码阅读</h1><h2 id="杂"><a href="#杂" class="headerlink" title="杂"></a>杂</h2><p>最近接手组里的两个operator，代码逻辑看完其实没什么好疑惑的，但是其实对底层用到的controller模式似懂非懂，决定还是好好看下controller-manager的代码，熟悉下controller模式的原理、informer原理。</p>
+<p>GitVersion: release-1.14</p>
+<h2 id="Kube-Controller-Manager"><a href="#Kube-Controller-Manager" class="headerlink" title="Kube-Controller-Manager"></a>Kube-Controller-Manager</h2><h3 id="一、整体框架"><a href="#一、整体框架" class="headerlink" title="一、整体框架"></a>一、整体框架</h3><h4 id=""><a href="#" class="headerlink" title=""></a></h4><h3 id="二、Informer"><a href="#二、Informer" class="headerlink" title="二、Informer"></a>二、Informer</h3><h3 id="三、k8s一些机制"><a href="#三、k8s一些机制" class="headerlink" title="三、k8s一些机制"></a>三、k8s一些机制</h3><h4 id="List-Watch"><a href="#List-Watch" class="headerlink" title="List-Watch"></a>List-Watch</h4><h4 id="Kubernetes的同步、如何保证一致性"><a href="#Kubernetes的同步、如何保证一致性" class="headerlink" title="Kubernetes的同步、如何保证一致性"></a>Kubernetes的同步、如何保证一致性</h4><h4 id="EventBroadcaster"><a href="#EventBroadcaster" class="headerlink" title="EventBroadcaster"></a>EventBroadcaster</h4><h4 id="RateLimitingQueue"><a href="#RateLimitingQueue" class="headerlink" title="RateLimitingQueue"></a>RateLimitingQueue</h4><h3 id="四、pkg"><a href="#四、pkg" class="headerlink" title="四、pkg"></a>四、pkg</h3><ol>
+<li><p>glog</p>
+</li>
+<li><p>klog</p>
+</li>
+<li><p>cobra</p>
+</li>
+<li><p>pflag</p>
+</li>
+<li><p>leaderElect</p>
+</li>
+<li><p>http/client</p>
+</li>
+<li></li>
+<li><p>metrics</p>
+</li>
+</ol>
+<h2 id="-1"><a href="#-1" class="headerlink" title=""></a></h2>
+      
+    </div>
+
+    
+    
+    
+      <footer class="post-footer">
+        <div class="post-eof"></div>
+      </footer>
+  </article>
+  
+  
+  
+
+      
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="en">
     <link itemprop="mainEntityOfPage" href="https://qmloong.github.io/2020/04/11/10xEngineer/">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
       <meta itemprop="image" content="/images/avatar.gif">
-      <meta itemprop="name" content="8gscoder">
-      <meta itemprop="description" content="">
+      <meta itemprop="name" content="qi">
+      <meta itemprop="description" content="my soul?">
     </span>
 
     <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
@@ -592,7 +876,7 @@ t: query time</code></pre>
                   <i class="far fa-calendar-check"></i>
                 </span>
                 <span class="post-meta-item-text">Edited on</span>
-                <time title="Modified: 2020-04-19 18:58:07" itemprop="dateModified" datetime="2020-04-19T18:58:07+08:00">2020-04-19</time>
+                <time title="Modified: 2020-05-23 18:33:42" itemprop="dateModified" datetime="2020-05-23T18:33:42+08:00">2020-05-23</time>
               </span>
             <span class="post-meta-item">
               <span class="post-meta-item-icon">
@@ -600,7 +884,7 @@ t: query time</code></pre>
               </span>
               <span class="post-meta-item-text">In</span>
                 <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-                  <a href="/categorie/effective/" itemprop="url" rel="index"><span itemprop="name">effective</span></a>
+                  <a href="/categories/work/" itemprop="url" rel="index"><span itemprop="name">work</span></a>
                 </span>
             </span>
 
@@ -732,8 +1016,8 @@ t: query time</code></pre>
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
       <meta itemprop="image" content="/images/avatar.gif">
-      <meta itemprop="name" content="8gscoder">
-      <meta itemprop="description" content="">
+      <meta itemprop="name" content="qi">
+      <meta itemprop="description" content="my soul?">
     </span>
 
     <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
@@ -759,7 +1043,7 @@ t: query time</code></pre>
                   <i class="far fa-calendar-check"></i>
                 </span>
                 <span class="post-meta-item-text">Edited on</span>
-                <time title="Modified: 2020-04-12 22:15:45" itemprop="dateModified" datetime="2020-04-12T22:15:45+08:00">2020-04-12</time>
+                <time title="Modified: 2020-05-23 18:35:33" itemprop="dateModified" datetime="2020-05-23T18:35:33+08:00">2020-05-23</time>
               </span>
             <span class="post-meta-item">
               <span class="post-meta-item-icon">
@@ -767,7 +1051,7 @@ t: query time</code></pre>
               </span>
               <span class="post-meta-item-text">In</span>
                 <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-                  <a href="/categorie/chaos/" itemprop="url" rel="index"><span itemprop="name">chaos</span></a>
+                  <a href="/categories/chaos/" itemprop="url" rel="index"><span itemprop="name">chaos</span></a>
                 </span>
             </span>
 
@@ -787,12 +1071,10 @@ t: query time</code></pre>
 <ol>
 <li>欺骗自己是写给别人看的…这样会稍微认真对待每次记录</li>
 <li>同样，em..因为可能以为别人会看，所以会有点动力去写些东西</li>
-<li>把乱七八糟的事情慢慢梳理起来，recorded</li>
+<li>把乱七八糟的事情慢慢梳理起来</li>
 </ol>
-<p>同时在这里持续记录下使用hexo和gh pages搭建blog过程中遇到的坑吧</p>
 <h1 id="Hexo-Record"><a href="#Hexo-Record" class="headerlink" title="Hexo Record"></a>Hexo Record</h1><h4 id="1-Set-up"><a href="#1-Set-up" class="headerlink" title="1. Set up"></a>1. Set up</h4><p>​    基本上搭建起来不是很难，按照官网文档走就可以了</p>
-<h4 id="2-theme使用的是Chric"><a href="#2-theme使用的是Chric" class="headerlink" title="2. theme使用的是Chric"></a>2. theme使用的是Chric</h4><p>​    懒得记录Chric有啥自己改的地方了，所以直接把hexo的整个工程文件push到gh private repo上去了..把Chric主题作为submoudule搞到里面去了，隔一段时间就push一下吧，以后电脑出问题，就直接pull下来</p>
-<h4 id="3-markdown工具"><a href="#3-markdown工具" class="headerlink" title="3. markdown工具"></a>3. markdown工具</h4><p>​    直接撸markdown还是比较烦的，mac下搞了个工具来写markdown还是挺方便的</p>
+<h4 id="2-theme使用的是next"><a href="#2-theme使用的是next" class="headerlink" title="2. theme使用的是next"></a>2. theme使用的是next</h4><h4 id="3-markdown工具"><a href="#3-markdown工具" class="headerlink" title="3. markdown工具"></a>3. markdown工具</h4><p>​    直接撸markdown还是比较烦的，mac下搞了个工具来写markdown还是挺方便的</p>
 <p><img src="/2020/04/11/hello-world/image-20200412214913034.png" alt="image-20200412214913034"></p>
 <h4 id="4-图片问题"><a href="#4-图片问题" class="headerlink" title="4. 图片问题"></a>4. 图片问题</h4><p><strong>hexo要引用图片的话</strong></p>
 <ol>
@@ -890,24 +1172,26 @@ t: query time</code></pre>
 
       <div class="site-overview-wrap sidebar-panel">
         <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
-  <p class="site-author-name" itemprop="name">8gscoder</p>
-  <div class="site-description" itemprop="description"></div>
+  <p class="site-author-name" itemprop="name">qi</p>
+  <div class="site-description" itemprop="description">my soul?</div>
 </div>
 <div class="site-state-wrap motion-element">
   <nav class="site-state">
       <div class="site-state-item site-state-posts">
           <a href="/archives">
-          <span class="site-state-item-count">16</span>
+          <span class="site-state-item-count">19</span>
           <span class="site-state-item-name">posts</span>
         </a>
       </div>
       <div class="site-state-item site-state-categories">
+            <a href="/categories/">
         <span class="site-state-item-count">8</span>
-        <span class="site-state-item-name">categories</span>
+        <span class="site-state-item-name">categories</span></a>
       </div>
       <div class="site-state-item site-state-tags">
-        <span class="site-state-item-count">12</span>
-        <span class="site-state-item-name">tags</span>
+            <a href="/tags/">
+        <span class="site-state-item-count">19</span>
+        <span class="site-state-item-name">tags</span></a>
       </div>
   </nav>
 </div>
@@ -937,9 +1221,9 @@ t: query time</code></pre>
   <span class="with-love">
     <i class="fa fa-heart"></i>
   </span>
-  <span class="author" itemprop="copyrightHolder">8gscoder</span>
+  <span class="author" itemprop="copyrightHolder">qi</span>
 </div>
-  <div class="powered-by">Powered by <a href="https://hexo.io/" class="theme-link" rel="noopener" target="_blank">Hexo</a> & <a href="https://theme-next.js.org/muse/" class="theme-link" rel="noopener" target="_blank">NexT.Muse</a>
+  <div class="powered-by">Powered by <a href="https://hexo.io/" class="theme-link" rel="noopener" target="_blank">Hexo</a> & <a href="https://theme-next.js.org/pisces/" class="theme-link" rel="noopener" target="_blank">NexT.Pisces</a>
   </div>
 
         
@@ -965,7 +1249,7 @@ t: query time</code></pre>
 <script src="/js/motion.js"></script>
 
 
-<script src="/js/schemes/muse.js"></script>
+<script src="/js/schemes/pisces.js"></script>
 
 
 <script src="/js/next-boot.js"></script>
