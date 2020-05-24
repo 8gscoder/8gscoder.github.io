@@ -1,0 +1,504 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=2">
+<meta name="theme-color" content="#222">
+<meta name="generator" content="Hexo 4.2.0">
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png">
+  <link rel="mask-icon" href="/images/logo.svg" color="#222">
+
+<link rel="stylesheet" href="/css/main.css">
+
+
+<link rel="stylesheet" href="/lib/font-awesome/css/all.min.css">
+
+<script id="hexo-configurations">
+    var NexT = window.NexT || {};
+    var CONFIG = {"hostname":"qmloong.github.io","root":"/","scheme":"Pisces","version":"8.0.0-rc.2","exturl":false,"sidebar":{"position":"left","display":"post","padding":18,"offset":12,"onmobile":false},"copycode":{"enable":true,"show_result":false,"style":"mac"},"back2top":{"enable":true,"sidebar":true,"scrollpercent":true},"bookmark":{"enable":true,"color":"#222","save":"manual"},"fancybox":false,"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"algolia":{"hits":{"per_page":10},"labels":{"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}},"localsearch":{"enable":false,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false},"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}}};
+  </script>
+
+  <meta name="description" content="INSTALL APIs在看scheme机制的时候，想找一下注册install apis的地方，发现还很绕.. go的代码一向符合命令式风格，kubernetes&#x2F;kube-apiserver也是如此，用了spf13&#x2F;cobra的cmd包 1. Run123456789101112&#x2F;&#x2F; Run runs the specified APIServer.  This should never exi">
+<meta property="og:type" content="article">
+<meta property="og:title" content="kubernetes&#x2F;kube-apiserver&#x2F;install-apis">
+<meta property="og:url" content="https://qmloong.github.io/2020/05/23/kubernetes/kube-apiserver/install-apis/index.html">
+<meta property="og:site_name" content="qmloong&#39;s Blog">
+<meta property="og:description" content="INSTALL APIs在看scheme机制的时候，想找一下注册install apis的地方，发现还很绕.. go的代码一向符合命令式风格，kubernetes&#x2F;kube-apiserver也是如此，用了spf13&#x2F;cobra的cmd包 1. Run123456789101112&#x2F;&#x2F; Run runs the specified APIServer.  This should never exi">
+<meta property="og:locale" content="zh_CN">
+<meta property="article:published_time" content="2020-05-23T13:10:38.950Z">
+<meta property="article:modified_time" content="2020-05-24T10:32:07.947Z">
+<meta property="article:author" content="menglong">
+<meta property="article:tag" content="kube-apiserver">
+<meta name="twitter:card" content="summary">
+
+<link rel="canonical" href="https://qmloong.github.io/2020/05/23/kubernetes/kube-apiserver/install-apis/">
+
+
+<script id="page-configurations">
+  // https://hexo.io/docs/variables.html
+  CONFIG.page = {
+    sidebar: "",
+    isHome : false,
+    isPost : true,
+    lang   : 'zh-CN'
+  };
+</script>
+
+  <title>kubernetes/kube-apiserver/install-apis | qmloong's Blog</title>
+  
+
+
+
+
+
+
+  <noscript>
+  <style>
+  .use-motion .brand,
+  .use-motion .menu-item,
+  .sidebar-inner,
+  .use-motion .post-block,
+  .use-motion .pagination,
+  .use-motion .comments,
+  .use-motion .post-header,
+  .use-motion .post-body,
+  .use-motion .collection-header { opacity: initial; }
+
+  .use-motion .site-title,
+  .use-motion .site-subtitle {
+    opacity: initial;
+    top: initial;
+  }
+
+  .use-motion .logo-line-before i { left: initial; }
+  .use-motion .logo-line-after i { right: initial; }
+  </style>
+</noscript>
+
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage">
+  <div class="container use-motion">
+    <div class="headband"></div>
+
+    <header class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-container">
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="切换导航栏">
+        <span class="toggle-line toggle-line-first"></span>
+        <span class="toggle-line toggle-line-middle"></span>
+        <span class="toggle-line toggle-line-last"></span>
+    </div>
+  </div>
+
+  <div class="site-meta">
+
+    <a href="/" class="brand" rel="start">
+      <span class="logo-line-before"><i></i></span>
+      <h1 class="site-title">qmloong's Blog</h1>
+      <span class="logo-line-after"><i></i></span>
+    </a>
+  </div>
+
+  <div class="site-nav-right">
+    <div class="toggle popup-trigger">
+    </div>
+  </div>
+</div>
+
+
+
+<nav class="site-nav">
+  <ul id="menu" class="main-menu menu">
+        <li class="menu-item menu-item-home">
+
+    <a href="/" rel="section"><i class="fa fa-home fa-fw"></i>首页</a>
+
+  </li>
+        <li class="menu-item menu-item-tags">
+
+    <a href="/tags/" rel="section"><i class="fa fa-tags fa-fw"></i>标签</a>
+
+  </li>
+        <li class="menu-item menu-item-categories">
+
+    <a href="/categories/" rel="section"><i class="fa fa-th fa-fw"></i>分类</a>
+
+  </li>
+        <li class="menu-item menu-item-archives">
+
+    <a href="/archives/" rel="section"><i class="fa fa-archive fa-fw"></i>归档</a>
+
+  </li>
+  </ul>
+</nav>
+
+
+
+
+</div>
+    </header>
+
+    
+  <div class="reading-progress-bar"></div>
+  <a role="button" class="book-mark-link book-mark-link-fixed"></a>
+
+
+    <main class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          
+
+          <div class="content post posts-expand">
+            
+
+    
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="https://qmloong.github.io/2020/05/23/kubernetes/kube-apiserver/install-apis/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.gif">
+      <meta itemprop="name" content="menglong">
+      <meta itemprop="description" content="Love is a heroic dream in a tired life.🐬">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="qmloong's Blog">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          kubernetes/kube-apiserver/install-apis
+        </h1>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-calendar"></i>
+              </span>
+              <span class="post-meta-item-text">发表于</span>
+
+              <time title="创建时间：2020-05-23 21:10:38" itemprop="dateCreated datePublished" datetime="2020-05-23T21:10:38+08:00">2020-05-23</time>
+            </span>
+              <span class="post-meta-item">
+                <span class="post-meta-item-icon">
+                  <i class="far fa-calendar-check"></i>
+                </span>
+                <span class="post-meta-item-text">更新于</span>
+                <time title="修改时间：2020-05-24 18:32:07" itemprop="dateModified" datetime="2020-05-24T18:32:07+08:00">2020-05-24</time>
+              </span>
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-folder"></i>
+              </span>
+              <span class="post-meta-item-text">分类于</span>
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/kubernetes/" itemprop="url" rel="index"><span itemprop="name">kubernetes</span></a>
+                </span>
+            </span>
+
+          
+            <span class="post-meta-item" title="阅读次数" id="busuanzi_container_page_pv" style="display: none;">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-eye"></i>
+              </span>
+              <span class="post-meta-item-text">阅读次数：</span>
+              <span id="busuanzi_value_page_pv"></span>
+            </span>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+        <h1 id="INSTALL-APIs"><a href="#INSTALL-APIs" class="headerlink" title="INSTALL APIs"></a>INSTALL APIs</h1><p>在看scheme机制的时候，想找一下注册install apis的地方，发现还很绕..</p>
+<p>go的代码一向符合命令式风格，kubernetes/kube-apiserver也是如此，用了spf13/cobra的cmd包</p>
+<h3 id="1-Run"><a href="#1-Run" class="headerlink" title="1. Run"></a>1. Run</h3><figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// Run runs the specified APIServer.  This should never exit.</span></span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">Run</span><span class="params">(completeOptions completedServerRunOptions, stopCh &lt;-<span class="keyword">chan</span> <span class="keyword">struct</span>&#123;&#125;)</span> <span class="title">error</span></span> &#123;</span><br><span class="line">   <span class="comment">// To help debugging, immediately log version</span></span><br><span class="line">   glog.Infof(<span class="string">"Version: %+v"</span>, version.Get())</span><br><span class="line"></span><br><span class="line">   server, err := CreateServerChain(completeOptions, stopCh)</span><br><span class="line">   <span class="keyword">if</span> err != <span class="literal">nil</span> &#123;</span><br><span class="line">      <span class="keyword">return</span> err</span><br><span class="line">   &#125;</span><br><span class="line"></span><br><span class="line">   <span class="keyword">return</span> server.PrepareRun().Run(stopCh)</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<h3 id="2-CreateServerChain"><a href="#2-CreateServerChain" class="headerlink" title="2. CreateServerChain"></a>2. CreateServerChain</h3><ol>
+<li>通过completedServerRunOptions构建KubeAPIServerConfig，这是一个master.Config</li>
+<li>通过master.Config和其他外部apiserver的GenericAPIServer，构建master.Master</li>
+<li>聚合kubeAPIServer和apiExtensionsServer的config，构建aggregatorConfig然后构建出aggregatorServer</li>
+<li>返回聚合后的aggregatorServer（aggregator layer是内嵌在Kube-Apiserver里面的）</li>
+</ol>
+<figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br></pre></td><td class="code"><pre><span class="line"></span><br><span class="line"></span><br><span class="line"><span class="comment">// CreateServerChain creates the apiservers connected via delegation.</span></span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">CreateServerChain</span><span class="params">(completedOptions completedServerRunOptions, stopCh &lt;-<span class="keyword">chan</span> <span class="keyword">struct</span>&#123;&#125;)</span> <span class="params">(*genericapiserver.GenericAPIServer, error)</span></span> &#123;</span><br><span class="line">   </span><br><span class="line">  ...</span><br><span class="line">	<span class="comment">//   STEP ONE </span></span><br><span class="line">   kubeAPIServerConfig, insecureServingInfo, serviceResolver, pluginInitializer, admissionPostStartHook, err := CreateKubeAPIServerConfig(completedOptions, nodeTunneler, proxyTransport)</span><br><span class="line">   <span class="keyword">if</span> err != <span class="literal">nil</span> &#123;</span><br><span class="line">      <span class="keyword">return</span> <span class="literal">nil</span>, err</span><br><span class="line">   &#125;</span><br><span class="line"></span><br><span class="line">  ...</span><br><span class="line">  </span><br><span class="line">  <span class="comment">//   STEP TOW</span></span><br><span class="line">   kubeAPIServer, err := CreateKubeAPIServer(kubeAPIServerConfig, apiExtensionsServer.GenericAPIServer, admissionPostStartHook)</span><br><span class="line">   <span class="keyword">if</span> err != <span class="literal">nil</span> &#123;</span><br><span class="line">      <span class="keyword">return</span> <span class="literal">nil</span>, err</span><br><span class="line">   &#125;</span><br><span class="line"></span><br><span class="line">  ...</span><br><span class="line">  </span><br><span class="line">  <span class="comment">//	STEP THREE</span></span><br><span class="line">   <span class="comment">// aggregator comes last in the chain</span></span><br><span class="line">   aggregatorConfig, err := createAggregatorConfig(*kubeAPIServerConfig.GenericConfig, completedOptions.ServerRunOptions, kubeAPIServerConfig.ExtraConfig.VersionedInformers, serviceResolver, proxyTransport, pluginInitializer)</span><br><span class="line">   <span class="keyword">if</span> err != <span class="literal">nil</span> &#123;</span><br><span class="line">      <span class="keyword">return</span> <span class="literal">nil</span>, err</span><br><span class="line">   &#125;</span><br><span class="line"> </span><br><span class="line">   aggregatorServer, err := createAggregatorServer(aggregatorConfig, kubeAPIServer.GenericAPIServer, apiExtensionsServer.Informers)</span><br><span class="line">   <span class="keyword">if</span> err != <span class="literal">nil</span> &#123;</span><br><span class="line">      <span class="comment">// we don't need special handling for innerStopCh because the aggregator server doesn't create any go routines</span></span><br><span class="line">      <span class="keyword">return</span> <span class="literal">nil</span>, err</span><br><span class="line">   &#125;</span><br><span class="line"></span><br><span class="line">  <span class="comment">// ...</span></span><br><span class="line">  <span class="comment">// STEP FOUR (DONE)</span></span><br><span class="line">   <span class="keyword">return</span> aggregatorServer.GenericAPIServer, <span class="literal">nil</span></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>仔细看下如何构建APIServer的，先Complete一下填充master.Config的默认参数，然后New</p>
+<figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// CreateKubeAPIServer creates and wires a workable kube-apiserver</span></span><br><span class="line"><span class="comment">// 从kubeAPIServerConfig的master.Config调了Complete方法填好默认config参数，然后New一个</span></span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">CreateKubeAPIServer</span><span class="params">(kubeAPIServerConfig *master.Config, delegateAPIServer genericapiserver.DelegationTarget, admissionPostStartHook genericapiserver.PostStartHookFunc)</span> <span class="params">(*master.Master, error)</span></span> &#123;</span><br><span class="line">  <span class="comment">// CORE CODE</span></span><br><span class="line">	kubeAPIServer, err := kubeAPIServerConfig.Complete().New(delegateAPIServer)</span><br><span class="line">	<span class="keyword">if</span> err != <span class="literal">nil</span> &#123;</span><br><span class="line">		<span class="keyword">return</span> <span class="literal">nil</span>, err</span><br><span class="line">	&#125;</span><br><span class="line"></span><br><span class="line">	kubeAPIServer.GenericAPIServer.AddPostStartHookOrDie(<span class="string">"start-kube-apiserver-admission-initializer"</span>, admissionPostStartHook)</span><br><span class="line"></span><br><span class="line">	<span class="keyword">return</span> kubeAPIServer, <span class="literal">nil</span></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>看下New，第二个入参名字叫做delegationTarget，其实就是把上一个包装好的链式GenericAPIServer传进来，把他作为自己的GenericAPIServer，再附加一些自己API路由。</p>
+<figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br><span class="line">66</span><br><span class="line">67</span><br><span class="line">68</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// New returns a new instance of Master from the given config.</span></span><br><span class="line"><span class="comment">// Certain config fields will be set to a default value if unset.</span></span><br><span class="line"><span class="comment">// Certain config fields must be specified, including:</span></span><br><span class="line"><span class="comment">//   KubeletClientConfig</span></span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="params">(c completedConfig)</span> <span class="title">New</span><span class="params">(delegationTarget genericapiserver.DelegationTarget)</span> <span class="params">(*Master, error)</span></span> &#123;</span><br><span class="line">  </span><br><span class="line">  ...</span><br><span class="line">  </span><br><span class="line">   s, err := c.GenericConfig.New(<span class="string">"kube-apiserver"</span>, delegationTarget)</span><br><span class="line">   <span class="keyword">if</span> err != <span class="literal">nil</span> &#123;</span><br><span class="line">      <span class="keyword">return</span> <span class="literal">nil</span>, err</span><br><span class="line">   &#125;</span><br><span class="line"></span><br><span class="line">   m := &amp;Master&#123;</span><br><span class="line">      GenericAPIServer: s,</span><br><span class="line">   &#125;</span><br><span class="line"></span><br><span class="line">   <span class="comment">// install legacy rest storage</span></span><br><span class="line">   <span class="keyword">if</span> c.ExtraConfig.APIResourceConfigSource.VersionEnabled(apiv1.SchemeGroupVersion) &#123;</span><br><span class="line">      legacyRESTStorageProvider := corerest.LegacyRESTStorageProvider&#123;</span><br><span class="line">         StorageFactory:              c.ExtraConfig.StorageFactory,</span><br><span class="line">         ProxyTransport:              c.ExtraConfig.ProxyTransport,</span><br><span class="line">         KubeletClientConfig:         c.ExtraConfig.KubeletClientConfig,</span><br><span class="line">         EventTTL:                    c.ExtraConfig.EventTTL,</span><br><span class="line">         ServiceIPRange:              c.ExtraConfig.ServiceIPRange,</span><br><span class="line">         ServiceNodePortRange:        c.ExtraConfig.ServiceNodePortRange,</span><br><span class="line">         LoopbackClientConfig:        c.GenericConfig.LoopbackClientConfig,</span><br><span class="line">         ServiceAccountIssuer:        c.ExtraConfig.ServiceAccountIssuer,</span><br><span class="line">         ServiceAccountAPIAudiences:  c.ExtraConfig.ServiceAccountAPIAudiences,</span><br><span class="line">         ServiceAccountMaxExpiration: c.ExtraConfig.ServiceAccountMaxExpiration,</span><br><span class="line">      &#125;</span><br><span class="line">      m.InstallLegacyAPI(&amp;c, c.GenericConfig.RESTOptionsGetter, legacyRESTStorageProvider)</span><br><span class="line">   &#125;</span><br><span class="line"></span><br><span class="line">   <span class="comment">// The order here is preserved in discovery.</span></span><br><span class="line">   <span class="comment">// If resources with identical names exist in more than one of these groups (e.g. "deployments.apps"" and "deployments.extensions"),</span></span><br><span class="line">   <span class="comment">// the order of this list determines which group an unqualified resource name (e.g. "deployments") should prefer.</span></span><br><span class="line">   <span class="comment">// This priority order is used for local discovery, but it ends up aggregated in `k8s.io/kubernetes/cmd/kube-apiserver/app/aggregator.go</span></span><br><span class="line">   <span class="comment">// with specific priorities.</span></span><br><span class="line">   <span class="comment">// <span class="doctag">TODO:</span> describe the priority all the way down in the RESTStorageProviders and plumb it back through the various discovery</span></span><br><span class="line">   <span class="comment">// handlers that we have.</span></span><br><span class="line">   restStorageProviders := []RESTStorageProvider&#123;</span><br><span class="line">      authenticationrest.RESTStorageProvider&#123;Authenticator: c.GenericConfig.Authentication.Authenticator&#125;,</span><br><span class="line">      authorizationrest.RESTStorageProvider&#123;Authorizer: c.GenericConfig.Authorization.Authorizer, RuleResolver: c.GenericConfig.RuleResolver&#125;,</span><br><span class="line">      autoscalingrest.RESTStorageProvider&#123;&#125;,</span><br><span class="line">      batchrest.RESTStorageProvider&#123;&#125;,</span><br><span class="line">      certificatesrest.RESTStorageProvider&#123;&#125;,</span><br><span class="line">      coordinationrest.RESTStorageProvider&#123;&#125;,</span><br><span class="line">      extensionsrest.RESTStorageProvider&#123;&#125;,</span><br><span class="line">      networkingrest.RESTStorageProvider&#123;&#125;,</span><br><span class="line">      policyrest.RESTStorageProvider&#123;&#125;,</span><br><span class="line">      rbacrest.RESTStorageProvider&#123;Authorizer: c.GenericConfig.Authorization.Authorizer&#125;,</span><br><span class="line">      schedulingrest.RESTStorageProvider&#123;&#125;,</span><br><span class="line">      settingsrest.RESTStorageProvider&#123;&#125;,</span><br><span class="line">      storagerest.RESTStorageProvider&#123;&#125;,</span><br><span class="line">      <span class="comment">// keep apps after extensions so legacy clients resolve the extensions versions of shared resource names.</span></span><br><span class="line">      <span class="comment">// See https://github.com/kubernetes/kubernetes/issues/42392</span></span><br><span class="line">      appsrest.RESTStorageProvider&#123;&#125;,</span><br><span class="line">      admissionregistrationrest.RESTStorageProvider&#123;&#125;,</span><br><span class="line">      eventsrest.RESTStorageProvider&#123;TTL: c.ExtraConfig.EventTTL&#125;,</span><br><span class="line">   &#125;</span><br><span class="line">   m.InstallAPIs(c.ExtraConfig.APIResourceConfigSource, c.GenericConfig.RESTOptionsGetter, restStorageProviders...)</span><br><span class="line"></span><br><span class="line">  ...</span><br><span class="line">  </span><br><span class="line"> </span><br><span class="line">   <span class="keyword">return</span> m, <span class="literal">nil</span></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>看下master.New函数，就是在这里对core的gvk和apis的gvk进行注册REST路由的。</p>
+<p>注意“legacy rest storage”注释的意思，就是core资源注册。</p>
+<ol>
+<li><p>m.InstallLegacyAPI</p>
+<pre><code>1. NewLegacyRESTStorage返回legacyStorage和apiGroupInfo，apiGroupInfo给下面用
+2. InstallLegacyAPIGroup
+     1. installAPIResources
+          1. InstallREST
+               1. installer.Install
+                    1. **registerResourceHandlers**这里才是核心，把GernicServer的Storage绑定到path上。</code></pre></li>
+<li><p>m.InstallAPIs</p>
+<ol>
+<li><p>for循环吊桶各个groups的RESTStorageProvider.NewRESTStorage，获取到APIGroupInfo集合</p>
+<pre><code>1. 调用各个group的NewRESTStorage，这个函数会返回APIGroupInfo结构体，这个结构体里面包含了重要的映射信息，具体看最后</code></pre></li>
+<li><p>遍历APIGroupInfo调用GenericAPIServer的InstallAPIGroup方法，把InstallAPIGroup安装到GenericAPIServer.Handler.GoRestfulContainer里面</p>
+<pre><code>1. installAPIResources
+     1. InstallREST
+          1. Installer.Install
+               1. **registerResourceHandlers**这里才是核心，把GernicServer的Storage绑定到path上。</code></pre></li>
+</ol>
+</li>
+</ol>
+<p>看下New,</p>
+<figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br><span class="line">66</span><br><span class="line">67</span><br><span class="line">68</span><br><span class="line">69</span><br><span class="line">70</span><br><span class="line">71</span><br><span class="line">72</span><br><span class="line">73</span><br><span class="line">74</span><br><span class="line">75</span><br><span class="line">76</span><br><span class="line">77</span><br><span class="line">78</span><br><span class="line">79</span><br><span class="line">80</span><br><span class="line">81</span><br><span class="line">82</span><br><span class="line">83</span><br><span class="line">84</span><br><span class="line">85</span><br><span class="line">86</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// New returns a new instance of Master from the given config.</span></span><br><span class="line"><span class="comment">// Certain config fields will be set to a default value if unset.</span></span><br><span class="line"><span class="comment">// Certain config fields must be specified, including:</span></span><br><span class="line"><span class="comment">//   KubeletClientConfig</span></span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="params">(c completedConfig)</span> <span class="title">New</span><span class="params">(delegationTarget genericapiserver.DelegationTarget)</span> <span class="params">(*Master, error)</span></span> &#123;</span><br><span class="line">   <span class="keyword">if</span> reflect.DeepEqual(c.ExtraConfig.KubeletClientConfig, kubeletclient.KubeletClientConfig&#123;&#125;) &#123;</span><br><span class="line">      <span class="keyword">return</span> <span class="literal">nil</span>, fmt.Errorf(<span class="string">"Master.New() called with empty config.KubeletClientConfig"</span>)</span><br><span class="line">   &#125;</span><br><span class="line"></span><br><span class="line">   s, err := c.GenericConfig.New(<span class="string">"kube-apiserver"</span>, delegationTarget)</span><br><span class="line">   <span class="keyword">if</span> err != <span class="literal">nil</span> &#123;</span><br><span class="line">      <span class="keyword">return</span> <span class="literal">nil</span>, err</span><br><span class="line">   &#125;</span><br><span class="line"></span><br><span class="line">   <span class="keyword">if</span> c.ExtraConfig.EnableLogsSupport &#123;</span><br><span class="line">      routes.Logs&#123;&#125;.Install(s.Handler.GoRestfulContainer)</span><br><span class="line">   &#125;</span><br><span class="line"></span><br><span class="line">   m := &amp;Master&#123;</span><br><span class="line">      GenericAPIServer: s,</span><br><span class="line">   &#125;</span><br><span class="line"></span><br><span class="line">   <span class="comment">// install legacy rest storage</span></span><br><span class="line">   <span class="keyword">if</span> c.ExtraConfig.APIResourceConfigSource.VersionEnabled(apiv1.SchemeGroupVersion) &#123;</span><br><span class="line">      legacyRESTStorageProvider := corerest.LegacyRESTStorageProvider&#123;</span><br><span class="line">         StorageFactory:              c.ExtraConfig.StorageFactory,</span><br><span class="line">         ProxyTransport:              c.ExtraConfig.ProxyTransport,</span><br><span class="line">         KubeletClientConfig:         c.ExtraConfig.KubeletClientConfig,</span><br><span class="line">         EventTTL:                    c.ExtraConfig.EventTTL,</span><br><span class="line">         ServiceIPRange:              c.ExtraConfig.ServiceIPRange,</span><br><span class="line">         ServiceNodePortRange:        c.ExtraConfig.ServiceNodePortRange,</span><br><span class="line">         LoopbackClientConfig:        c.GenericConfig.LoopbackClientConfig,</span><br><span class="line">         ServiceAccountIssuer:        c.ExtraConfig.ServiceAccountIssuer,</span><br><span class="line">         ServiceAccountAPIAudiences:  c.ExtraConfig.ServiceAccountAPIAudiences,</span><br><span class="line">         ServiceAccountMaxExpiration: c.ExtraConfig.ServiceAccountMaxExpiration,</span><br><span class="line">      &#125;</span><br><span class="line">     </span><br><span class="line">     </span><br><span class="line">  	<span class="comment">// NOTICE: INSTALLLAGACYAPI</span></span><br><span class="line">      m.InstallLegacyAPI(&amp;c, c.GenericConfig.RESTOptionsGetter, legacyRESTStorageProvider)</span><br><span class="line">   &#125;</span><br><span class="line"></span><br><span class="line">   <span class="comment">// The order here is preserved in discovery.</span></span><br><span class="line">   <span class="comment">// If resources with identical names exist in more than one of these groups (e.g. "deployments.apps"" and "deployments.extensions"),</span></span><br><span class="line">   <span class="comment">// the order of this list determines which group an unqualified resource name (e.g. "deployments") should prefer.</span></span><br><span class="line">   <span class="comment">// This priority order is used for local discovery, but it ends up aggregated in `k8s.io/kubernetes/cmd/kube-apiserver/app/aggregator.go</span></span><br><span class="line">   <span class="comment">// with specific priorities.</span></span><br><span class="line">   <span class="comment">// <span class="doctag">TODO:</span> describe the priority all the way down in the RESTStorageProviders and plumb it back through the various discovery</span></span><br><span class="line">   <span class="comment">// handlers that we have.</span></span><br><span class="line">   restStorageProviders := []RESTStorageProvider&#123;</span><br><span class="line">      authenticationrest.RESTStorageProvider&#123;Authenticator: c.GenericConfig.Authentication.Authenticator&#125;,</span><br><span class="line">      authorizationrest.RESTStorageProvider&#123;Authorizer: c.GenericConfig.Authorization.Authorizer, RuleResolver: c.GenericConfig.RuleResolver&#125;,</span><br><span class="line">      autoscalingrest.RESTStorageProvider&#123;&#125;,</span><br><span class="line">      batchrest.RESTStorageProvider&#123;&#125;,</span><br><span class="line">      certificatesrest.RESTStorageProvider&#123;&#125;,</span><br><span class="line">      coordinationrest.RESTStorageProvider&#123;&#125;,</span><br><span class="line">      extensionsrest.RESTStorageProvider&#123;&#125;,</span><br><span class="line">      networkingrest.RESTStorageProvider&#123;&#125;,</span><br><span class="line">      policyrest.RESTStorageProvider&#123;&#125;,</span><br><span class="line">      rbacrest.RESTStorageProvider&#123;Authorizer: c.GenericConfig.Authorization.Authorizer&#125;,</span><br><span class="line">      schedulingrest.RESTStorageProvider&#123;&#125;,</span><br><span class="line">      settingsrest.RESTStorageProvider&#123;&#125;,</span><br><span class="line">      storagerest.RESTStorageProvider&#123;&#125;,</span><br><span class="line">      <span class="comment">// keep apps after extensions so legacy clients resolve the extensions versions of shared resource names.</span></span><br><span class="line">      <span class="comment">// See https://github.com/kubernetes/kubernetes/issues/42392</span></span><br><span class="line">      appsrest.RESTStorageProvider&#123;&#125;,</span><br><span class="line">      admissionregistrationrest.RESTStorageProvider&#123;&#125;,</span><br><span class="line">      eventsrest.RESTStorageProvider&#123;TTL: c.ExtraConfig.EventTTL&#125;,</span><br><span class="line">   &#125;</span><br><span class="line">  <span class="comment">// NOTICE: INSTALLAPIS</span></span><br><span class="line">   m.InstallAPIs(c.ExtraConfig.APIResourceConfigSource, c.GenericConfig.RESTOptionsGetter, restStorageProviders...)</span><br><span class="line"></span><br><span class="line">   <span class="keyword">if</span> c.ExtraConfig.Tunneler != <span class="literal">nil</span> &#123;</span><br><span class="line">      m.installTunneler(c.ExtraConfig.Tunneler, corev1client.NewForConfigOrDie(c.GenericConfig.LoopbackClientConfig).Nodes())</span><br><span class="line">   &#125;</span><br><span class="line"></span><br><span class="line">   m.GenericAPIServer.AddPostStartHookOrDie(<span class="string">"ca-registration"</span>, c.ExtraConfig.ClientCARegistrationHook.PostStartHook)</span><br><span class="line">   m.GenericAPIServer.AddPostStartHookOrDie(<span class="string">"start-kube-apiserver-informers"</span>, <span class="function"><span class="keyword">func</span><span class="params">(context genericapiserver.PostStartHookContext)</span> <span class="title">error</span></span> &#123;</span><br><span class="line">      <span class="keyword">if</span> c.ExtraConfig.InternalInformers != <span class="literal">nil</span> &#123;</span><br><span class="line">         c.ExtraConfig.InternalInformers.Start(context.StopCh)</span><br><span class="line">      &#125;</span><br><span class="line">      <span class="keyword">return</span> <span class="literal">nil</span></span><br><span class="line">   &#125;)</span><br><span class="line"></span><br><span class="line">   <span class="keyword">return</span> m, <span class="literal">nil</span></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+
+
+<p>重要的结构体，及之间的关系</p>
+<p>REST</p>
+<p>Storage</p>
+<p>RESTStorageProvider</p>
+<p>ApiGroupInfo</p>
+<p>APIGroupVersion</p>
+
+    </div>
+
+    
+    
+    
+
+      <footer class="post-footer">
+          <div class="post-tags">
+              <a href="/tags/kube-apiserver/" rel="tag"># kube-apiserver</a>
+          </div>
+
+        
+
+
+        
+    <div class="post-nav">
+      <div class="post-nav-item">
+    <a href="/2020/05/22/kubernetes/catalogue/" rel="prev" title="kubernetes/catalogue">
+      <i class="fa fa-chevron-left"></i> kubernetes/catalogue
+    </a></div>
+      <div class="post-nav-item">
+    <a href="/2020/05/23/design-patterns/delegation/" rel="next" title="design-patterns/delegation">
+      design-patterns/delegation <i class="fa fa-chevron-right"></i>
+    </a></div>
+    </div>
+      </footer>
+    
+  </article>
+  
+  
+  
+
+
+
+          </div>
+          
+
+<script>
+  window.addEventListener('tabs:register', () => {
+    let { activeClass } = CONFIG.comments;
+    if (CONFIG.comments.storage) {
+      activeClass = localStorage.getItem('comments_active') || activeClass;
+    }
+    if (activeClass) {
+      let activeTab = document.querySelector(`a[href="#comment-${activeClass}"]`);
+      if (activeTab) {
+        activeTab.click();
+      }
+    }
+  });
+  if (CONFIG.comments.storage) {
+    window.addEventListener('tabs:click', event => {
+      if (!event.target.matches('.tabs-comment .tab-content .tab-pane')) return;
+      let commentClass = event.target.classList[1];
+      localStorage.setItem('comments_active', commentClass);
+    });
+  }
+</script>
+
+        </div>
+          
+  
+  <div class="toggle sidebar-toggle">
+    <span class="toggle-line toggle-line-first"></span>
+    <span class="toggle-line toggle-line-middle"></span>
+    <span class="toggle-line toggle-line-last"></span>
+  </div>
+
+  <aside class="sidebar">
+    <div class="sidebar-inner">
+
+      <ul class="sidebar-nav motion-element">
+        <li class="sidebar-nav-toc">
+          文章目录
+        </li>
+        <li class="sidebar-nav-overview">
+          站点概览
+        </li>
+      </ul>
+
+      <!--noindex-->
+      <div class="post-toc-wrap sidebar-panel">
+          <div class="post-toc motion-element"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#INSTALL-APIs"><span class="nav-number">1.</span> <span class="nav-text">INSTALL APIs</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#1-Run"><span class="nav-number">1.0.1.</span> <span class="nav-text">1. Run</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#2-CreateServerChain"><span class="nav-number">1.0.2.</span> <span class="nav-text">2. CreateServerChain</span></a></li></ol></li></ol></li></ol></div>
+      </div>
+      <!--/noindex-->
+
+      <div class="site-overview-wrap sidebar-panel">
+        <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+  <p class="site-author-name" itemprop="name">menglong</p>
+  <div class="site-description" itemprop="description">Love is a heroic dream in a tired life.🐬</div>
+</div>
+<div class="site-state-wrap motion-element">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+          <a href="/archives/">
+        
+          <span class="site-state-item-count">22</span>
+          <span class="site-state-item-name">日志</span>
+        </a>
+      </div>
+      <div class="site-state-item site-state-categories">
+            <a href="/categories/">
+          
+        <span class="site-state-item-count">8</span>
+        <span class="site-state-item-name">分类</span></a>
+      </div>
+      <div class="site-state-item site-state-tags">
+            <a href="/tags/">
+          
+        <span class="site-state-item-count">18</span>
+        <span class="site-state-item-name">标签</span></a>
+      </div>
+  </nav>
+</div>
+  <div class="links-of-author motion-element">
+      <span class="links-of-author-item">
+        <a href="https://github.com/qmloong" title="GitHub → https:&#x2F;&#x2F;github.com&#x2F;qmloong" rel="noopener" target="_blank"><i class="fab fa-github fa-fw"></i>GitHub</a>
+      </span>
+      <span class="links-of-author-item">
+        <a href="mailto:qmlfighting@gmail.com" title="E-Mail → mailto:qmlfighting@gmail.com" rel="noopener" target="_blank"><i class="fa fa-envelope fa-fw"></i>E-Mail</a>
+      </span>
+  </div>
+
+
+
+      </div>
+        <div class="back-to-top motion-element">
+          <i class="fa fa-arrow-up"></i>
+          <span>0%</span>
+        </div>
+
+    </div>
+  </aside>
+  <div id="sidebar-dimmer"></div>
+
+
+      </div>
+    </main>
+
+    <footer class="footer">
+      <div class="footer-inner">
+        
+
+        
+
+<div class="copyright">
+  
+  &copy; 
+  <span itemprop="copyrightYear">2020</span>
+  <span class="with-love">
+    <i class="fa fa-heart"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">menglong</span>
+</div>
+  <div class="powered-by">由 <a href="https://hexo.io/" class="theme-link" rel="noopener" target="_blank">Hexo</a> & <a href="https://theme-next.js.org/pisces/" class="theme-link" rel="noopener" target="_blank">NexT.Pisces</a> 强力驱动
+  </div>
+
+        
+<div class="busuanzi-count">
+  <script async src="https://busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+    <span class="post-meta-item" id="busuanzi_container_site_uv" style="display: none;">
+      <span class="post-meta-item-icon">
+        <i class="fa fa-user"></i>
+      </span>
+      <span class="site-uv" title="总访客量">
+        <span id="busuanzi_value_site_uv"></span>
+      </span>
+    </span>
+    <span class="post-meta-divider">|</span>
+    <span class="post-meta-item" id="busuanzi_container_site_pv" style="display: none;">
+      <span class="post-meta-item-icon">
+        <i class="fa fa-eye"></i>
+      </span>
+      <span class="site-pv" title="总访问量">
+        <span id="busuanzi_value_site_pv"></span>
+      </span>
+    </span>
+</div>
+
+
+
+
+
+
+
+
+      </div>
+    </footer>
+  </div>
+
+  
+  <script src="/lib/anime.min.js"></script>
+  <script src="/lib/velocity/velocity.min.js"></script>
+  <script src="/lib/velocity/velocity.ui.min.js"></script>
+
+<script src="/js/utils.js"></script>
+
+<script src="/js/motion.js"></script>
+
+
+<script src="/js/schemes/pisces.js"></script>
+
+
+<script src="/js/next-boot.js"></script>
+
+<script src="/js/bookmark.js"></script>
+
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+  
+
+</body>
+</html>
