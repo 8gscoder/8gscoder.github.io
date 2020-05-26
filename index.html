@@ -154,7 +154,7 @@
   
   
   <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
-    <link itemprop="mainEntityOfPage" href="https://qmloong.github.io/2020/05/24/kubernetes/kube-apiserver/API-request-link/">
+    <link itemprop="mainEntityOfPage" href="https://qmloong.github.io/2020/05/26/kubernetes/issure/unversion-type/">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
       <meta itemprop="image" content="/images/avatar.gif">
@@ -168,7 +168,7 @@
       <header class="post-header">
         <h2 class="post-title" itemprop="name headline">
           
-            <a href="/2020/05/24/kubernetes/kube-apiserver/API-request-link/" class="post-title-link" itemprop="url">kubernetes/kube-apiserver/API-request-link</a>
+            <a href="/2020/05/26/kubernetes/issure/unversion-type/" class="post-title-link" itemprop="url">kubernetes/issure/unversion-type</a>
         </h2>
 
         <div class="post-meta">
@@ -179,8 +179,249 @@
               <span class="post-meta-item-text">发表于</span>
               
 
-              <time title="创建时间：2020-05-24 18:31:42 / 修改时间：23:49:28" itemprop="dateCreated datePublished" datetime="2020-05-24T18:31:42+08:00">2020-05-24</time>
+              <time title="创建时间：2020-05-26 07:56:55 / 修改时间：07:58:00" itemprop="dateCreated datePublished" datetime="2020-05-26T07:56:55+08:00">2020-05-26</time>
             </span>
+
+          
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+          <p><img src="/2020/05/26/kubernetes/issure/unversion-type/image-20200526075706724.png" alt="image-20200526075706724"></p>
+<p><a href="https://github.com/kubernetes/kubernetes/issues/19018" target="_blank" rel="noopener">https://github.com/kubernetes/kubernetes/issues/19018</a></p>
+<p>TODO</p>
+
+      
+    </div>
+
+    
+    
+    
+      <footer class="post-footer">
+        <div class="post-eof"></div>
+      </footer>
+  </article>
+  
+  
+  
+
+      
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="https://qmloong.github.io/2020/05/26/kubernetes/kube-apiserver/install-api/install-apis(3)/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.gif">
+      <meta itemprop="name" content="menglong">
+      <meta itemprop="description" content="Love is a heroic dream in a tired life.🐬">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="qmloong's Blog">
+    </span>
+      <header class="post-header">
+        <h2 class="post-title" itemprop="name headline">
+          
+            <a href="/2020/05/26/kubernetes/kube-apiserver/install-api/install-apis(3)/" class="post-title-link" itemprop="url">kubernetes/kube-apiserver/install-api/install-apis(3)</a>
+        </h2>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-calendar"></i>
+              </span>
+              <span class="post-meta-item-text">发表于</span>
+              
+
+              <time title="创建时间：2020-05-26 07:50:45 / 修改时间：09:22:06" itemprop="dateCreated datePublished" datetime="2020-05-26T07:50:45+08:00">2020-05-26</time>
+            </span>
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-folder"></i>
+              </span>
+              <span class="post-meta-item-text">分类于</span>
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/kubernetes/" itemprop="url" rel="index"><span itemprop="name">kubernetes</span></a>
+                </span>
+            </span>
+
+          
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+          <h1 id="Install-APIS"><a href="#Install-APIS" class="headerlink" title="Install-APIS"></a>Install-APIS</h1><p>在installAPIResource的时候，发现不是拿apiGroupInfo进行注册的，而是先构造了个APIGroupVersion的结构，然后调用APIGroupVersion.InstallREST，看下这块是如何做注册的。</p>
+<figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// installAPIResources is a private method for installing the REST storage backing each api groupversionresource</span></span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="params">(s *GenericAPIServer)</span> <span class="title">installAPIResources</span><span class="params">(apiPrefix <span class="keyword">string</span>, apiGroupInfo *APIGroupInfo)</span> <span class="title">error</span></span> &#123;</span><br><span class="line">   <span class="keyword">for</span> _, groupVersion := <span class="keyword">range</span> apiGroupInfo.PrioritizedVersions &#123;</span><br><span class="line">      <span class="keyword">if</span> <span class="built_in">len</span>(apiGroupInfo.VersionedResourcesStorageMap[groupVersion.Version]) == <span class="number">0</span> &#123;</span><br><span class="line">         glog.Warningf(<span class="string">"Skipping API %v because it has no resources."</span>, groupVersion)</span><br><span class="line">         <span class="keyword">continue</span></span><br><span class="line">      &#125;</span><br><span class="line"></span><br><span class="line">     <span class="comment">// NOTICE</span></span><br><span class="line">      apiGroupVersion := s.getAPIGroupVersion(apiGroupInfo, groupVersion, apiPrefix)</span><br><span class="line">      <span class="keyword">if</span> apiGroupInfo.OptionsExternalVersion != <span class="literal">nil</span> &#123;</span><br><span class="line">         apiGroupVersion.OptionsExternalVersion = apiGroupInfo.OptionsExternalVersion</span><br><span class="line">      &#125;</span><br><span class="line">      apiGroupVersion.MaxRequestBodyBytes = s.maxRequestBodyBytes</span><br><span class="line"></span><br><span class="line">      <span class="keyword">if</span> err := apiGroupVersion.InstallREST(s.Handler.GoRestfulContainer); err != <span class="literal">nil</span> &#123;</span><br><span class="line">         <span class="keyword">return</span> fmt.Errorf(<span class="string">"unable to setup API %v: %v"</span>, apiGroupInfo, err)</span><br><span class="line">      &#125;</span><br><span class="line">   &#125;</span><br><span class="line"></span><br><span class="line">   <span class="keyword">return</span> <span class="literal">nil</span></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+
+
+
+
+<p>把APIGroupInfo里面的几个参数透传给了APIGroupVersion，比较重要的是Scheme字段，作为了好几个字段，说明这Scheme有很大的作用。其实可以理解为APIGroupInfo，是对Group的描述，里面包含多版本的Version，而APIGroupVersion则是对指定gv的描述，里面包含了指定gv的版本，以及各种Creater构造器、Convertor转换器、Serializer序列化工具，Typer导出类型的工具、Defaulter填写默认值工具…</p>
+<figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">func</span> <span class="params">(s *GenericAPIServer)</span> <span class="title">newAPIGroupVersion</span><span class="params">(apiGroupInfo *APIGroupInfo, groupVersion schema.GroupVersion)</span> *<span class="title">genericapi</span>.<span class="title">APIGroupVersion</span></span> &#123;</span><br><span class="line">   <span class="keyword">return</span> &amp;genericapi.APIGroupVersion&#123;</span><br><span class="line">      GroupVersion:     groupVersion,</span><br><span class="line">      MetaGroupVersion: apiGroupInfo.MetaGroupVersion,</span><br><span class="line"></span><br><span class="line">      ParameterCodec:  apiGroupInfo.ParameterCodec,</span><br><span class="line">      Serializer:      apiGroupInfo.NegotiatedSerializer,</span><br><span class="line">      Creater:         apiGroupInfo.Scheme,</span><br><span class="line">      Convertor:       apiGroupInfo.Scheme,</span><br><span class="line">      UnsafeConvertor: runtime.UnsafeObjectConvertor(apiGroupInfo.Scheme),</span><br><span class="line">      Defaulter:       apiGroupInfo.Scheme,</span><br><span class="line">      Typer:           apiGroupInfo.Scheme,</span><br><span class="line">      Linker:          runtime.SelfLinker(meta.NewAccessor()),</span><br><span class="line"></span><br><span class="line">      Admit:                        s.admissionControl,</span><br><span class="line">      MinRequestTimeout:            s.minRequestTimeout,</span><br><span class="line">      EnableAPIResponseCompression: s.enableAPIResponseCompression,</span><br><span class="line">      OpenAPIConfig:                s.openAPIConfig,</span><br><span class="line">      Authorizer:                   s.Authorizer,</span><br><span class="line">   &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+
+
+<p>然后看下APIGroupVersion.InstallREST，通过installer.Install，返回了注册好到go-restful的websevice，以及注册后的apiResource，然后把这个apiResource作为discoveryHandler再注册到ws上，然后把ws注册到genericAPIServer传过来的go-restful contianer里面。over！</p>
+<figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// InstallREST registers the REST handlers (storage, watch, proxy and redirect) into a restful Container.</span></span><br><span class="line"><span class="comment">// It is expected that the provided path root prefix will serve all operations. Root MUST NOT end</span></span><br><span class="line"><span class="comment">// in a slash.</span></span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="params">(g *APIGroupVersion)</span> <span class="title">InstallREST</span><span class="params">(container *restful.Container)</span> <span class="title">error</span></span> &#123;</span><br><span class="line">   prefix := path.Join(g.Root, g.GroupVersion.Group, g.GroupVersion.Version)</span><br><span class="line">   installer := &amp;APIInstaller&#123;</span><br><span class="line">      group:                        g,</span><br><span class="line">      prefix:                       prefix,</span><br><span class="line">      minRequestTimeout:            g.MinRequestTimeout,</span><br><span class="line">      enableAPIResponseCompression: g.EnableAPIResponseCompression,</span><br><span class="line">   &#125;</span><br><span class="line"></span><br><span class="line">   apiResources, ws, registrationErrors := installer.Install()</span><br><span class="line">   versionDiscoveryHandler := discovery.NewAPIVersionHandler(g.Serializer, g.GroupVersion, staticLister&#123;apiResources&#125;)</span><br><span class="line">   versionDiscoveryHandler.AddToWebService(ws)</span><br><span class="line">   container.Add(ws)</span><br><span class="line">   <span class="keyword">return</span> utilerrors.NewAggregate(registrationErrors)</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+
+
+<p>然后看下APIInstaller.Install吧，这是一个正儿八经的注册REST地方，而且返回了注册后的APIResource。</p>
+<p>他主要是通过newWebService，在注册的时候，是把serializer转到WebService的Produces里面了。这个后续再看。需要看runtime包了。然后把path（这里的path其实是resource name）registerResourceHandlers到ws上。</p>
+<figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// Install handlers for API resources.</span></span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="params">(a *APIInstaller)</span> <span class="title">Install</span><span class="params">()</span> <span class="params">([]metav1.APIResource, *restful.WebService, []error)</span></span> &#123;</span><br><span class="line">   <span class="keyword">var</span> apiResources []metav1.APIResource</span><br><span class="line">   <span class="keyword">var</span> errors []error</span><br><span class="line">  <span class="comment">// NOTICE</span></span><br><span class="line">   ws := a.newWebService()</span><br><span class="line"></span><br><span class="line">   <span class="comment">// Register the paths in a deterministic (sorted) order to get a deterministic swagger spec.</span></span><br><span class="line">   paths := <span class="built_in">make</span>([]<span class="keyword">string</span>, <span class="built_in">len</span>(a.group.Storage))</span><br><span class="line">   <span class="keyword">var</span> i <span class="keyword">int</span> = <span class="number">0</span></span><br><span class="line">   <span class="keyword">for</span> path := <span class="keyword">range</span> a.group.Storage &#123;</span><br><span class="line">      paths[i] = path</span><br><span class="line">      i++</span><br><span class="line">   &#125;</span><br><span class="line">   sort.Strings(paths)</span><br><span class="line">   <span class="keyword">for</span> _, path := <span class="keyword">range</span> paths &#123;</span><br><span class="line">      apiResource, err := a.registerResourceHandlers(path, a.group.Storage[path], ws)</span><br><span class="line">      <span class="keyword">if</span> err != <span class="literal">nil</span> &#123;</span><br><span class="line">         errors = <span class="built_in">append</span>(errors, fmt.Errorf(<span class="string">"error in registering resource: %s, %v"</span>, path, err))</span><br><span class="line">      &#125;</span><br><span class="line">      <span class="keyword">if</span> apiResource != <span class="literal">nil</span> &#123;</span><br><span class="line">         apiResources = <span class="built_in">append</span>(apiResources, *apiResource)</span><br><span class="line">      &#125;</span><br><span class="line">   &#125;</span><br><span class="line">   <span class="keyword">return</span> apiResources, ws, errors</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"></span><br><span class="line"></span><br><span class="line"><span class="comment">// newWebService creates a new restful webservice with the api installer's prefix and version.</span></span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="params">(a *APIInstaller)</span> <span class="title">newWebService</span><span class="params">()</span> *<span class="title">restful</span>.<span class="title">WebService</span></span> &#123;</span><br><span class="line">	ws := <span class="built_in">new</span>(restful.WebService)</span><br><span class="line">	ws.Path(a.prefix)</span><br><span class="line">	<span class="comment">// a.prefix contains "prefix/group/version"</span></span><br><span class="line">	ws.Doc(<span class="string">"API at "</span> + a.prefix)</span><br><span class="line">	<span class="comment">// Backwards compatibility, we accepted objects with empty content-type at V1.</span></span><br><span class="line">	<span class="comment">// If we stop using go-restful, we can default empty content-type to application/json on an</span></span><br><span class="line">	<span class="comment">// endpoint by endpoint basis</span></span><br><span class="line">	ws.Consumes(<span class="string">"*/*"</span>)</span><br><span class="line">	mediaTypes, streamMediaTypes := negotiation.MediaTypesForSerializer(a.group.Serializer)</span><br><span class="line">	ws.Produces(<span class="built_in">append</span>(mediaTypes, streamMediaTypes...)...)</span><br><span class="line">	ws.ApiVersion(a.group.GroupVersion.String())</span><br><span class="line"></span><br><span class="line">	<span class="keyword">return</span> ws</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+
+
+<p>具体看下registerResourceHandlers</p>
+<p>这是一个600+行的函数。分开看吧</p>
+<figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">func</span> <span class="params">(a *APIInstaller)</span> <span class="title">registerResourceHandlers</span><span class="params">(path <span class="keyword">string</span>, storage rest.Storage, ws *restful.WebService)</span> <span class="params">(*metav1.APIResource, error)</span></span> &#123;</span><br><span class="line">   </span><br><span class="line">  ... </span><br><span class="line">  </span><br><span class="line">  </span><br><span class="line">   <span class="comment">// If there is a subresource, namespace scoping is defined by the parent resource</span></span><br><span class="line">  <span class="comment">// 注册storage的时候，有一些是子资源注册上来的，比如deployment、deployment/status，status就是子资源，和父资源共享一个namespaceScoped属性</span></span><br><span class="line">   namespaceScoped := <span class="literal">true</span></span><br><span class="line">   <span class="keyword">if</span> isSubresource &#123;</span><br><span class="line">      parentStorage, ok := a.group.Storage[resource]</span><br><span class="line">      <span class="keyword">if</span> !ok &#123;</span><br><span class="line">         <span class="keyword">return</span> <span class="literal">nil</span>, fmt.Errorf(<span class="string">"missing parent storage: %q"</span>, resource)</span><br><span class="line">      &#125;</span><br><span class="line">      scoper, ok := parentStorage.(rest.Scoper)</span><br><span class="line">      <span class="keyword">if</span> !ok &#123;</span><br><span class="line">         <span class="keyword">return</span> <span class="literal">nil</span>, fmt.Errorf(<span class="string">"%q must implement scoper"</span>, resource)</span><br><span class="line">      &#125;</span><br><span class="line">      namespaceScoped = scoper.NamespaceScoped()</span><br><span class="line"></span><br><span class="line">   &#125; <span class="keyword">else</span> &#123;</span><br><span class="line">      scoper, ok := storage.(rest.Scoper)</span><br><span class="line">      <span class="keyword">if</span> !ok &#123;</span><br><span class="line">         <span class="keyword">return</span> <span class="literal">nil</span>, fmt.Errorf(<span class="string">"%q must implement scoper"</span>, resource)</span><br><span class="line">      &#125;</span><br><span class="line">      namespaceScoped = scoper.NamespaceScoped()</span><br><span class="line">   &#125;</span><br></pre></td></tr></table></figure>
+
+<figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br><span class="line">66</span><br><span class="line">67</span><br><span class="line">68</span><br><span class="line">69</span><br><span class="line">70</span><br><span class="line">71</span><br><span class="line">72</span><br><span class="line">73</span><br><span class="line">74</span><br><span class="line">75</span><br><span class="line">76</span><br><span class="line">77</span><br><span class="line">78</span><br><span class="line">79</span><br><span class="line">80</span><br><span class="line">81</span><br><span class="line">82</span><br><span class="line">83</span><br><span class="line">84</span><br><span class="line">85</span><br><span class="line">86</span><br><span class="line">87</span><br><span class="line">88</span><br><span class="line">89</span><br><span class="line">90</span><br><span class="line">91</span><br><span class="line">92</span><br><span class="line">93</span><br><span class="line">94</span><br><span class="line">95</span><br><span class="line">96</span><br><span class="line">97</span><br><span class="line">98</span><br><span class="line">99</span><br><span class="line">100</span><br><span class="line">101</span><br><span class="line">102</span><br><span class="line">103</span><br><span class="line">104</span><br><span class="line">105</span><br><span class="line">106</span><br><span class="line">107</span><br><span class="line">108</span><br><span class="line">109</span><br><span class="line">110</span><br><span class="line">111</span><br><span class="line">112</span><br><span class="line">113</span><br><span class="line">114</span><br><span class="line">115</span><br><span class="line">116</span><br><span class="line">117</span><br><span class="line">118</span><br><span class="line">119</span><br><span class="line">120</span><br><span class="line">121</span><br><span class="line">122</span><br><span class="line">123</span><br><span class="line">124</span><br><span class="line">125</span><br><span class="line">126</span><br><span class="line">127</span><br><span class="line">128</span><br><span class="line">129</span><br><span class="line">130</span><br><span class="line">131</span><br><span class="line">132</span><br><span class="line">133</span><br><span class="line">134</span><br><span class="line">135</span><br><span class="line">136</span><br><span class="line">137</span><br><span class="line">138</span><br><span class="line">139</span><br><span class="line">140</span><br><span class="line">141</span><br><span class="line">142</span><br><span class="line">143</span><br><span class="line">144</span><br><span class="line">145</span><br><span class="line">146</span><br><span class="line">147</span><br><span class="line">148</span><br><span class="line">149</span><br><span class="line">150</span><br><span class="line">151</span><br><span class="line">152</span><br><span class="line">153</span><br><span class="line">154</span><br><span class="line">155</span><br><span class="line">156</span><br><span class="line">157</span><br><span class="line">158</span><br></pre></td><td class="code"><pre><span class="line">  <span class="comment">// what verbs are supported by the storage, used to know what verbs we support per path</span></span><br><span class="line"> <span class="comment">// 这里看下该资源支持哪些属性，就是看下这个storage实现了构造器，通过断言来判断，这块留给后面用来判断对应到RESTful API上，对应哪些HTTP Verb</span></span><br><span class="line">  creater, isCreater := storage.(rest.Creater)</span><br><span class="line">  namedCreater, isNamedCreater := storage.(rest.NamedCreater)</span><br><span class="line">  lister, isLister := storage.(rest.Lister)</span><br><span class="line">  getter, isGetter := storage.(rest.Getter)</span><br><span class="line">  getterWithOptions, isGetterWithOptions := storage.(rest.GetterWithOptions)</span><br><span class="line">  gracefulDeleter, isGracefulDeleter := storage.(rest.GracefulDeleter)</span><br><span class="line">  collectionDeleter, isCollectionDeleter := storage.(rest.CollectionDeleter)</span><br><span class="line">  updater, isUpdater := storage.(rest.Updater)</span><br><span class="line">  patcher, isPatcher := storage.(rest.Patcher)</span><br><span class="line">  watcher, isWatcher := storage.(rest.Watcher)</span><br><span class="line">  connecter, isConnecter := storage.(rest.Connecter)</span><br><span class="line">  storageMeta, isMetadata := storage.(rest.StorageMetadata)</span><br><span class="line">  <span class="keyword">if</span> !isMetadata &#123;</span><br><span class="line">     storageMeta = defaultStorageMetadata&#123;&#125;</span><br><span class="line">  &#125;</span><br><span class="line"> <span class="comment">// NOTICE</span></span><br><span class="line">  exporter, isExporter := storage.(rest.Exporter)</span><br><span class="line">  <span class="keyword">if</span> !isExporter &#123;</span><br><span class="line">     exporter = <span class="literal">nil</span></span><br><span class="line">  &#125;</span><br><span class="line"></span><br><span class="line"> <span class="comment">// TODO，不太懂这里是干嘛的，跳过</span></span><br><span class="line">  versionedExportOptions, err := a.group.Creater.New(optionsExternalVersion.WithKind(<span class="string">"ExportOptions"</span>))</span><br><span class="line">  <span class="keyword">if</span> err != <span class="literal">nil</span> &#123;</span><br><span class="line">     <span class="keyword">return</span> <span class="literal">nil</span>, err</span><br><span class="line">  &#125;</span><br><span class="line"></span><br><span class="line">  <span class="keyword">if</span> isNamedCreater &#123;</span><br><span class="line">     isCreater = <span class="literal">true</span></span><br><span class="line">  &#125;</span><br><span class="line"></span><br><span class="line"> <span class="comment">//  下面都是一系列重复的构造，用interface来承载，因为这块也不知道会构造出什么对象，通过Creater的New来通过</span></span><br><span class="line">  <span class="keyword">var</span> versionedList <span class="keyword">interface</span>&#123;&#125;</span><br><span class="line">  <span class="keyword">if</span> isLister &#123;</span><br><span class="line">     list := lister.NewList()</span><br><span class="line">     listGVKs, _, err := a.group.Typer.ObjectKinds(list)</span><br><span class="line">     <span class="keyword">if</span> err != <span class="literal">nil</span> &#123;</span><br><span class="line">        <span class="keyword">return</span> <span class="literal">nil</span>, err</span><br><span class="line">     &#125;</span><br><span class="line">     versionedListPtr, err := a.group.Creater.New(a.group.GroupVersion.WithKind(listGVKs[<span class="number">0</span>].Kind))</span><br><span class="line">     <span class="keyword">if</span> err != <span class="literal">nil</span> &#123;</span><br><span class="line">        <span class="keyword">return</span> <span class="literal">nil</span>, err</span><br><span class="line">     &#125;</span><br><span class="line">     versionedList = indirectArbitraryPointer(versionedListPtr)</span><br><span class="line">  &#125;</span><br><span class="line"> </span><br><span class="line"><span class="comment">// ... 省略其他方法注册</span></span><br><span class="line"> </span><br><span class="line"> <span class="string">``</span><span class="string">` go</span></span><br><span class="line"><span class="string"> </span></span><br><span class="line"><span class="string"> // 下面开始依据是否是namespace的，来构造action（这个action可以简单理解为verb,path,param三元组吧），因为是否是Namespacescoped，在url路径上会体现，比如/apis/core/v1/deployment/default/xx，所以这块需要构造path没啥好看的。</span></span><br><span class="line"><span class="string">  var apiResource metav1.APIResource</span></span><br><span class="line"><span class="string">  // Get the list of actions for the given scope.</span></span><br><span class="line"><span class="string">  switch &#123;</span></span><br><span class="line"><span class="string">  case !namespaceScoped:</span></span><br><span class="line"><span class="string">     // Handle non-namespace scoped resources like nodes.</span></span><br><span class="line"><span class="string">     resourcePath := resource</span></span><br><span class="line"><span class="string">     resourceParams := params</span></span><br><span class="line"><span class="string">     itemPath := resourcePath + "/&#123;name&#125;"</span></span><br><span class="line"><span class="string">     nameParams := append(params, nameParam)</span></span><br><span class="line"><span class="string">     proxyParams := append(nameParams, pathParam)</span></span><br><span class="line"><span class="string">     suffix := ""</span></span><br><span class="line"><span class="string">     if isSubresource &#123;</span></span><br><span class="line"><span class="string">        suffix = "/" + subresource</span></span><br><span class="line"><span class="string">        itemPath = itemPath + suffix</span></span><br><span class="line"><span class="string">        resourcePath = itemPath</span></span><br><span class="line"><span class="string">        resourceParams = nameParams</span></span><br><span class="line"><span class="string">     &#125;</span></span><br><span class="line"><span class="string">     apiResource.Name = path</span></span><br><span class="line"><span class="string">     apiResource.Namespaced = false</span></span><br><span class="line"><span class="string">     apiResource.Kind = resourceKind</span></span><br><span class="line"><span class="string">     namer := handlers.ContextBasedNaming&#123;</span></span><br><span class="line"><span class="string">        SelfLinker:         a.group.Linker,</span></span><br><span class="line"><span class="string">        ClusterScoped:      true,</span></span><br><span class="line"><span class="string">        SelfLinkPathPrefix: gpath.Join(a.prefix, resource) + "/",</span></span><br><span class="line"><span class="string">        SelfLinkPathSuffix: suffix,</span></span><br><span class="line"><span class="string">     &#125;</span></span><br><span class="line"><span class="string"></span></span><br><span class="line"><span class="string">     // Handler for standard REST verbs (GET, PUT, POST and DELETE).</span></span><br><span class="line"><span class="string">     // Add actions at the resource path: /api/apiVersion/resource</span></span><br><span class="line"><span class="string">     actions = appendIf(actions, action&#123;"LIST", resourcePath, resourceParams, namer, false&#125;, isLister)</span></span><br><span class="line"><span class="string">     actions = appendIf(actions, action&#123;"POST", resourcePath, resourceParams, namer, false&#125;, isCreater)</span></span><br><span class="line"><span class="string">     actions = appendIf(actions, action&#123;"DELETECOLLECTION", resourcePath, resourceParams, namer, false&#125;, isCollectionDeleter)</span></span><br><span class="line"><span class="string">     // DEPRECATED in 1.11</span></span><br><span class="line"><span class="string">     actions = appendIf(actions, action&#123;"WATCHLIST", "watch/" + resourcePath, resourceParams, namer, false&#125;, allowWatchList)</span></span><br><span class="line"><span class="string"></span></span><br><span class="line"><span class="string">     // Add actions at the item path: /api/apiVersion/resource/&#123;name&#125;</span></span><br><span class="line"><span class="string">     actions = appendIf(actions, action&#123;"GET", itemPath, nameParams, namer, false&#125;, isGetter)</span></span><br><span class="line"><span class="string">     if getSubpath &#123;</span></span><br><span class="line"><span class="string">        actions = appendIf(actions, action&#123;"GET", itemPath + "/&#123;path:*&#125;", proxyParams, namer, false&#125;, isGetter)</span></span><br><span class="line"><span class="string">     &#125;</span></span><br><span class="line"><span class="string">     actions = appendIf(actions, action&#123;"PUT", itemPath, nameParams, namer, false&#125;, isUpdater)</span></span><br><span class="line"><span class="string">     actions = appendIf(actions, action&#123;"PATCH", itemPath, nameParams, namer, false&#125;, isPatcher)</span></span><br><span class="line"><span class="string">     actions = appendIf(actions, action&#123;"DELETE", itemPath, nameParams, namer, false&#125;, isGracefulDeleter)</span></span><br><span class="line"><span class="string">     // DEPRECATED in 1.11</span></span><br><span class="line"><span class="string">     actions = appendIf(actions, action&#123;"WATCH", "watch/" + itemPath, nameParams, namer, false&#125;, isWatcher)</span></span><br><span class="line"><span class="string">     actions = appendIf(actions, action&#123;"CONNECT", itemPath, nameParams, namer, false&#125;, isConnecter)</span></span><br><span class="line"><span class="string">     actions = appendIf(actions, action&#123;"CONNECT", itemPath + "/&#123;path:*&#125;", proxyParams, namer, false&#125;, isConnecter &amp;&amp; connectSubpath)</span></span><br><span class="line"><span class="string">     break</span></span><br><span class="line"><span class="string">  default:</span></span><br><span class="line"><span class="string">     namespaceParamName := "namespaces"</span></span><br><span class="line"><span class="string">     // Handler for standard REST verbs (GET, PUT, POST and DELETE).</span></span><br><span class="line"><span class="string">     namespaceParam := ws.PathParameter("namespace", "object name and auth scope, such as for teams and projects").DataType("string")</span></span><br><span class="line"><span class="string">     namespacedPath := namespaceParamName + "/&#123;" + "namespace" + "&#125;/" + resource</span></span><br><span class="line"><span class="string">     namespaceParams := []*restful.Parameter&#123;namespaceParam&#125;</span></span><br><span class="line"><span class="string"></span></span><br><span class="line"><span class="string">     resourcePath := namespacedPath</span></span><br><span class="line"><span class="string">     resourceParams := namespaceParams</span></span><br><span class="line"><span class="string">     itemPath := namespacedPath + "/&#123;name&#125;"</span></span><br><span class="line"><span class="string">     nameParams := append(namespaceParams, nameParam)</span></span><br><span class="line"><span class="string">     proxyParams := append(nameParams, pathParam)</span></span><br><span class="line"><span class="string">     itemPathSuffix := ""</span></span><br><span class="line"><span class="string">     if isSubresource &#123;</span></span><br><span class="line"><span class="string">        itemPathSuffix = "/" + subresource</span></span><br><span class="line"><span class="string">        itemPath = itemPath + itemPathSuffix</span></span><br><span class="line"><span class="string">        resourcePath = itemPath</span></span><br><span class="line"><span class="string">        resourceParams = nameParams</span></span><br><span class="line"><span class="string">     &#125;</span></span><br><span class="line"><span class="string">     apiResource.Name = path</span></span><br><span class="line"><span class="string">     apiResource.Namespaced = true</span></span><br><span class="line"><span class="string">     apiResource.Kind = resourceKind</span></span><br><span class="line"><span class="string">     namer := handlers.ContextBasedNaming&#123;</span></span><br><span class="line"><span class="string">        SelfLinker:         a.group.Linker,</span></span><br><span class="line"><span class="string">        ClusterScoped:      false,</span></span><br><span class="line"><span class="string">        SelfLinkPathPrefix: gpath.Join(a.prefix, namespaceParamName) + "/",</span></span><br><span class="line"><span class="string">        SelfLinkPathSuffix: itemPathSuffix,</span></span><br><span class="line"><span class="string">     &#125;</span></span><br><span class="line"><span class="string"></span></span><br><span class="line"><span class="string">     actions = appendIf(actions, action&#123;"LIST", resourcePath, resourceParams, namer, false&#125;, isLister)</span></span><br><span class="line"><span class="string">     actions = appendIf(actions, action&#123;"POST", resourcePath, resourceParams, namer, false&#125;, isCreater)</span></span><br><span class="line"><span class="string">     actions = appendIf(actions, action&#123;"DELETECOLLECTION", resourcePath, resourceParams, namer, false&#125;, isCollectionDeleter)</span></span><br><span class="line"><span class="string">     // DEPRECATED in 1.11</span></span><br><span class="line"><span class="string">     actions = appendIf(actions, action&#123;"WATCHLIST", "watch/" + resourcePath, resourceParams, namer, false&#125;, allowWatchList)</span></span><br><span class="line"><span class="string"></span></span><br><span class="line"><span class="string">     actions = appendIf(actions, action&#123;"GET", itemPath, nameParams, namer, false&#125;, isGetter)</span></span><br><span class="line"><span class="string">     if getSubpath &#123;</span></span><br><span class="line"><span class="string">        actions = appendIf(actions, action&#123;"GET", itemPath + "/&#123;path:*&#125;", proxyParams, namer, false&#125;, isGetter)</span></span><br><span class="line"><span class="string">     &#125;</span></span><br><span class="line"><span class="string">     actions = appendIf(actions, action&#123;"PUT", itemPath, nameParams, namer, false&#125;, isUpdater)</span></span><br><span class="line"><span class="string">     actions = appendIf(actions, action&#123;"PATCH", itemPath, nameParams, namer, false&#125;, isPatcher)</span></span><br><span class="line"><span class="string">     actions = appendIf(actions, action&#123;"DELETE", itemPath, nameParams, namer, false&#125;, isGracefulDeleter)</span></span><br><span class="line"><span class="string">     // DEPRECATED in 1.11</span></span><br><span class="line"><span class="string">     actions = appendIf(actions, action&#123;"WATCH", "watch/" + itemPath, nameParams, namer, false&#125;, isWatcher)</span></span><br><span class="line"><span class="string">     actions = appendIf(actions, action&#123;"CONNECT", itemPath, nameParams, namer, false&#125;, isConnecter)</span></span><br><span class="line"><span class="string">     actions = appendIf(actions, action&#123;"CONNECT", itemPath + "/&#123;path:*&#125;", proxyParams, namer, false&#125;, isConnecter &amp;&amp; connectSubpath)</span></span><br><span class="line"><span class="string"></span></span><br><span class="line"><span class="string">     // list or post across namespace.</span></span><br><span class="line"><span class="string">     // For ex: LIST all pods in all namespaces by sending a LIST request at /api/apiVersion/pods.</span></span><br><span class="line"><span class="string">     // TODO: more strongly type whether a resource allows these actions on "all namespaces" (bulk delete)</span></span><br><span class="line"><span class="string">     if !isSubresource &#123;</span></span><br><span class="line"><span class="string">        actions = appendIf(actions, action&#123;"LIST", resource, params, namer, true&#125;, isLister)</span></span><br><span class="line"><span class="string">        // DEPRECATED in 1.11</span></span><br><span class="line"><span class="string">        actions = appendIf(actions, action&#123;"WATCHLIST", "watch/" + resource, params, namer, true&#125;, allowWatchList)</span></span><br><span class="line"><span class="string">     &#125;</span></span><br><span class="line"><span class="string">     break</span></span><br><span class="line"><span class="string">  &#125;</span></span><br></pre></td></tr></table></figure>
+
+
+<figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br><span class="line">66</span><br><span class="line">67</span><br><span class="line">68</span><br><span class="line">69</span><br><span class="line">70</span><br><span class="line">71</span><br><span class="line">72</span><br><span class="line">73</span><br><span class="line">74</span><br><span class="line">75</span><br><span class="line">76</span><br><span class="line">77</span><br><span class="line">78</span><br><span class="line">79</span><br><span class="line">80</span><br><span class="line">81</span><br><span class="line">82</span><br><span class="line">83</span><br><span class="line">84</span><br><span class="line">85</span><br><span class="line">86</span><br></pre></td><td class="code"><pre><span class="line">  <span class="comment">// 下面就是依据action开始构建restful正儿八经用到的Route了。</span></span><br><span class="line"></span><br><span class="line">   <span class="comment">// Create Routes for the actions.</span></span><br><span class="line">   <span class="comment">// <span class="doctag">TODO:</span> Add status documentation using Returns()</span></span><br><span class="line">   <span class="comment">// Errors (see api/errors/errors.go as well as go-restful router):</span></span><br><span class="line">   <span class="comment">// http.StatusNotFound, http.StatusMethodNotAllowed,</span></span><br><span class="line">   <span class="comment">// http.StatusUnsupportedMediaType, http.StatusNotAcceptable,</span></span><br><span class="line">   <span class="comment">// http.StatusBadRequest, http.StatusUnauthorized, http.StatusForbidden,</span></span><br><span class="line">   <span class="comment">// http.StatusRequestTimeout, http.StatusConflict, http.StatusPreconditionFailed,</span></span><br><span class="line">   <span class="comment">// http.StatusUnprocessableEntity, http.StatusInternalServerError,</span></span><br><span class="line">   <span class="comment">// http.StatusServiceUnavailable</span></span><br><span class="line">   <span class="comment">// and api error codes</span></span><br><span class="line">   <span class="comment">// Note that if we specify a versioned Status object here, we may need to</span></span><br><span class="line">   <span class="comment">// create one for the tests, also</span></span><br><span class="line">   <span class="comment">// Success:</span></span><br><span class="line">   <span class="comment">// http.StatusOK, http.StatusCreated, http.StatusAccepted, http.StatusNoContent</span></span><br><span class="line">   <span class="comment">//</span></span><br><span class="line">   <span class="comment">// test/integration/auth_test.go is currently the most comprehensive status code test</span></span><br><span class="line"></span><br><span class="line">	<span class="comment">/// ...</span></span><br><span class="line"></span><br><span class="line">         <span class="keyword">switch</span> &#123;</span><br><span class="line">         <span class="keyword">case</span> isLister &amp;&amp; isWatcher:</span><br><span class="line">            doc := <span class="string">"list or watch objects of kind "</span> + kind</span><br><span class="line">            <span class="keyword">if</span> isSubresource &#123;</span><br><span class="line">               doc = <span class="string">"list or watch "</span> + subresource + <span class="string">" of objects of kind "</span> + kind</span><br><span class="line">            &#125;</span><br><span class="line">            route.Doc(doc)</span><br><span class="line">         <span class="keyword">case</span> isWatcher:</span><br><span class="line">            doc := <span class="string">"watch objects of kind "</span> + kind</span><br><span class="line">            <span class="keyword">if</span> isSubresource &#123;</span><br><span class="line">               doc = <span class="string">"watch "</span> + subresource + <span class="string">"of objects of kind "</span> + kind</span><br><span class="line">            &#125;</span><br><span class="line">            route.Doc(doc)</span><br><span class="line">         &#125;</span><br><span class="line">         addParams(route, action.Params)</span><br><span class="line">         routes = <span class="built_in">append</span>(routes, route)</span><br><span class="line">      <span class="keyword">case</span> <span class="string">"PUT"</span>: <span class="comment">// Update a resource.</span></span><br><span class="line">         doc := <span class="string">"replace the specified "</span> + kind</span><br><span class="line">         <span class="keyword">if</span> isSubresource &#123;</span><br><span class="line">            doc = <span class="string">"replace "</span> + subresource + <span class="string">" of the specified "</span> + kind</span><br><span class="line">         &#125;</span><br><span class="line">         handler := metrics.InstrumentRouteFunc(action.Verb, resource, subresource, requestScope, restfulUpdateResource(updater, reqScope, admit))</span><br><span class="line">         route := ws.PUT(action.Path).To(handler).</span><br><span class="line">            Doc(doc).</span><br><span class="line">            Param(ws.QueryParameter(<span class="string">"pretty"</span>, <span class="string">"If 'true', then the output is pretty printed."</span>)).</span><br><span class="line">            Operation(<span class="string">"replace"</span>+namespaced+kind+strings.Title(subresource)+operationSuffix).</span><br><span class="line">            Produces(<span class="built_in">append</span>(storageMeta.ProducesMIMETypes(action.Verb), mediaTypes...)...).</span><br><span class="line">            Returns(http.StatusOK, <span class="string">"OK"</span>, producedObject).</span><br><span class="line">            <span class="comment">// <span class="doctag">TODO:</span> in some cases, the API may return a v1.Status instead of the versioned object</span></span><br><span class="line">            <span class="comment">// but currently go-restful can't handle multiple different objects being returned.</span></span><br><span class="line">            Returns(http.StatusCreated, <span class="string">"Created"</span>, producedObject).</span><br><span class="line">            Reads(defaultVersionedObject).</span><br><span class="line">            Writes(producedObject)</span><br><span class="line">         <span class="keyword">if</span> err := addObjectParams(ws, route, versionedUpdateOptions); err != <span class="literal">nil</span> &#123;</span><br><span class="line">            <span class="keyword">return</span> <span class="literal">nil</span>, err</span><br><span class="line">         &#125;</span><br><span class="line">         addParams(route, action.Params)</span><br><span class="line">         routes = <span class="built_in">append</span>(routes, route)</span><br><span class="line"></span><br><span class="line"> 			<span class="comment">// ... 省略其他verb的注册</span></span><br><span class="line"></span><br><span class="line">      <span class="comment">// Note: update GetAuthorizerAttributes() when adding a custom handler.</span></span><br><span class="line">   &#125;</span><br><span class="line"></span><br><span class="line">   apiResource.Verbs = <span class="built_in">make</span>([]<span class="keyword">string</span>, <span class="number">0</span>, <span class="built_in">len</span>(kubeVerbs))</span><br><span class="line">   <span class="keyword">for</span> kubeVerb := <span class="keyword">range</span> kubeVerbs &#123;</span><br><span class="line">      apiResource.Verbs = <span class="built_in">append</span>(apiResource.Verbs, kubeVerb)</span><br><span class="line">   &#125;</span><br><span class="line">   sort.Strings(apiResource.Verbs)</span><br><span class="line"></span><br><span class="line">   <span class="keyword">if</span> shortNamesProvider, ok := storage.(rest.ShortNamesProvider); ok &#123;</span><br><span class="line">      apiResource.ShortNames = shortNamesProvider.ShortNames()</span><br><span class="line">   &#125;</span><br><span class="line">   <span class="keyword">if</span> categoriesProvider, ok := storage.(rest.CategoriesProvider); ok &#123;</span><br><span class="line">      apiResource.Categories = categoriesProvider.Categories()</span><br><span class="line">   &#125;</span><br><span class="line">   <span class="keyword">if</span> gvkProvider, ok := storage.(rest.GroupVersionKindProvider); ok &#123;</span><br><span class="line">      gvk := gvkProvider.GroupVersionKind(a.group.GroupVersion)</span><br><span class="line">      apiResource.Group = gvk.Group</span><br><span class="line">      apiResource.Version = gvk.Version</span><br><span class="line">      apiResource.Kind = gvk.Kind</span><br><span class="line">   &#125;</span><br><span class="line"></span><br><span class="line">   <span class="keyword">return</span> &amp;apiResource, <span class="literal">nil</span></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>主要看下这块，ws.PUT().To.Doc.Param.Operation.Produce.Return.Reads.Writes链，主要是defaultVersionedObject这个的反序列，已经producedObject的序列化</p>
+<figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">case</span> <span class="string">"PUT"</span>: <span class="comment">// Update a resource.</span></span><br><span class="line">	doc := <span class="string">"replace the specified "</span> + kind</span><br><span class="line">	<span class="keyword">if</span> isSubresource &#123;</span><br><span class="line">		doc = <span class="string">"replace "</span> + subresource + <span class="string">" of the specified "</span> + kind</span><br><span class="line">	&#125;</span><br><span class="line">	handler := metrics.InstrumentRouteFunc(action.Verb, resource, subresource, requestScope, restfulUpdateResource(updater, reqScope, admit))</span><br><span class="line">	route := ws.PUT(action.Path).To(handler).</span><br><span class="line">		Doc(doc).</span><br><span class="line">		Param(ws.QueryParameter(<span class="string">"pretty"</span>, <span class="string">"If 'true', then the output is pretty printed."</span>)).</span><br><span class="line">		Operation(<span class="string">"replace"</span>+namespaced+kind+strings.Title(subresource)+operationSuffix).</span><br><span class="line">		Produces(<span class="built_in">append</span>(storageMeta.ProducesMIMETypes(action.Verb), mediaTypes...)...).</span><br><span class="line">		Returns(http.StatusOK, <span class="string">"OK"</span>, producedObject).</span><br><span class="line">		<span class="comment">// <span class="doctag">TODO:</span> in some cases, the API may return a v1.Status instead of the versioned object</span></span><br><span class="line">		<span class="comment">// but currently go-restful can't handle multiple different objects being returned.</span></span><br><span class="line">		Returns(http.StatusCreated, <span class="string">"Created"</span>, producedObject).</span><br><span class="line">		Reads(defaultVersionedObject).</span><br><span class="line">		Writes(producedObject)</span><br><span class="line">	<span class="keyword">if</span> err := addObjectParams(ws, route, versionedUpdateOptions); err != <span class="literal">nil</span> &#123;</span><br><span class="line">		<span class="keyword">return</span> <span class="literal">nil</span>, err</span><br><span class="line">	&#125;</span><br><span class="line">	addParams(route, action.Params)</span><br><span class="line">	routes = <span class="built_in">append</span>(routes, route)</span><br></pre></td></tr></table></figure>
+
+<p>而defaultVersionedObject的由来也很明显，是通过Scheme的Creator来的，然后通过反射而来的。</p>
+<figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line">versionedPtr, err := a.group.Creater.New(fqKindToRegister)</span><br><span class="line"><span class="keyword">if</span> err != <span class="literal">nil</span> &#123;</span><br><span class="line">   <span class="keyword">return</span> <span class="literal">nil</span>, err</span><br><span class="line">&#125;</span><br><span class="line">defaultVersionedObject := indirectArbitraryPointer(versionedPtr)</span><br><span class="line"></span><br><span class="line"></span><br><span class="line"></span><br><span class="line"><span class="comment">// indirectArbitraryPointer returns *ptrToObject for an arbitrary pointer</span></span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">indirectArbitraryPointer</span><span class="params">(ptrToObject <span class="keyword">interface</span>&#123;&#125;)</span> <span class="title">interface</span></span>&#123;&#125; &#123;</span><br><span class="line">	<span class="keyword">return</span> reflect.Indirect(reflect.ValueOf(ptrToObject)).Interface()</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+
+
+<p>看完了上面的会发现，这块就是注册路由，依据不同包StorageProvider，各个资源在pkg/regitry下面是否有重写Store的Create，或者其他接口，例外最重要的是需要提供New和NewList这两个函数指针给Store，不然上层分装的New接口在正儿八经registerResourceHandlers的时候，没把结构体注册到restful的处理链上。</p>
+
+      
+    </div>
+
+    
+    
+    
+      <footer class="post-footer">
+        <div class="post-eof"></div>
+      </footer>
+  </article>
+  
+  
+  
+
+      
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="https://qmloong.github.io/2020/05/25/kubernetes/cluster-autoscaler/cluster-autoscaler/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.gif">
+      <meta itemprop="name" content="menglong">
+      <meta itemprop="description" content="Love is a heroic dream in a tired life.🐬">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="qmloong's Blog">
+    </span>
+      <header class="post-header">
+        <h2 class="post-title" itemprop="name headline">
+          
+            <a href="/2020/05/25/kubernetes/cluster-autoscaler/cluster-autoscaler/" class="post-title-link" itemprop="url">kubernetes/cluster-autoscaler/cluster-autoscaler</a>
+        </h2>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-calendar"></i>
+              </span>
+              <span class="post-meta-item-text">发表于</span>
+              
+
+              <time title="创建时间：2020-05-25 11:50:30 / 修改时间：11:51:07" itemprop="dateCreated datePublished" datetime="2020-05-25T11:50:30+08:00">2020-05-25</time>
+            </span>
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-folder"></i>
+              </span>
+              <span class="post-meta-item-text">分类于</span>
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/kubernetes/" itemprop="url" rel="index"><span itemprop="name">kubernetes</span></a>
+                </span>
+            </span>
+
+          
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+          <h1 id="cluster-autoscaler"><a href="#cluster-autoscaler" class="headerlink" title="cluster-autoscaler"></a>cluster-autoscaler</h1>
+      
+    </div>
+
+    
+    
+    
+      <footer class="post-footer">
+        <div class="post-eof"></div>
+      </footer>
+  </article>
+  
+  
+  
+
+      
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="https://qmloong.github.io/2020/05/24/kubernetes/kube-apiserver/install-api/install-apis(2)/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.gif">
+      <meta itemprop="name" content="menglong">
+      <meta itemprop="description" content="Love is a heroic dream in a tired life.🐬">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="qmloong's Blog">
+    </span>
+      <header class="post-header">
+        <h2 class="post-title" itemprop="name headline">
+          
+            <a href="/2020/05/24/kubernetes/kube-apiserver/install-api/install-apis(2)/" class="post-title-link" itemprop="url">kubernetes/kube-apiserver/install-api/install-apis(2)</a>
+        </h2>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-calendar"></i>
+              </span>
+              <span class="post-meta-item-text">发表于</span>
+
+              <time title="创建时间：2020-05-24 18:31:42" itemprop="dateCreated datePublished" datetime="2020-05-24T18:31:42+08:00">2020-05-24</time>
+            </span>
+              <span class="post-meta-item">
+                <span class="post-meta-item-icon">
+                  <i class="far fa-calendar-check"></i>
+                </span>
+                <span class="post-meta-item-text">更新于</span>
+                <time title="修改时间：2020-05-26 09:11:40" itemprop="dateModified" datetime="2020-05-26T09:11:40+08:00">2020-05-26</time>
+              </span>
             <span class="post-meta-item">
               <span class="post-meta-item-icon">
                 <i class="far fa-folder"></i>
@@ -210,7 +451,7 @@
 <p>APIGroupVersion</p>
           <!--noindex-->
             <div class="post-button">
-              <a class="btn" href="/2020/05/24/kubernetes/kube-apiserver/API-request-link/#more" rel="contents">
+              <a class="btn" href="/2020/05/24/kubernetes/kube-apiserver/install-api/install-apis(2)/#more" rel="contents">
                 阅读全文 &raquo;
               </a>
             </div>
@@ -362,7 +603,7 @@
   
   
   <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
-    <link itemprop="mainEntityOfPage" href="https://qmloong.github.io/2020/05/23/kubernetes/kube-apiserver/install-apis/">
+    <link itemprop="mainEntityOfPage" href="https://qmloong.github.io/2020/05/23/kubernetes/kube-apiserver/install-api/install-apis(1)/">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
       <meta itemprop="image" content="/images/avatar.gif">
@@ -376,7 +617,7 @@
       <header class="post-header">
         <h2 class="post-title" itemprop="name headline">
           
-            <a href="/2020/05/23/kubernetes/kube-apiserver/install-apis/" class="post-title-link" itemprop="url">kubernetes/kube-apiserver/install-apis</a>
+            <a href="/2020/05/23/kubernetes/kube-apiserver/install-api/install-apis(1)/" class="post-title-link" itemprop="url">kubernetes/kube-apiserver/install-api/install-apis(1)</a>
         </h2>
 
         <div class="post-meta">
@@ -393,7 +634,7 @@
                   <i class="far fa-calendar-check"></i>
                 </span>
                 <span class="post-meta-item-text">更新于</span>
-                <time title="修改时间：2020-05-24 23:47:32" itemprop="dateModified" datetime="2020-05-24T23:47:32+08:00">2020-05-24</time>
+                <time title="修改时间：2020-05-26 09:10:27" itemprop="dateModified" datetime="2020-05-26T09:10:27+08:00">2020-05-26</time>
               </span>
             <span class="post-meta-item">
               <span class="post-meta-item-icon">
@@ -419,7 +660,7 @@
           <h1 id="INSTALL-APIs"><a href="#INSTALL-APIs" class="headerlink" title="INSTALL APIs"></a>INSTALL APIs</h1><p>在看scheme机制的时候，想找一下注册install apis的地方，发现还很绕..</p>
           <!--noindex-->
             <div class="post-button">
-              <a class="btn" href="/2020/05/23/kubernetes/kube-apiserver/install-apis/#more" rel="contents">
+              <a class="btn" href="/2020/05/23/kubernetes/kube-apiserver/install-api/install-apis(1)/#more" rel="contents">
                 阅读全文 &raquo;
               </a>
             </div>
@@ -686,243 +927,6 @@
   
   
 
-      
-  
-  
-  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
-    <link itemprop="mainEntityOfPage" href="https://qmloong.github.io/2020/05/21/design-patterns/decorator/">
-
-    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="image" content="/images/avatar.gif">
-      <meta itemprop="name" content="menglong">
-      <meta itemprop="description" content="Love is a heroic dream in a tired life.🐬">
-    </span>
-
-    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="qmloong's Blog">
-    </span>
-      <header class="post-header">
-        <h2 class="post-title" itemprop="name headline">
-          
-            <a href="/2020/05/21/design-patterns/decorator/" class="post-title-link" itemprop="url">design-patterns/decorator</a>
-        </h2>
-
-        <div class="post-meta">
-            <span class="post-meta-item">
-              <span class="post-meta-item-icon">
-                <i class="far fa-calendar"></i>
-              </span>
-              <span class="post-meta-item-text">发表于</span>
-
-              <time title="创建时间：2020-05-21 00:18:36" itemprop="dateCreated datePublished" datetime="2020-05-21T00:18:36+08:00">2020-05-21</time>
-            </span>
-              <span class="post-meta-item">
-                <span class="post-meta-item-icon">
-                  <i class="far fa-calendar-check"></i>
-                </span>
-                <span class="post-meta-item-text">更新于</span>
-                <time title="修改时间：2020-05-23 21:36:29" itemprop="dateModified" datetime="2020-05-23T21:36:29+08:00">2020-05-23</time>
-              </span>
-            <span class="post-meta-item">
-              <span class="post-meta-item-icon">
-                <i class="far fa-folder"></i>
-              </span>
-              <span class="post-meta-item-text">分类于</span>
-                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-                  <a href="/categories/design-patterns/" itemprop="url" rel="index"><span itemprop="name">design-patterns</span></a>
-                </span>
-            </span>
-
-          
-
-        </div>
-      </header>
-
-    
-    
-    
-    <div class="post-body" itemprop="articleBody">
-
-      
-          <h1 id="Decorator-装饰器模式"><a href="#Decorator-装饰器模式" class="headerlink" title="Decorator-装饰器模式"></a>Decorator-装饰器模式</h1><blockquote>
-<p>装饰器本质上允许您包装现有功能并在开始或结尾处添加您自己的自定义功能。</p>
-</blockquote>
-<p>golang在http包、go-restful包中频繁运用装饰器模式，不得已了解一下</p>
-          <!--noindex-->
-            <div class="post-button">
-              <a class="btn" href="/2020/05/21/design-patterns/decorator/#more" rel="contents">
-                阅读全文 &raquo;
-              </a>
-            </div>
-          <!--/noindex-->
-        
-      
-    </div>
-
-    
-    
-    
-      <footer class="post-footer">
-        <div class="post-eof"></div>
-      </footer>
-  </article>
-  
-  
-  
-
-      
-  
-  
-  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
-    <link itemprop="mainEntityOfPage" href="https://qmloong.github.io/2020/05/14/kubernetes/proposal/api/">
-
-    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="image" content="/images/avatar.gif">
-      <meta itemprop="name" content="menglong">
-      <meta itemprop="description" content="Love is a heroic dream in a tired life.🐬">
-    </span>
-
-    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="qmloong's Blog">
-    </span>
-      <header class="post-header">
-        <h2 class="post-title" itemprop="name headline">
-          
-            <a href="/2020/05/14/kubernetes/proposal/api/" class="post-title-link" itemprop="url">kubernetes/proposal/api</a>
-        </h2>
-
-        <div class="post-meta">
-            <span class="post-meta-item">
-              <span class="post-meta-item-icon">
-                <i class="far fa-calendar"></i>
-              </span>
-              <span class="post-meta-item-text">发表于</span>
-
-              <time title="创建时间：2020-05-14 00:59:15" itemprop="dateCreated datePublished" datetime="2020-05-14T00:59:15+08:00">2020-05-14</time>
-            </span>
-              <span class="post-meta-item">
-                <span class="post-meta-item-icon">
-                  <i class="far fa-calendar-check"></i>
-                </span>
-                <span class="post-meta-item-text">更新于</span>
-                <time title="修改时间：2020-05-24 01:28:35" itemprop="dateModified" datetime="2020-05-24T01:28:35+08:00">2020-05-24</time>
-              </span>
-            <span class="post-meta-item">
-              <span class="post-meta-item-icon">
-                <i class="far fa-folder"></i>
-              </span>
-              <span class="post-meta-item-text">分类于</span>
-                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-                  <a href="/categories/kubernetes/" itemprop="url" rel="index"><span itemprop="name">kubernetes</span></a>
-                </span>
-            </span>
-
-          
-
-        </div>
-      </header>
-
-    
-    
-    
-    <div class="post-body" itemprop="articleBody">
-
-      
-          <h1 id="API"><a href="#API" class="headerlink" title="API"></a>API</h1><h2 id="前言"><a href="#前言" class="headerlink" title="前言"></a>前言</h2><p>Conventions: n. [法] 惯例；会议；[计] 约定（convention的复数）是kuberntes apiserver的API规范约定，或者说是开发者协议</p>
-          <!--noindex-->
-            <div class="post-button">
-              <a class="btn" href="/2020/05/14/kubernetes/proposal/api/#more" rel="contents">
-                阅读全文 &raquo;
-              </a>
-            </div>
-          <!--/noindex-->
-        
-      
-    </div>
-
-    
-    
-    
-      <footer class="post-footer">
-        <div class="post-eof"></div>
-      </footer>
-  </article>
-  
-  
-  
-
-      
-  
-  
-  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
-    <link itemprop="mainEntityOfPage" href="https://qmloong.github.io/2020/05/14/kubernetes/runtime/serializer/">
-
-    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="image" content="/images/avatar.gif">
-      <meta itemprop="name" content="menglong">
-      <meta itemprop="description" content="Love is a heroic dream in a tired life.🐬">
-    </span>
-
-    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="qmloong's Blog">
-    </span>
-      <header class="post-header">
-        <h2 class="post-title" itemprop="name headline">
-          
-            <a href="/2020/05/14/kubernetes/runtime/serializer/" class="post-title-link" itemprop="url">kubernetes/runtime/serializer</a>
-        </h2>
-
-        <div class="post-meta">
-            <span class="post-meta-item">
-              <span class="post-meta-item-icon">
-                <i class="far fa-calendar"></i>
-              </span>
-              <span class="post-meta-item-text">发表于</span>
-
-              <time title="创建时间：2020-05-14 00:42:47" itemprop="dateCreated datePublished" datetime="2020-05-14T00:42:47+08:00">2020-05-14</time>
-            </span>
-              <span class="post-meta-item">
-                <span class="post-meta-item-icon">
-                  <i class="far fa-calendar-check"></i>
-                </span>
-                <span class="post-meta-item-text">更新于</span>
-                <time title="修改时间：2020-05-23 19:10:27" itemprop="dateModified" datetime="2020-05-23T19:10:27+08:00">2020-05-23</time>
-              </span>
-
-          
-
-        </div>
-      </header>
-
-    
-    
-    
-    <div class="post-body" itemprop="articleBody">
-
-      
-          <h1 id="serialization"><a href="#serialization" class="headerlink" title="serialization"></a>serialization</h1><p>serialization: n. 序列化；串行化；连载长篇</p>
-          <!--noindex-->
-            <div class="post-button">
-              <a class="btn" href="/2020/05/14/kubernetes/runtime/serializer/#more" rel="contents">
-                阅读全文 &raquo;
-              </a>
-            </div>
-          <!--/noindex-->
-        
-      
-    </div>
-
-    
-    
-    
-      <footer class="post-footer">
-        <div class="post-eof"></div>
-      </footer>
-  </article>
-  
-  
-  
-
 
   
   <nav class="pagination">
@@ -992,7 +996,7 @@
       <div class="site-state-item site-state-posts">
           <a href="/archives/">
         
-          <span class="site-state-item-count">22</span>
+          <span class="site-state-item-count">25</span>
           <span class="site-state-item-name">日志</span>
         </a>
       </div>
@@ -1005,7 +1009,7 @@
       <div class="site-state-item site-state-tags">
             <a href="/tags/">
           
-        <span class="site-state-item-count">18</span>
+        <span class="site-state-item-count">19</span>
         <span class="site-state-item-name">标签</span></a>
       </div>
   </nav>
