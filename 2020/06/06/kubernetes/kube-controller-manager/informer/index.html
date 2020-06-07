@@ -1,0 +1,482 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=2">
+<meta name="theme-color" content="#222">
+<meta name="generator" content="Hexo 4.2.0">
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png">
+  <link rel="mask-icon" href="/images/logo.svg" color="#222">
+
+<link rel="stylesheet" href="/css/main.css">
+
+
+<link rel="stylesheet" href="/lib/font-awesome/css/all.min.css">
+
+<script id="hexo-configurations">
+    var NexT = window.NexT || {};
+    var CONFIG = {"hostname":"qmloong.github.io","root":"/","scheme":"Pisces","version":"8.0.0-rc.2","exturl":false,"sidebar":{"position":"left","display":"post","padding":18,"offset":12,"onmobile":false},"copycode":{"enable":true,"show_result":false,"style":"mac"},"back2top":{"enable":true,"sidebar":true,"scrollpercent":true},"bookmark":{"enable":true,"color":"#222","save":"manual"},"fancybox":false,"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"algolia":{"hits":{"per_page":10},"labels":{"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}},"localsearch":{"enable":false,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false},"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}}};
+  </script>
+
+  <meta name="description" content="总览  index其实就是线程安全的带读写锁的、带索引的map和slice 1234567891011121314151617181920212223242526272829303132333435363738394041&#x2F;&#x2F; cache responsibilities are limited to:&#x2F;&#x2F; 1. Computing keys for objects via keyFunc&#x2F;&#x2F;">
+<meta property="og:type" content="article">
+<meta property="og:title" content="kubernetes&#x2F;kube-controller-manager&#x2F;informer">
+<meta property="og:url" content="https://qmloong.github.io/2020/06/06/kubernetes/kube-controller-manager/informer/index.html">
+<meta property="og:site_name" content="qmloong&#39;s Blog">
+<meta property="og:description" content="总览  index其实就是线程安全的带读写锁的、带索引的map和slice 1234567891011121314151617181920212223242526272829303132333435363738394041&#x2F;&#x2F; cache responsibilities are limited to:&#x2F;&#x2F; 1. Computing keys for objects via keyFunc&#x2F;&#x2F;">
+<meta property="og:locale" content="zh_CN">
+<meta property="og:image" content="https://qmloong.github.io/2020/06/06/kubernetes/kube-controller-manager/informer/image-20200607193225672.png">
+<meta property="og:image" content="https://qmloong.github.io/2020/06/06/kubernetes/kube-controller-manager/informer/16eb55aa6684bff4.jpeg">
+<meta property="og:image" content="https://qmloong.github.io/2020/06/06/kubernetes/kube-controller-manager/informer/70-20200607195127867.png">
+<meta property="og:image" content="https://qmloong.github.io/2020/06/06/kubernetes/kube-controller-manager/informer/70.png">
+<meta property="article:published_time" content="2020-06-06T13:56:51.889Z">
+<meta property="article:modified_time" content="2020-06-07T13:15:48.302Z">
+<meta property="article:author" content="menglong">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="https://qmloong.github.io/2020/06/06/kubernetes/kube-controller-manager/informer/image-20200607193225672.png">
+
+<link rel="canonical" href="https://qmloong.github.io/2020/06/06/kubernetes/kube-controller-manager/informer/">
+
+
+<script id="page-configurations">
+  // https://hexo.io/docs/variables.html
+  CONFIG.page = {
+    sidebar: "",
+    isHome : false,
+    isPost : true,
+    lang   : 'zh-CN'
+  };
+</script>
+
+  <title>kubernetes/kube-controller-manager/informer | qmloong's Blog</title>
+  
+
+
+
+
+
+
+  <noscript>
+  <style>
+  .use-motion .brand,
+  .use-motion .menu-item,
+  .sidebar-inner,
+  .use-motion .post-block,
+  .use-motion .pagination,
+  .use-motion .comments,
+  .use-motion .post-header,
+  .use-motion .post-body,
+  .use-motion .collection-header { opacity: initial; }
+
+  .use-motion .site-title,
+  .use-motion .site-subtitle {
+    opacity: initial;
+    top: initial;
+  }
+
+  .use-motion .logo-line-before i { left: initial; }
+  .use-motion .logo-line-after i { right: initial; }
+  </style>
+</noscript>
+
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage">
+  <div class="container use-motion">
+    <div class="headband"></div>
+
+    <header class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-container">
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="切换导航栏">
+        <span class="toggle-line toggle-line-first"></span>
+        <span class="toggle-line toggle-line-middle"></span>
+        <span class="toggle-line toggle-line-last"></span>
+    </div>
+  </div>
+
+  <div class="site-meta">
+
+    <a href="/" class="brand" rel="start">
+      <span class="logo-line-before"><i></i></span>
+      <h1 class="site-title">qmloong's Blog</h1>
+      <span class="logo-line-after"><i></i></span>
+    </a>
+  </div>
+
+  <div class="site-nav-right">
+    <div class="toggle popup-trigger">
+    </div>
+  </div>
+</div>
+
+
+
+<nav class="site-nav">
+  <ul id="menu" class="main-menu menu">
+        <li class="menu-item menu-item-home">
+
+    <a href="/" rel="section"><i class="fa fa-home fa-fw"></i>首页</a>
+
+  </li>
+        <li class="menu-item menu-item-tags">
+
+    <a href="/tags/" rel="section"><i class="fa fa-tags fa-fw"></i>标签</a>
+
+  </li>
+        <li class="menu-item menu-item-categories">
+
+    <a href="/categories/" rel="section"><i class="fa fa-th fa-fw"></i>分类</a>
+
+  </li>
+        <li class="menu-item menu-item-archives">
+
+    <a href="/archives/" rel="section"><i class="fa fa-archive fa-fw"></i>归档</a>
+
+  </li>
+  </ul>
+</nav>
+
+
+
+
+</div>
+    </header>
+
+    
+  <div class="reading-progress-bar"></div>
+  <a role="button" class="book-mark-link book-mark-link-fixed"></a>
+
+
+    <main class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          
+
+          <div class="content post posts-expand">
+            
+
+    
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="https://qmloong.github.io/2020/06/06/kubernetes/kube-controller-manager/informer/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.gif">
+      <meta itemprop="name" content="menglong">
+      <meta itemprop="description" content="Love is a heroic dream in a tired life.🐬">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="qmloong's Blog">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          kubernetes/kube-controller-manager/informer
+        </h1>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-calendar"></i>
+              </span>
+              <span class="post-meta-item-text">发表于</span>
+
+              <time title="创建时间：2020-06-06 21:56:51" itemprop="dateCreated datePublished" datetime="2020-06-06T21:56:51+08:00">2020-06-06</time>
+            </span>
+              <span class="post-meta-item">
+                <span class="post-meta-item-icon">
+                  <i class="far fa-calendar-check"></i>
+                </span>
+                <span class="post-meta-item-text">更新于</span>
+                <time title="修改时间：2020-06-07 21:15:48" itemprop="dateModified" datetime="2020-06-07T21:15:48+08:00">2020-06-07</time>
+              </span>
+
+          
+            <span class="post-meta-item" title="阅读次数" id="busuanzi_container_page_pv" style="display: none;">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-eye"></i>
+              </span>
+              <span class="post-meta-item-text">阅读次数：</span>
+              <span id="busuanzi_value_page_pv"></span>
+            </span>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+        <h1 id="总览"><a href="#总览" class="headerlink" title="总览"></a>总览</h1><p><img src="/2020/06/06/kubernetes/kube-controller-manager/informer/image-20200607193225672.png" alt="sample-controller架构"></p>
+<p><img src="/2020/06/06/kubernetes/kube-controller-manager/informer/16eb55aa6684bff4.jpeg" alt="sample-controller架构"></p>
+<h1 id="index"><a href="#index" class="headerlink" title="index"></a>index</h1><p>其实就是线程安全的带读写锁的、带索引的map和slice</p>
+<figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// cache responsibilities are limited to:</span></span><br><span class="line"><span class="comment">// 1. Computing keys for objects via keyFunc</span></span><br><span class="line"><span class="comment">//  2. Invoking methods of a ThreadSafeStorage interface</span></span><br><span class="line"><span class="keyword">type</span> cache <span class="keyword">struct</span> &#123;</span><br><span class="line">   <span class="comment">// cacheStorage bears the burden of thread safety for the cache</span></span><br><span class="line">   cacheStorage ThreadSafeStore</span><br><span class="line">   <span class="comment">// keyFunc is used to make the key for objects stored in and retrieved from items, and</span></span><br><span class="line">   <span class="comment">// should be deterministic.</span></span><br><span class="line">   keyFunc KeyFunc</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="keyword">type</span> ThreadSafeStore <span class="keyword">interface</span> &#123;</span><br><span class="line">	Add(key <span class="keyword">string</span>, obj <span class="keyword">interface</span>&#123;&#125;)</span><br><span class="line">	Update(key <span class="keyword">string</span>, obj <span class="keyword">interface</span>&#123;&#125;)</span><br><span class="line">	Delete(key <span class="keyword">string</span>)</span><br><span class="line">	Get(key <span class="keyword">string</span>) (item <span class="keyword">interface</span>&#123;&#125;, exists <span class="keyword">bool</span>)</span><br><span class="line">	List() []<span class="keyword">interface</span>&#123;&#125;</span><br><span class="line">	ListKeys() []<span class="keyword">string</span></span><br><span class="line">	Replace(<span class="keyword">map</span>[<span class="keyword">string</span>]<span class="keyword">interface</span>&#123;&#125;, <span class="keyword">string</span>)</span><br><span class="line">	Index(indexName <span class="keyword">string</span>, obj <span class="keyword">interface</span>&#123;&#125;) ([]<span class="keyword">interface</span>&#123;&#125;, error)</span><br><span class="line">	IndexKeys(indexName, indexKey <span class="keyword">string</span>) ([]<span class="keyword">string</span>, error)</span><br><span class="line">	ListIndexFuncValues(name <span class="keyword">string</span>) []<span class="keyword">string</span></span><br><span class="line">	ByIndex(indexName, indexKey <span class="keyword">string</span>) ([]<span class="keyword">interface</span>&#123;&#125;, error)</span><br><span class="line">	GetIndexers() Indexers</span><br><span class="line"></span><br><span class="line">	<span class="comment">// AddIndexers adds more indexers to this store.  If you call this after you already have data</span></span><br><span class="line">	<span class="comment">// in the store, the results are undefined.</span></span><br><span class="line">	AddIndexers(newIndexers Indexers) error</span><br><span class="line">	Resync() error</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="comment">// threadSafeMap implements ThreadSafeStore</span></span><br><span class="line"><span class="keyword">type</span> threadSafeMap <span class="keyword">struct</span> &#123;</span><br><span class="line">	lock  sync.RWMutex</span><br><span class="line">	items <span class="keyword">map</span>[<span class="keyword">string</span>]<span class="keyword">interface</span>&#123;&#125;</span><br><span class="line"></span><br><span class="line">	<span class="comment">// indexers maps a name to an IndexFunc</span></span><br><span class="line">	indexers Indexers</span><br><span class="line">	<span class="comment">// indices maps a name to an Index</span></span><br><span class="line">	indices Indices</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+
+
+<h1 id="Delta-FIFO"><a href="#Delta-FIFO" class="headerlink" title="Delta-FIFO"></a>Delta-FIFO</h1><p>Delta的意思是变化，而DeltaFIFO就是一个变化事件的Queue，底层是map/slice存储对象实现的一个FIFO Queue，并且再底层获取具体obj的是一个Store，就是上面的Index</p>
+<p>Delta-FIFO的队列主要包含了Store和一个key的queue，注意，其实Queue中的元素逻辑上是key，而一个key可能有很多Delta时间，所以items其实是一个map[string]Deltas，注意是Deltas，带s的，即是一组Delta</p>
+<p>这个队列入队是通过Add()、Delete()、Update()、Resync()，其实还有Replace()，Replace会把一个list全部入队，并设置initialPopulationCount参数，这个参数后面说</p>
+<p><img src="/2020/06/06/kubernetes/kube-controller-manager/informer/70-20200607195127867.png" alt="img"></p>
+<blockquote>
+<p> 图片来源看结尾</p>
+</blockquote>
+<p>我主要想看下Resync和HasSynced到底是什么</p>
+<h2 id="Resync"><a href="#Resync" class="headerlink" title="Resync"></a>Resync</h2><p>对list一下底层index Store存储的key，遍历并塞入到Queue里面的item，都添加一个SYNC的事件，以及去除掉Add之后又Delete的Delta（这个可能是提高效率吧，没考虑上层业务）</p>
+<figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// Resync will send a sync event for each item</span></span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="params">(f *DeltaFIFO)</span> <span class="title">Resync</span><span class="params">()</span> <span class="title">error</span></span> &#123;</span><br><span class="line">   f.lock.Lock()</span><br><span class="line">   <span class="keyword">defer</span> f.lock.Unlock()</span><br><span class="line"></span><br><span class="line">   <span class="keyword">if</span> f.knownObjects == <span class="literal">nil</span> &#123;</span><br><span class="line">      <span class="keyword">return</span> <span class="literal">nil</span></span><br><span class="line">   &#125;</span><br><span class="line"></span><br><span class="line">   keys := f.knownObjects.ListKeys()</span><br><span class="line">   <span class="keyword">for</span> _, k := <span class="keyword">range</span> keys &#123;</span><br><span class="line">      <span class="keyword">if</span> err := f.syncKeyLocked(k); err != <span class="literal">nil</span> &#123;</span><br><span class="line">         <span class="keyword">return</span> err</span><br><span class="line">      &#125;</span><br><span class="line">   &#125;</span><br><span class="line">   <span class="keyword">return</span> <span class="literal">nil</span></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<h2 id="HasResynced"><a href="#HasResynced" class="headerlink" title="HasResynced"></a>HasResynced</h2><figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// Return true if an Add/Update/Delete/AddIfNotPresent are called first,</span></span><br><span class="line"><span class="comment">// or an Update called first but the first batch of items inserted by Replace() has been popped</span></span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="params">(f *DeltaFIFO)</span> <span class="title">HasSynced</span><span class="params">()</span> <span class="title">bool</span></span> &#123;</span><br><span class="line">	f.lock.Lock()</span><br><span class="line">	<span class="keyword">defer</span> f.lock.Unlock()</span><br><span class="line">	<span class="keyword">return</span> f.populated &amp;&amp; f.initialPopulationCount == <span class="number">0</span></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>initialPopulationCount是在每次Replace的时候会设置，而Replace其实就是初始化将一个list塞入到Queue的时候，即从list-watch那边初始化list得到的一个objlist，而什么时候initialPopulationCount会减少？就是DeltaFIFO进行Pop的时候，Pop的时候回判断initialPopulationCount是不是不为0，如果是的话就initialPopulationCount–，这个判断的目的是，最起码FIFO是已经底层的Store一致了</p>
+<h1 id="ListerWatcher"><a href="#ListerWatcher" class="headerlink" title="ListerWatcher"></a>ListerWatcher</h1><p>listerwatcher是一个client-go的lister和watcher的分装，这里是直接合apiserver交互的工具</p>
+<figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// ListerWatcher is any object that knows how to perform an initial list and start a watch on a resource.</span></span><br><span class="line"><span class="keyword">type</span> ListerWatcher <span class="keyword">interface</span> &#123;</span><br><span class="line">   <span class="comment">// List should return a list type object; the Items field will be extracted, and the</span></span><br><span class="line">   <span class="comment">// ResourceVersion field will be used to start the watch in the right place.</span></span><br><span class="line">   List(options metav1.ListOptions) (runtime.Object, error)</span><br><span class="line">   <span class="comment">// Watch should begin a watch at the specified version.</span></span><br><span class="line">   Watch(options metav1.ListOptions) (watch.Interface, error)</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<h1 id="Reflector"><a href="#Reflector" class="headerlink" title="Reflector"></a>Reflector</h1><p>reflector是一个反射器，他有store底层存储，这个Store是DeltaFIFO（注意DeltaFIFO自己里面有Thread-Safe-Map Indexer），有listerWatcher去list-watch apiserver，有指定监听对象的类型反射，有resync的period值。</p>
+<figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// Reflector watches a specified resource and causes all changes to be reflected in the given store.</span></span><br><span class="line"><span class="keyword">type</span> Reflector <span class="keyword">struct</span> &#123;</span><br><span class="line">   <span class="comment">// name identifies this reflector. By default it will be a file:line if possible.</span></span><br><span class="line">   name <span class="keyword">string</span></span><br><span class="line">   <span class="comment">// metrics tracks basic metric information about the reflector</span></span><br><span class="line">   metrics *reflectorMetrics</span><br><span class="line"></span><br><span class="line">   <span class="comment">// The type of object we expect to place in the store.</span></span><br><span class="line">   expectedType reflect.Type</span><br><span class="line">   <span class="comment">// The destination to sync up with the watch source</span></span><br><span class="line">   store Store</span><br><span class="line">   <span class="comment">// listerWatcher is used to perform lists and watches.</span></span><br><span class="line">   listerWatcher ListerWatcher</span><br><span class="line">   <span class="comment">// period controls timing between one watch ending and</span></span><br><span class="line">   <span class="comment">// the beginning of the next one.</span></span><br><span class="line">   period       time.Duration</span><br><span class="line">   resyncPeriod time.Duration</span><br><span class="line">   ShouldResync <span class="function"><span class="keyword">func</span><span class="params">()</span> <span class="title">bool</span></span></span><br><span class="line">   <span class="comment">// clock allows tests to manipulate time</span></span><br><span class="line">   clock clock.Clock</span><br><span class="line">   <span class="comment">// lastSyncResourceVersion is the resource version token last</span></span><br><span class="line">   <span class="comment">// observed when doing a sync with the underlying store</span></span><br><span class="line">   <span class="comment">// it is thread safe, but not synchronized with the underlying store</span></span><br><span class="line">   lastSyncResourceVersion <span class="keyword">string</span></span><br><span class="line">   <span class="comment">// lastSyncResourceVersionMutex guards read/write access to lastSyncResourceVersion</span></span><br><span class="line">   lastSyncResourceVersionMutex sync.RWMutex</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>注意总览图，Reflector是和APIServer最近的组件，他会List-Watch Apiserver</p>
+<h2 id="Run"><a href="#Run" class="headerlink" title="Run"></a>Run</h2><figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// Run starts a watch and handles watch events. Will restart the watch if it is closed.</span></span><br><span class="line"><span class="comment">// Run will exit when stopCh is closed.</span></span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="params">(r *Reflector)</span> <span class="title">Run</span><span class="params">(stopCh &lt;-<span class="keyword">chan</span> <span class="keyword">struct</span>&#123;&#125;)</span></span> &#123;</span><br><span class="line">   glog.V(<span class="number">3</span>).Infof(<span class="string">"Starting reflector %v (%s) from %s"</span>, r.expectedType, r.resyncPeriod, r.name)</span><br><span class="line">   wait.Until(<span class="function"><span class="keyword">func</span><span class="params">()</span></span> &#123;</span><br><span class="line">      <span class="keyword">if</span> err := r.ListAndWatch(stopCh); err != <span class="literal">nil</span> &#123;</span><br><span class="line">         utilruntime.HandleError(err)</span><br><span class="line">      &#125;</span><br><span class="line">   &#125;, r.period, stopCh)</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<h2 id="List-Watch函数"><a href="#List-Watch函数" class="headerlink" title="List-Watch函数"></a>List-Watch函数</h2><p>List-watch会先sync-with一下list出来的obj，然后再watch，调用watchHandler函数进行对watch到的事件进行分类调用Store接口入队</p>
+<figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br><span class="line">66</span><br><span class="line">67</span><br><span class="line">68</span><br><span class="line">69</span><br><span class="line">70</span><br><span class="line">71</span><br><span class="line">72</span><br><span class="line">73</span><br><span class="line">74</span><br><span class="line">75</span><br><span class="line">76</span><br><span class="line">77</span><br><span class="line">78</span><br><span class="line">79</span><br><span class="line">80</span><br><span class="line">81</span><br><span class="line">82</span><br><span class="line">83</span><br><span class="line">84</span><br><span class="line">85</span><br><span class="line">86</span><br><span class="line">87</span><br><span class="line">88</span><br><span class="line">89</span><br><span class="line">90</span><br><span class="line">91</span><br><span class="line">92</span><br><span class="line">93</span><br><span class="line">94</span><br><span class="line">95</span><br><span class="line">96</span><br><span class="line">97</span><br><span class="line">98</span><br><span class="line">99</span><br><span class="line">100</span><br><span class="line">101</span><br><span class="line">102</span><br><span class="line">103</span><br><span class="line">104</span><br><span class="line">105</span><br><span class="line">106</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// ListAndWatch first lists all items and get the resource version at the moment of call,</span></span><br><span class="line"><span class="comment">// and then use the resource version to watch.</span></span><br><span class="line"><span class="comment">// It returns error if ListAndWatch didn't even try to initialize watch.</span></span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="params">(r *Reflector)</span> <span class="title">ListAndWatch</span><span class="params">(stopCh &lt;-<span class="keyword">chan</span> <span class="keyword">struct</span>&#123;&#125;)</span> <span class="title">error</span></span> &#123;</span><br><span class="line">   glog.V(<span class="number">3</span>).Infof(<span class="string">"Listing and watching %v from %s"</span>, r.expectedType, r.name)</span><br><span class="line">   <span class="keyword">var</span> resourceVersion <span class="keyword">string</span></span><br><span class="line"></span><br><span class="line">   <span class="comment">// Explicitly set "0" as resource version - it's fine for the List()</span></span><br><span class="line">   <span class="comment">// to be served from cache and potentially be delayed relative to</span></span><br><span class="line">   <span class="comment">// etcd contents. Reflector framework will catch up via Watch() eventually.</span></span><br><span class="line">   options := metav1.ListOptions&#123;ResourceVersion: <span class="string">"0"</span>&#125;</span><br><span class="line">   list, err := r.listerWatcher.List(options)</span><br><span class="line">   <span class="keyword">if</span> err != <span class="literal">nil</span> &#123;</span><br><span class="line">      <span class="keyword">return</span> fmt.Errorf(<span class="string">"%s: Failed to list %v: %v"</span>, r.name, r.expectedType, err)</span><br><span class="line">   &#125;</span><br><span class="line">   listMetaInterface, err := meta.ListAccessor(list)</span><br><span class="line">   <span class="keyword">if</span> err != <span class="literal">nil</span> &#123;</span><br><span class="line">      <span class="keyword">return</span> fmt.Errorf(<span class="string">"%s: Unable to understand list result %#v: %v"</span>, r.name, list, err)</span><br><span class="line">   &#125;</span><br><span class="line">   resourceVersion = listMetaInterface.GetResourceVersion()</span><br><span class="line">   items, err := meta.ExtractList(list)</span><br><span class="line">   <span class="keyword">if</span> err != <span class="literal">nil</span> &#123;</span><br><span class="line">      <span class="keyword">return</span> fmt.Errorf(<span class="string">"%s: Unable to understand list result %#v (%v)"</span>, r.name, list, err)</span><br><span class="line">   &#125;</span><br><span class="line">   <span class="keyword">if</span> err := r.syncWith(items, resourceVersion); err != <span class="literal">nil</span> &#123;</span><br><span class="line">      <span class="keyword">return</span> fmt.Errorf(<span class="string">"%s: Unable to sync list result: %v"</span>, r.name, err)</span><br><span class="line">   &#125;</span><br><span class="line">   r.setLastSyncResourceVersion(resourceVersion)</span><br><span class="line"></span><br><span class="line">   resyncerrc := <span class="built_in">make</span>(<span class="keyword">chan</span> error, <span class="number">1</span>)</span><br><span class="line">   cancelCh := <span class="built_in">make</span>(<span class="keyword">chan</span> <span class="keyword">struct</span>&#123;&#125;)</span><br><span class="line">   <span class="keyword">defer</span> <span class="built_in">close</span>(cancelCh)</span><br><span class="line">   <span class="keyword">go</span> <span class="function"><span class="keyword">func</span><span class="params">()</span></span> &#123;</span><br><span class="line">      resyncCh, cleanup := r.resyncChan()</span><br><span class="line">      <span class="keyword">defer</span> <span class="function"><span class="keyword">func</span><span class="params">()</span></span> &#123;</span><br><span class="line">         cleanup() <span class="comment">// Call the last one written into cleanup</span></span><br><span class="line">      &#125;()</span><br><span class="line">      <span class="keyword">for</span> &#123;</span><br><span class="line">         <span class="keyword">select</span> &#123;</span><br><span class="line">         <span class="keyword">case</span> &lt;-resyncCh:</span><br><span class="line">         <span class="keyword">case</span> &lt;-stopCh:</span><br><span class="line">            <span class="keyword">return</span></span><br><span class="line">         <span class="keyword">case</span> &lt;-cancelCh:</span><br><span class="line">            <span class="keyword">return</span></span><br><span class="line">         &#125;</span><br><span class="line">         <span class="keyword">if</span> r.ShouldResync == <span class="literal">nil</span> || r.ShouldResync() &#123;</span><br><span class="line">            glog.V(<span class="number">4</span>).Infof(<span class="string">"%s: forcing resync"</span>, r.name)</span><br><span class="line">            <span class="keyword">if</span> err := r.store.Resync(); err != <span class="literal">nil</span> &#123;</span><br><span class="line">               resyncerrc &lt;- err</span><br><span class="line">               <span class="keyword">return</span></span><br><span class="line">            &#125;</span><br><span class="line">         &#125;</span><br><span class="line">         cleanup()</span><br><span class="line">         resyncCh, cleanup = r.resyncChan()</span><br><span class="line">      &#125;</span><br><span class="line">   &#125;()</span><br><span class="line"></span><br><span class="line">   <span class="keyword">for</span> &#123;</span><br><span class="line">      <span class="comment">// give the stopCh a chance to stop the loop, even in case of continue statements further down on errors</span></span><br><span class="line">      <span class="keyword">select</span> &#123;</span><br><span class="line">      <span class="keyword">case</span> &lt;-stopCh:</span><br><span class="line">         <span class="keyword">return</span> <span class="literal">nil</span></span><br><span class="line">      <span class="keyword">default</span>:</span><br><span class="line">      &#125;</span><br><span class="line"></span><br><span class="line">      timeoutSeconds := <span class="keyword">int64</span>(minWatchTimeout.Seconds() * (rand.Float64() + <span class="number">1.0</span>))</span><br><span class="line">      options = metav1.ListOptions&#123;</span><br><span class="line">         ResourceVersion: resourceVersion,</span><br><span class="line">         <span class="comment">// We want to avoid situations of hanging watchers. Stop any wachers that do not</span></span><br><span class="line">         <span class="comment">// receive any events within the timeout window.</span></span><br><span class="line">         TimeoutSeconds: &amp;timeoutSeconds,</span><br><span class="line">      &#125;</span><br><span class="line"></span><br><span class="line">      w, err := r.listerWatcher.Watch(options)</span><br><span class="line">      <span class="keyword">if</span> err != <span class="literal">nil</span> &#123;</span><br><span class="line">         <span class="keyword">switch</span> err &#123;</span><br><span class="line">         <span class="keyword">case</span> io.EOF:</span><br><span class="line">            <span class="comment">// watch closed normally</span></span><br><span class="line">         <span class="keyword">case</span> io.ErrUnexpectedEOF:</span><br><span class="line">            glog.V(<span class="number">1</span>).Infof(<span class="string">"%s: Watch for %v closed with unexpected EOF: %v"</span>, r.name, r.expectedType, err)</span><br><span class="line">         <span class="keyword">default</span>:</span><br><span class="line">            utilruntime.HandleError(fmt.Errorf(<span class="string">"%s: Failed to watch %v: %v"</span>, r.name, r.expectedType, err))</span><br><span class="line">         &#125;</span><br><span class="line">         <span class="comment">// If this is "connection refused" error, it means that most likely apiserver is not responsive.</span></span><br><span class="line">         <span class="comment">// It doesn't make sense to re-list all objects because most likely we will be able to restart</span></span><br><span class="line">         <span class="comment">// watch where we ended.</span></span><br><span class="line">         <span class="comment">// If that's the case wait and resend watch request.</span></span><br><span class="line">         <span class="keyword">if</span> urlError, ok := err.(*url.Error); ok &#123;</span><br><span class="line">            <span class="keyword">if</span> opError, ok := urlError.Err.(*net.OpError); ok &#123;</span><br><span class="line">               <span class="keyword">if</span> errno, ok := opError.Err.(syscall.Errno); ok &amp;&amp; errno == syscall.ECONNREFUSED &#123;</span><br><span class="line">                  time.Sleep(time.Second)</span><br><span class="line">                  <span class="keyword">continue</span></span><br><span class="line">               &#125;</span><br><span class="line">            &#125;</span><br><span class="line">         &#125;</span><br><span class="line">         <span class="keyword">return</span> <span class="literal">nil</span></span><br><span class="line">      &#125;</span><br><span class="line"></span><br><span class="line">      <span class="keyword">if</span> err := r.watchHandler(w, &amp;resourceVersion, resyncerrc, stopCh); err != <span class="literal">nil</span> &#123;</span><br><span class="line">         <span class="keyword">if</span> err != errorStopRequested &#123;</span><br><span class="line">            glog.Warningf(<span class="string">"%s: watch of %v ended with: %v"</span>, r.name, r.expectedType, err)</span><br><span class="line">         &#125;</span><br><span class="line">         <span class="keyword">return</span> <span class="literal">nil</span></span><br><span class="line">      &#125;</span><br><span class="line">   &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+
+
+<h1 id="Controller"><a href="#Controller" class="headerlink" title="Controller"></a>Controller</h1><p>这块的controller不是kube-controller-manager的controller，这里的controller是一个Reflector和DeltaFIFO的组合</p>
+<p>controller就是包含了Reflector和Process的对象，他的调用Reflector的Run，进行watch APIServer，然后processLoop进行Pop Reflector的Delta。看起来有点像总览里面的左半部分informer</p>
+<h1 id="Informer"><a href="#Informer" class="headerlink" title="Informer"></a>Informer</h1><p>informer的意思就是通知者，</p>
+<p><img src="/2020/06/06/kubernetes/kube-controller-manager/informer/70.png" alt="img"></p>
+<h1 id="参考"><a href="#参考" class="headerlink" title="参考"></a>参考</h1><p><a href="https://blog.csdn.net/weixin_42663840/article/details/81699303" target="_blank" rel="noopener">深入浅出kubernetes之client-go的SharedInformer</a></p>
+
+    </div>
+
+    
+    
+    
+
+      <footer class="post-footer">
+
+        
+
+
+        
+    <div class="post-nav">
+      <div class="post-nav-item">
+    <a href="/2020/06/04/mysql/log/" rel="prev" title="mysql/log">
+      <i class="fa fa-chevron-left"></i> mysql/log
+    </a></div>
+      <div class="post-nav-item"></div>
+    </div>
+      </footer>
+    
+  </article>
+  
+  
+  
+
+
+
+          </div>
+          
+
+<script>
+  window.addEventListener('tabs:register', () => {
+    let { activeClass } = CONFIG.comments;
+    if (CONFIG.comments.storage) {
+      activeClass = localStorage.getItem('comments_active') || activeClass;
+    }
+    if (activeClass) {
+      let activeTab = document.querySelector(`a[href="#comment-${activeClass}"]`);
+      if (activeTab) {
+        activeTab.click();
+      }
+    }
+  });
+  if (CONFIG.comments.storage) {
+    window.addEventListener('tabs:click', event => {
+      if (!event.target.matches('.tabs-comment .tab-content .tab-pane')) return;
+      let commentClass = event.target.classList[1];
+      localStorage.setItem('comments_active', commentClass);
+    });
+  }
+</script>
+
+        </div>
+          
+  
+  <div class="toggle sidebar-toggle">
+    <span class="toggle-line toggle-line-first"></span>
+    <span class="toggle-line toggle-line-middle"></span>
+    <span class="toggle-line toggle-line-last"></span>
+  </div>
+
+  <aside class="sidebar">
+    <div class="sidebar-inner">
+
+      <ul class="sidebar-nav motion-element">
+        <li class="sidebar-nav-toc">
+          文章目录
+        </li>
+        <li class="sidebar-nav-overview">
+          站点概览
+        </li>
+      </ul>
+
+      <!--noindex-->
+      <div class="post-toc-wrap sidebar-panel">
+          <div class="post-toc motion-element"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#总览"><span class="nav-number">1.</span> <span class="nav-text">总览</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#index"><span class="nav-number">2.</span> <span class="nav-text">index</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#Delta-FIFO"><span class="nav-number">3.</span> <span class="nav-text">Delta-FIFO</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#Resync"><span class="nav-number">3.1.</span> <span class="nav-text">Resync</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#HasResynced"><span class="nav-number">3.2.</span> <span class="nav-text">HasResynced</span></a></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#ListerWatcher"><span class="nav-number">4.</span> <span class="nav-text">ListerWatcher</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#Reflector"><span class="nav-number">5.</span> <span class="nav-text">Reflector</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#Run"><span class="nav-number">5.1.</span> <span class="nav-text">Run</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#List-Watch函数"><span class="nav-number">5.2.</span> <span class="nav-text">List-Watch函数</span></a></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#Controller"><span class="nav-number">6.</span> <span class="nav-text">Controller</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#Informer"><span class="nav-number">7.</span> <span class="nav-text">Informer</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#参考"><span class="nav-number">8.</span> <span class="nav-text">参考</span></a></li></ol></div>
+      </div>
+      <!--/noindex-->
+
+      <div class="site-overview-wrap sidebar-panel">
+        <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+  <p class="site-author-name" itemprop="name">menglong</p>
+  <div class="site-description" itemprop="description">Love is a heroic dream in a tired life.🐬</div>
+</div>
+<div class="site-state-wrap motion-element">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+          <a href="/archives/">
+        
+          <span class="site-state-item-count">33</span>
+          <span class="site-state-item-name">日志</span>
+        </a>
+      </div>
+      <div class="site-state-item site-state-categories">
+            <a href="/categories/">
+          
+        <span class="site-state-item-count">9</span>
+        <span class="site-state-item-name">分类</span></a>
+      </div>
+      <div class="site-state-item site-state-tags">
+            <a href="/tags/">
+          
+        <span class="site-state-item-count">22</span>
+        <span class="site-state-item-name">标签</span></a>
+      </div>
+  </nav>
+</div>
+  <div class="links-of-author motion-element">
+      <span class="links-of-author-item">
+        <a href="https://github.com/qmloong" title="GitHub → https:&#x2F;&#x2F;github.com&#x2F;qmloong" rel="noopener" target="_blank"><i class="fab fa-github fa-fw"></i>GitHub</a>
+      </span>
+      <span class="links-of-author-item">
+        <a href="mailto:qmlfighting@gmail.com" title="E-Mail → mailto:qmlfighting@gmail.com" rel="noopener" target="_blank"><i class="fa fa-envelope fa-fw"></i>E-Mail</a>
+      </span>
+  </div>
+
+
+
+      </div>
+        <div class="back-to-top motion-element">
+          <i class="fa fa-arrow-up"></i>
+          <span>0%</span>
+        </div>
+
+    </div>
+  </aside>
+  <div id="sidebar-dimmer"></div>
+
+
+      </div>
+    </main>
+
+    <footer class="footer">
+      <div class="footer-inner">
+        
+
+        
+
+<div class="copyright">
+  
+  &copy; 
+  <span itemprop="copyrightYear">2020</span>
+  <span class="with-love">
+    <i class="fa fa-heart"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">menglong</span>
+</div>
+  <div class="powered-by">由 <a href="https://hexo.io/" class="theme-link" rel="noopener" target="_blank">Hexo</a> & <a href="https://theme-next.js.org/pisces/" class="theme-link" rel="noopener" target="_blank">NexT.Pisces</a> 强力驱动
+  </div>
+
+        
+<div class="busuanzi-count">
+  <script async src="https://busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+    <span class="post-meta-item" id="busuanzi_container_site_uv" style="display: none;">
+      <span class="post-meta-item-icon">
+        <i class="fa fa-user"></i>
+      </span>
+      <span class="site-uv" title="总访客量">
+        <span id="busuanzi_value_site_uv"></span>
+      </span>
+    </span>
+    <span class="post-meta-divider">|</span>
+    <span class="post-meta-item" id="busuanzi_container_site_pv" style="display: none;">
+      <span class="post-meta-item-icon">
+        <i class="fa fa-eye"></i>
+      </span>
+      <span class="site-pv" title="总访问量">
+        <span id="busuanzi_value_site_pv"></span>
+      </span>
+    </span>
+</div>
+
+
+
+
+
+
+
+
+      </div>
+    </footer>
+  </div>
+
+  
+  <script src="/lib/anime.min.js"></script>
+  <script src="/lib/velocity/velocity.min.js"></script>
+  <script src="/lib/velocity/velocity.ui.min.js"></script>
+
+<script src="/js/utils.js"></script>
+
+<script src="/js/motion.js"></script>
+
+
+<script src="/js/schemes/pisces.js"></script>
+
+
+<script src="/js/next-boot.js"></script>
+
+<script src="/js/bookmark.js"></script>
+
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+  
+
+</body>
+</html>

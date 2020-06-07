@@ -28,8 +28,9 @@
 <meta property="og:description" content="API前言Conventions: n. [法] 惯例；会议；[计] 约定（convention的复数）是kuberntes apiserver的API规范约定，或者说是开发者协议">
 <meta property="og:locale" content="zh_CN">
 <meta property="og:image" content="https://qmloong.github.io/2020/05/14/kubernetes/proposal/api/image-20200515012508671.png">
+<meta property="og:image" content="https://qmloong.github.io/2020/05/14/kubernetes/proposal/api/image-20200606173715965.png">
 <meta property="article:published_time" content="2020-05-13T16:59:15.482Z">
-<meta property="article:modified_time" content="2020-05-23T17:28:35.050Z">
+<meta property="article:modified_time" content="2020-06-06T09:47:07.924Z">
 <meta property="article:author" content="menglong">
 <meta property="article:tag" content="kubernetes">
 <meta property="article:tag" content="kube-apiserver">
@@ -192,7 +193,7 @@
                   <i class="far fa-calendar-check"></i>
                 </span>
                 <span class="post-meta-item-text">更新于</span>
-                <time title="修改时间：2020-05-24 01:28:35" itemprop="dateModified" datetime="2020-05-24T01:28:35+08:00">2020-05-24</time>
+                <time title="修改时间：2020-06-06 17:47:07" itemprop="dateModified" datetime="2020-06-06T17:47:07+08:00">2020-06-06</time>
               </span>
             <span class="post-meta-item">
               <span class="post-meta-item-icon">
@@ -312,12 +313,21 @@
 </li>
 </ol>
 <h2 id="扩展API"><a href="#扩展API" class="headerlink" title="扩展API"></a>扩展API</h2><p>增加用户自定义的API，太麻烦了，不能总改APIServer的代码吧？所以就要有扩展APIServer的机制</p>
-<h4 id="1-CRD："><a href="#1-CRD：" class="headerlink" title="1. CRD："></a>1. CRD：</h4><h4 id="2-Aggregation-API-Layer："><a href="#2-Aggregation-API-Layer：" class="headerlink" title="2. Aggregation API Layer："></a>2. Aggregation API Layer：</h4><h2 id="参考文档"><a href="#参考文档" class="headerlink" title="参考文档"></a>参考文档</h2><p>Kubernetes API 概念介绍：<a href="https://kubernetes.io/zh/docs/concepts/overview/kubernetes-/2020/05/14/kubernetes/proposal/api/" target="_blank" rel="noopener">https://kubernetes.io/zh/docs/concepts/overview/kubernetes-/2020/05/14/kubernetes/proposal/api/</a></p>
-<p>Kubernetes API 详细文档：<a href="https://kubernetes.io/docs/reference/using-/2020/05/14/kubernetes/proposal/api/api-overview/" target="_blank" rel="noopener">https://kubernetes.io/docs/reference/using-/2020/05/14/kubernetes/proposal/api/api-overview/</a></p>
-<p>API Convention官方文档：<a href="https://github.com/kubernetes/community/blob/master/contributors/devel/sig-architecture/api-conventions.md" target="_blank" rel="noopener">https://github.com/kubernetes/community/blob/master/contributors/devel/sig-architecture/api-conventions.md</a></p>
-<p>API废弃规范：<a href="https://kubernetes.io/docs/reference/using-/2020/05/14/kubernetes/proposal/api/deprecation-policy/" target="_blank" rel="noopener">https://kubernetes.io/docs/reference/using-/2020/05/14/kubernetes/proposal/api/deprecation-policy/</a></p>
-<p>API变更规范：<a href="https://github.com/kubernetes/community/blob/master/contributors/devel/sig-architecture/api_changes.md" target="_blank" rel="noopener">https://github.com/kubernetes/community/blob/master/contributors/devel/sig-architecture/api_changes.md</a></p>
-<p>API Aggregation：<a href="https://kubernetes.io/docs/concepts/extend-kubernetes/api-extension/apiserver-aggregation/" target="_blank" rel="noopener">https://kubernetes.io/docs/concepts/extend-kubernetes/api-extension/apiserver-aggregation/</a></p>
+<h4 id="1-CRD："><a href="#1-CRD：" class="headerlink" title="1. CRD："></a>1. CRD：</h4><h4 id="2-Aggregation-API-Layer："><a href="#2-Aggregation-API-Layer：" class="headerlink" title="2. Aggregation API Layer："></a>2. Aggregation API Layer：</h4><h2 id="声明式API"><a href="#声明式API" class="headerlink" title="声明式API"></a>声明式API</h2><p><img src="/2020/05/14/kubernetes/proposal/api/image-20200606173715965.png" alt="image-20200606173715965"></p>
+<ol>
+<li><p>如何理解声明式API？</p>
+<p>个人理解：declarative，声明式API，就是通过RESTful接口，对资源进行操作的时候都是通过声明的方式提交，进行操作API资源，叫做声明式API，特点就是，每次我提交的请求，都是通过修改对API的定义（声明），来让server端不断同步当前status去满足状态</p>
+</li>
+<li><p>声明API和命令式API的区别？/声明式API有什么好处吗？</p>
+<p>个人理解：声明式API是异步的，和命令式API不同，命令式API每次调用必须获得的返回是成功或者失败。声明式API有利于像k8s这种API较多，并且对API对象需要进行复杂操作的系统，而且有效的配合controller模式。</p>
+</li>
+</ol>
+<h2 id="参考文档"><a href="#参考文档" class="headerlink" title="参考文档"></a>参考文档</h2><p><a href="https://kubernetes.io/zh/docs/concepts/overview/kubernetes-/2020/05/14/kubernetes/proposal/api/" target="_blank" rel="noopener">Kubernetes API 概念介绍</a></p>
+<p><a href="https://kubernetes.io/docs/reference/using-/2020/05/14/kubernetes/proposal/api/api-overview/" target="_blank" rel="noopener">Kubernetes</a></p>
+<p><a href="https://github.com/kubernetes/community/blob/master/contributors/devel/sig-architecture/api-conventions.md" target="_blank" rel="noopener">API Convention官方文档</a></p>
+<p><a href="https://kubernetes.io/docs/reference/using-/2020/05/14/kubernetes/proposal/api/deprecation-policy/" target="_blank" rel="noopener">API废弃规范</a></p>
+<p><a href="https://github.com/kubernetes/community/blob/master/contributors/devel/sig-architecture/api_changes.md" target="_blank" rel="noopener">API变更规范</a></p>
+<p><a href="https://kubernetes.io/docs/concepts/extend-kubernetes/api-extension/apiserver-aggregation/" target="_blank" rel="noopener">API Aggregation</a></p>
 
     </div>
 
@@ -403,7 +413,7 @@
 
       <!--noindex-->
       <div class="post-toc-wrap sidebar-panel">
-          <div class="post-toc motion-element"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#API"><span class="nav-number">1.</span> <span class="nav-text">API</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#前言"><span class="nav-number">1.1.</span> <span class="nav-text">前言</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#API-Versioning（API版本控制）"><span class="nav-number">1.2.</span> <span class="nav-text">API Versioning（API版本控制）</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#API-Group"><span class="nav-number">1.3.</span> <span class="nav-text">API Group</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#扩展API"><span class="nav-number">1.4.</span> <span class="nav-text">扩展API</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#1-CRD："><span class="nav-number">1.4.0.1.</span> <span class="nav-text">1. CRD：</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#2-Aggregation-API-Layer："><span class="nav-number">1.4.0.2.</span> <span class="nav-text">2. Aggregation API Layer：</span></a></li></ol></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#参考文档"><span class="nav-number">1.5.</span> <span class="nav-text">参考文档</span></a></li></ol></li></ol></div>
+          <div class="post-toc motion-element"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#API"><span class="nav-number">1.</span> <span class="nav-text">API</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#前言"><span class="nav-number">1.1.</span> <span class="nav-text">前言</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#API-Versioning（API版本控制）"><span class="nav-number">1.2.</span> <span class="nav-text">API Versioning（API版本控制）</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#API-Group"><span class="nav-number">1.3.</span> <span class="nav-text">API Group</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#扩展API"><span class="nav-number">1.4.</span> <span class="nav-text">扩展API</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#1-CRD："><span class="nav-number">1.4.0.1.</span> <span class="nav-text">1. CRD：</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#2-Aggregation-API-Layer："><span class="nav-number">1.4.0.2.</span> <span class="nav-text">2. Aggregation API Layer：</span></a></li></ol></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#声明式API"><span class="nav-number">1.5.</span> <span class="nav-text">声明式API</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#参考文档"><span class="nav-number">1.6.</span> <span class="nav-text">参考文档</span></a></li></ol></li></ol></div>
       </div>
       <!--/noindex-->
 
@@ -417,7 +427,7 @@
       <div class="site-state-item site-state-posts">
           <a href="/archives/">
         
-          <span class="site-state-item-count">32</span>
+          <span class="site-state-item-count">33</span>
           <span class="site-state-item-name">日志</span>
         </a>
       </div>
