@@ -1,0 +1,551 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=2">
+<meta name="theme-color" content="#222">
+<meta name="generator" content="Hexo 4.2.0">
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png">
+  <link rel="mask-icon" href="/images/logo.svg" color="#222">
+
+<link rel="stylesheet" href="/css/main.css">
+
+
+<link rel="stylesheet" href="/lib/font-awesome/css/all.min.css">
+
+<script id="hexo-configurations">
+    var NexT = window.NexT || {};
+    var CONFIG = {"hostname":"qmloong.github.io","root":"/","scheme":"Pisces","version":"8.0.0-rc.2","exturl":false,"sidebar":{"position":"left","display":"post","padding":18,"offset":12,"onmobile":false},"copycode":{"enable":true,"show_result":false,"style":"mac"},"back2top":{"enable":true,"sidebar":true,"scrollpercent":true},"bookmark":{"enable":true,"color":"#222","save":"manual"},"fancybox":false,"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"algolia":{"hits":{"per_page":10},"labels":{"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}},"localsearch":{"enable":false,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false},"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}}};
+  </script>
+
+  <meta name="description" content="API变更规范这篇proposal是变更规范，通过这篇变更规范，来理解多版本的API是如何工作的，有兴趣可以读一读原文。也会涉及定义一个API的流程，而详细的设计API的规范文档，是这篇">
+<meta property="og:type" content="article">
+<meta property="og:title" content="kubernetes&#x2F;proposal&#x2F;api-change">
+<meta property="og:url" content="https://qmloong.github.io/2020/06/08/kubernetes/proposal/api-change/index.html">
+<meta property="og:site_name" content="qmloong&#39;s Blog">
+<meta property="og:description" content="API变更规范这篇proposal是变更规范，通过这篇变更规范，来理解多版本的API是如何工作的，有兴趣可以读一读原文。也会涉及定义一个API的流程，而详细的设计API的规范文档，是这篇">
+<meta property="og:locale" content="zh_CN">
+<meta property="article:published_time" content="2020-06-08T15:01:51.914Z">
+<meta property="article:modified_time" content="2020-06-08T16:49:26.537Z">
+<meta property="article:author" content="menglong">
+<meta property="article:tag" content="kubernetes">
+<meta property="article:tag" content="kube-apiserver">
+<meta property="article:tag" content="proposal">
+<meta name="twitter:card" content="summary">
+
+<link rel="canonical" href="https://qmloong.github.io/2020/06/08/kubernetes/proposal/api-change/">
+
+
+<script id="page-configurations">
+  // https://hexo.io/docs/variables.html
+  CONFIG.page = {
+    sidebar: "",
+    isHome : false,
+    isPost : true,
+    lang   : 'zh-CN'
+  };
+</script>
+
+  <title>kubernetes/proposal/api-change | qmloong's Blog</title>
+  
+
+
+
+
+
+
+  <noscript>
+  <style>
+  .use-motion .brand,
+  .use-motion .menu-item,
+  .sidebar-inner,
+  .use-motion .post-block,
+  .use-motion .pagination,
+  .use-motion .comments,
+  .use-motion .post-header,
+  .use-motion .post-body,
+  .use-motion .collection-header { opacity: initial; }
+
+  .use-motion .site-title,
+  .use-motion .site-subtitle {
+    opacity: initial;
+    top: initial;
+  }
+
+  .use-motion .logo-line-before i { left: initial; }
+  .use-motion .logo-line-after i { right: initial; }
+  </style>
+</noscript>
+
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage">
+  <div class="container use-motion">
+    <div class="headband"></div>
+
+    <header class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-container">
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="切换导航栏">
+        <span class="toggle-line toggle-line-first"></span>
+        <span class="toggle-line toggle-line-middle"></span>
+        <span class="toggle-line toggle-line-last"></span>
+    </div>
+  </div>
+
+  <div class="site-meta">
+
+    <a href="/" class="brand" rel="start">
+      <span class="logo-line-before"><i></i></span>
+      <h1 class="site-title">qmloong's Blog</h1>
+      <span class="logo-line-after"><i></i></span>
+    </a>
+  </div>
+
+  <div class="site-nav-right">
+    <div class="toggle popup-trigger">
+    </div>
+  </div>
+</div>
+
+
+
+<nav class="site-nav">
+  <ul id="menu" class="main-menu menu">
+        <li class="menu-item menu-item-home">
+
+    <a href="/" rel="section"><i class="fa fa-home fa-fw"></i>首页</a>
+
+  </li>
+        <li class="menu-item menu-item-tags">
+
+    <a href="/tags/" rel="section"><i class="fa fa-tags fa-fw"></i>标签</a>
+
+  </li>
+        <li class="menu-item menu-item-categories">
+
+    <a href="/categories/" rel="section"><i class="fa fa-th fa-fw"></i>分类</a>
+
+  </li>
+        <li class="menu-item menu-item-archives">
+
+    <a href="/archives/" rel="section"><i class="fa fa-archive fa-fw"></i>归档</a>
+
+  </li>
+  </ul>
+</nav>
+
+
+
+
+</div>
+    </header>
+
+    
+  <div class="reading-progress-bar"></div>
+  <a role="button" class="book-mark-link book-mark-link-fixed"></a>
+
+
+    <main class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          
+
+          <div class="content post posts-expand">
+            
+
+    
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="https://qmloong.github.io/2020/06/08/kubernetes/proposal/api-change/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.gif">
+      <meta itemprop="name" content="menglong">
+      <meta itemprop="description" content="Love is a heroic dream in a tired life.🐬">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="qmloong's Blog">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          kubernetes/proposal/api-change
+        </h1>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-calendar"></i>
+              </span>
+              <span class="post-meta-item-text">发表于</span>
+
+              <time title="创建时间：2020-06-08 23:01:51" itemprop="dateCreated datePublished" datetime="2020-06-08T23:01:51+08:00">2020-06-08</time>
+            </span>
+              <span class="post-meta-item">
+                <span class="post-meta-item-icon">
+                  <i class="far fa-calendar-check"></i>
+                </span>
+                <span class="post-meta-item-text">更新于</span>
+                <time title="修改时间：2020-06-09 00:49:26" itemprop="dateModified" datetime="2020-06-09T00:49:26+08:00">2020-06-09</time>
+              </span>
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-folder"></i>
+              </span>
+              <span class="post-meta-item-text">分类于</span>
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/kubernetes/" itemprop="url" rel="index"><span itemprop="name">kubernetes</span></a>
+                </span>
+            </span>
+
+          
+            <span class="post-meta-item" title="阅读次数" id="busuanzi_container_page_pv" style="display: none;">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-eye"></i>
+              </span>
+              <span class="post-meta-item-text">阅读次数：</span>
+              <span id="busuanzi_value_page_pv"></span>
+            </span>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+        <h1 id="API变更规范"><a href="#API变更规范" class="headerlink" title="API变更规范"></a>API变更规范</h1><p>这篇proposal是变更规范，通过这篇变更规范，来理解多版本的API是如何工作的，有兴趣可以读一读<a href="https://github.com/kubernetes/community/blob/master/contributors/devel/sig-architecture/api_changes.md#readme" target="_blank" rel="noopener">原文</a>。也会涉及定义一个API的流程，而详细的设计API的规范文档，是<a href="https://github.com/kubernetes/community/blob/master/contributors/devel/sig-architecture/api-conventions.md" target="_blank" rel="noopener">这篇</a></p>
+<a id="more"></a>
+
+<p>记录一下里面的知识点</p>
+<blockquote>
+<p>The conversion process is logically a “star” with the internal form at the center. Every versioned API can be converted to the internal form (and vice-versa), but versioned APIs do not convert to other versioned APIs directly.</p>
+</blockquote>
+<p>从逻辑上说，转换过程是一个“星形”，内部形式居中。每个版本化的API都可以转换为内部形式（反之亦然），但是版本化的API不能直接转换为其他版本化的API。思考scheme的转换机制。</p>
+<blockquote>
+<p>While all of the Kubernetes code operates on the internal structures, they are always converted to a versioned form before being written to storage (disk or etcd) or being sent over a wire. Clients should consume and operate on the versioned APIs exclusively.</p>
+</blockquote>
+<p>尽管所有Kubernetes代码都在internal结构上运行，但在写入存储（磁盘或etcd），它们始终会转换为版本化形式。客户端应仅使用版本化的API并对其进行操作</p>
+<blockquote>
+<p>To demonstrate the general process, here is a (hypothetical) example:</p>
+<ol>
+<li>A user POSTs a <code>Pod</code> object to <code>/api/v7beta1/...</code></li>
+<li>The JSON is unmarshalled into a <code>v7beta1.Pod</code> structure</li>
+<li>Default values are applied to the <code>v7beta1.Pod</code></li>
+<li>The <code>v7beta1.Pod</code> is converted to an <code>api.Pod</code> structure</li>
+<li>The <code>api.Pod</code> is validated, and any errors are returned to the user</li>
+<li>The <code>api.Pod</code> is converted to a <code>v6.Pod</code> (because v6 is the latest stable version)</li>
+<li>The <code>v6.Pod</code> is marshalled into JSON and written to etcd</li>
+</ol>
+<p>Now that we have the <code>Pod</code> object stored, a user can GET that object in any supported api version. For example:</p>
+<ol>
+<li>A user GETs the <code>Pod</code> from <code>/api/v5/...</code></li>
+<li>The JSON is read from etcd and unmarshalled into a <code>v6.Pod</code> structure</li>
+<li>Default values are applied to the <code>v6.Pod</code></li>
+<li>The <code>v6.Pod</code> is converted to an <code>api.Pod</code> structure</li>
+<li>The <code>api.Pod</code> is converted to a <code>v5.Pod</code> structure</li>
+<li>The <code>v5.Pod</code> is marshalled into JSON and sent to the user</li>
+</ol>
+<p>The implication of this process is that API changes must be done carefully and backward-compatibly.</p>
+</blockquote>
+<p>外部调用-&gt;APIServer-&gt;Etcd，不通版本的转换机制示例</p>
+<h2 id="兼容性"><a href="#兼容性" class="headerlink" title="兼容性"></a>兼容性</h2><p>讲了一大堆兼容性的问题，没遇到过，浏览了一边，后面遇到再回顾一边吧。记住里面Patch的那个例子。</p>
+<blockquote>
+<p>Do not add a new API version of an existing resource and make it the preferred version in the same release, and do not make it the storage version. The latter is necessary so that a rollback of the apiserver doesn’t render resources in etcd undecodable after rollback.</p>
+</blockquote>
+<p>不要在添加现有资源的新API版本还其成为同一发行版中的首选版本，也不要使其成为<strong>存储版本</strong>。千万不要变成存储版本，以便回滚apiserver不会使etcd中的资源无法解码。<em>protobuf可能无法正常被解码</em></p>
+<p>如何理解向前、向后兼容？</p>
+<p>其实理解 <strong>Forward Compatibility</strong>、<strong>Backward Compatibility</strong>比理解中文简单多了。。</p>
+<p>Forward就是向未来兼容，Backward就是向过去兼容，都是以现在为坐标。</p>
+<h2 id="Changing-versioned-APIs"><a href="#Changing-versioned-APIs" class="headerlink" title="Changing versioned APIs"></a>Changing versioned APIs</h2><p>变更带版本的API</p>
+<h3 id="edit-types-go"><a href="#edit-types-go" class="headerlink" title="edit types.go"></a>edit types.go</h3><p>写xx版本的类型定义</p>
+<h3 id="edit-default-go"><a href="#edit-default-go" class="headerlink" title="edit default.go"></a>edit default.go</h3><p>写xx版本的资源默认值</p>
+<h3 id="edit-conversion-go"><a href="#edit-conversion-go" class="headerlink" title="edit conversion.go"></a>edit conversion.go</h3><p>写xx版本的转换文件。</p>
+<h2 id="Changing-the-internal-structures"><a href="#Changing-the-internal-structures" class="headerlink" title="Changing the internal structures"></a>Changing the internal structures</h2><h3 id="edit-types-go-1"><a href="#edit-types-go-1" class="headerlink" title="edit types.go"></a>edit types.go</h3><p>写interal版本的类型定义</p>
+<h2 id="Edit-validation-go"><a href="#Edit-validation-go" class="headerlink" title="Edit validation.go"></a>Edit validation.go</h2><p>内部版本的校验逻辑，校验客户端传入过来的object是否符合预期，不符合是要打回的</p>
+<h2 id="Edit-version-conversions"><a href="#Edit-version-conversions" class="headerlink" title="Edit version conversions"></a>Edit version conversions</h2><p>手动编写不通版本之间的字段转换函数，其他的字段会自动生成。</p>
+<p>注意这个转换函数会注册到Scheme上</p>
+<h2 id="Generate-Code"><a href="#Generate-Code" class="headerlink" title="Generate Code"></a>Generate Code</h2><p>生成代码的工具，通过不同的注释</p>
+<blockquote>
+<p>Apart from the <code>defaulter-gen</code>, <code>deepcopy-gen</code>, <code>conversion-gen</code> and <code>openapi-gen</code>, there are a few other generators:</p>
+<ul>
+<li><code>go-to-protobuf</code></li>
+<li><code>client-gen</code></li>
+<li><code>lister-gen</code></li>
+<li><code>informer-gen</code></li>
+<li><code>codecgen</code> (for fast json serialization with ugorji codec)</li>
+</ul>
+</blockquote>
+<h2 id="Making-a-new-API-Version"><a href="#Making-a-new-API-Version" class="headerlink" title="Making a new API Version"></a>Making a new API Version</h2><blockquote>
+<p>This section is under construction, as we make the tooling completely generic.</p>
+<p>If you are adding a new API version to an existing group, you can copy the structure of the existing <code>pkg/apis/&lt;group&gt;/&lt;existing-version&gt;</code> and <code>staging/src/k8s.io/api/&lt;group&gt;/&lt;existing-version&gt;</code> directories.</p>
+<p>Due to the fast changing nature of the project, the following content is probably out-dated:</p>
+<ul>
+<li>You can control if the version is enabled by default by update <a href="https://github.com/kubernetes/kubernetes/blob/v1.8.0-alpha.2/pkg/master/master.go#L381" target="_blank" rel="noopener">pkg/master/master.go</a>.</li>
+<li>You must add the new version to <a href="https://github.com/kubernetes/kubernetes/blob/v1.8.0-alpha.2/pkg/apis/apps/install/install.go" target="_blank" rel="noopener">pkg/apis/group_name/install/install.go</a>.</li>
+<li>You must add the new version to <a href="https://github.com/kubernetes/kubernetes/blob/v1.8.0-alpha.2/hack/lib/init.sh#L53" target="_blank" rel="noopener">hack/lib/init.sh#KUBE_AVAILABLE_GROUP_VERSIONS</a>.</li>
+<li>You must add the new version to <a href="https://github.com/kubernetes/kubernetes/blob/v1.8.2/hack/update-generated-protobuf-dockerized.sh#L44" target="_blank" rel="noopener">hack/update-generated-protobuf-dockerized.sh</a> to generate protobuf IDL and marshallers.</li>
+<li>You must add the new version to <a href="https://github.com/kubernetes/kubernetes/blob/v1.8.0-alpha.2/cmd/kube-apiserver/app/aggregator.go#L172" target="_blank" rel="noopener">cmd/kube-apiserver/app#apiVersionPriorities</a></li>
+<li>You must setup storage for the new version in <a href="https://github.com/kubernetes/kubernetes/blob/v1.8.0-alpha.2/pkg/registry/authentication/rest/storage_authentication.go" target="_blank" rel="noopener">pkg/registry/group_name/rest</a></li>
+</ul>
+<p>You need to regenerate the generated code as instructed in the sections above.</p>
+</blockquote>
+<p>目前这部分还是工具化，官方建议我们手动copy一个versioned资源😂，那就理所当然的抄代码吧。官方的叫我们如何写注册API的步骤，hhh</p>
+<h2 id="Making-a-new-API-Group"><a href="#Making-a-new-API-Group" class="headerlink" title="Making a new API Group"></a>Making a new API Group</h2><blockquote>
+<p> You’ll have to make a new directory under <code>pkg/apis/</code> and <code>staging/src/k8s.io/api</code>; copy the directory structure of an existing API group, e.g. <code>pkg/apis/authentication</code> and <code>staging/src/k8s.io/api/authentication</code>; replace “authentication” with your group name and replace versions with your versions; replace the API kinds in <a href="https://github.com/kubernetes/kubernetes/blob/v1.8.0-alpha.2/staging/src/k8s.io/api/authentication/v1/register.go#L47" target="_blank" rel="noopener">versioned</a> and <a href="https://github.com/kubernetes/kubernetes/blob/v1.8.0-alpha.2/pkg/apis/authentication/register.go#L47" target="_blank" rel="noopener">internal</a> register.go, and <a href="https://github.com/kubernetes/kubernetes/blob/v1.8.0-alpha.2/pkg/apis/authentication/install/install.go#L43" target="_blank" rel="noopener">install.go</a> with your kinds.</p>
+<p>You’ll have to add your API group/version to a few places in the code base, as noted in <a href="https://github.com/kubernetes/community/blob/master/contributors/devel/sig-architecture/api_changes.md#making-a-new-api-version" target="_blank" rel="noopener">Making a new API Version</a> section.</p>
+<p>You need to regenerate the generated code as instructed in the sections above.</p>
+</blockquote>
+<ol>
+<li><p>mk pkg/apis/&lt;group&gt; &amp;&amp; mk staging/src/k8s.io/api/&lt;gourp&gt;</p>
+</li>
+<li><p>cp pkg/apis/authentication/*  pkg/apis/&lt;group&gt;/ </p>
+</li>
+<li><p>cp staging/src/k8s.io/api/authentication/*  staging/src/k8s.io/api/&lt;gourp&gt;/</p>
+</li>
+<li><p>替换authentication</p>
+</li>
+<li><p>替换versioned和internal下的register.go，其实就是对应上面的pkg下的和staging下的register.go</p>
+</li>
+</ol>
+
+    </div>
+
+    
+    
+    
+
+      <footer class="post-footer">
+          <div class="post-tags">
+              <a href="/tags/kubernetes/" rel="tag"># kubernetes</a>
+              <a href="/tags/kube-apiserver/" rel="tag"># kube-apiserver</a>
+              <a href="/tags/proposal/" rel="tag"># proposal</a>
+          </div>
+
+        
+
+
+        
+    <div class="post-nav">
+      <div class="post-nav-item">
+    <a href="/2020/06/08/kubernetes/kube-controller-manager/workqueue/" rel="prev" title="kubernetes/kube-controller-manager/workqueue">
+      <i class="fa fa-chevron-left"></i> kubernetes/kube-controller-manager/workqueue
+    </a></div>
+      <div class="post-nav-item">
+    <a href="/2020/06/09/kubernetes/proposal/api-conventions/" rel="next" title="kubernetes/proposal/api-conventions">
+      kubernetes/proposal/api-conventions <i class="fa fa-chevron-right"></i>
+    </a></div>
+    </div>
+      </footer>
+    
+  </article>
+  
+  
+  
+
+
+
+          </div>
+          
+
+<script>
+  window.addEventListener('tabs:register', () => {
+    let { activeClass } = CONFIG.comments;
+    if (CONFIG.comments.storage) {
+      activeClass = localStorage.getItem('comments_active') || activeClass;
+    }
+    if (activeClass) {
+      let activeTab = document.querySelector(`a[href="#comment-${activeClass}"]`);
+      if (activeTab) {
+        activeTab.click();
+      }
+    }
+  });
+  if (CONFIG.comments.storage) {
+    window.addEventListener('tabs:click', event => {
+      if (!event.target.matches('.tabs-comment .tab-content .tab-pane')) return;
+      let commentClass = event.target.classList[1];
+      localStorage.setItem('comments_active', commentClass);
+    });
+  }
+</script>
+
+        </div>
+          
+  
+  <div class="toggle sidebar-toggle">
+    <span class="toggle-line toggle-line-first"></span>
+    <span class="toggle-line toggle-line-middle"></span>
+    <span class="toggle-line toggle-line-last"></span>
+  </div>
+
+  <aside class="sidebar">
+    <div class="sidebar-inner">
+
+      <ul class="sidebar-nav motion-element">
+        <li class="sidebar-nav-toc">
+          文章目录
+        </li>
+        <li class="sidebar-nav-overview">
+          站点概览
+        </li>
+      </ul>
+
+      <!--noindex-->
+      <div class="post-toc-wrap sidebar-panel">
+          <div class="post-toc motion-element"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#API变更规范"><span class="nav-number">1.</span> <span class="nav-text">API变更规范</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#兼容性"><span class="nav-number">1.1.</span> <span class="nav-text">兼容性</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#Changing-versioned-APIs"><span class="nav-number">1.2.</span> <span class="nav-text">Changing versioned APIs</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#edit-types-go"><span class="nav-number">1.2.1.</span> <span class="nav-text">edit types.go</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#edit-default-go"><span class="nav-number">1.2.2.</span> <span class="nav-text">edit default.go</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#edit-conversion-go"><span class="nav-number">1.2.3.</span> <span class="nav-text">edit conversion.go</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#Changing-the-internal-structures"><span class="nav-number">1.3.</span> <span class="nav-text">Changing the internal structures</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#edit-types-go-1"><span class="nav-number">1.3.1.</span> <span class="nav-text">edit types.go</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#Edit-validation-go"><span class="nav-number">1.4.</span> <span class="nav-text">Edit validation.go</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#Edit-version-conversions"><span class="nav-number">1.5.</span> <span class="nav-text">Edit version conversions</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#Generate-Code"><span class="nav-number">1.6.</span> <span class="nav-text">Generate Code</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#Making-a-new-API-Version"><span class="nav-number">1.7.</span> <span class="nav-text">Making a new API Version</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#Making-a-new-API-Group"><span class="nav-number">1.8.</span> <span class="nav-text">Making a new API Group</span></a></li></ol></li></ol></div>
+      </div>
+      <!--/noindex-->
+
+      <div class="site-overview-wrap sidebar-panel">
+        <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+  <p class="site-author-name" itemprop="name">menglong</p>
+  <div class="site-description" itemprop="description">Love is a heroic dream in a tired life.🐬</div>
+</div>
+<div class="site-state-wrap motion-element">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+          <a href="/archives/">
+        
+          <span class="site-state-item-count">37</span>
+          <span class="site-state-item-name">日志</span>
+        </a>
+      </div>
+      <div class="site-state-item site-state-categories">
+            <a href="/categories/">
+          
+        <span class="site-state-item-count">9</span>
+        <span class="site-state-item-name">分类</span></a>
+      </div>
+      <div class="site-state-item site-state-tags">
+            <a href="/tags/">
+          
+        <span class="site-state-item-count">24</span>
+        <span class="site-state-item-name">标签</span></a>
+      </div>
+  </nav>
+</div>
+  <div class="links-of-author motion-element">
+      <span class="links-of-author-item">
+        <a href="https://github.com/qmloong" title="GitHub → https:&#x2F;&#x2F;github.com&#x2F;qmloong" rel="noopener" target="_blank"><i class="fab fa-github fa-fw"></i>GitHub</a>
+      </span>
+      <span class="links-of-author-item">
+        <a href="mailto:qmlfighting@gmail.com" title="E-Mail → mailto:qmlfighting@gmail.com" rel="noopener" target="_blank"><i class="fa fa-envelope fa-fw"></i>E-Mail</a>
+      </span>
+  </div>
+
+
+
+      </div>
+        <div class="back-to-top motion-element">
+          <i class="fa fa-arrow-up"></i>
+          <span>0%</span>
+        </div>
+
+    </div>
+  </aside>
+  <div id="sidebar-dimmer"></div>
+
+
+      </div>
+    </main>
+
+    <footer class="footer">
+      <div class="footer-inner">
+        
+
+        
+
+<div class="copyright">
+  
+  &copy; 
+  <span itemprop="copyrightYear">2020</span>
+  <span class="with-love">
+    <i class="fa fa-heart"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">menglong</span>
+</div>
+  <div class="powered-by">由 <a href="https://hexo.io/" class="theme-link" rel="noopener" target="_blank">Hexo</a> & <a href="https://theme-next.js.org/pisces/" class="theme-link" rel="noopener" target="_blank">NexT.Pisces</a> 强力驱动
+  </div>
+
+        
+<div class="busuanzi-count">
+  <script async src="https://busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+    <span class="post-meta-item" id="busuanzi_container_site_uv" style="display: none;">
+      <span class="post-meta-item-icon">
+        <i class="fa fa-user"></i>
+      </span>
+      <span class="site-uv" title="总访客量">
+        <span id="busuanzi_value_site_uv"></span>
+      </span>
+    </span>
+    <span class="post-meta-divider">|</span>
+    <span class="post-meta-item" id="busuanzi_container_site_pv" style="display: none;">
+      <span class="post-meta-item-icon">
+        <i class="fa fa-eye"></i>
+      </span>
+      <span class="site-pv" title="总访问量">
+        <span id="busuanzi_value_site_pv"></span>
+      </span>
+    </span>
+</div>
+
+
+
+
+
+
+
+
+      </div>
+    </footer>
+  </div>
+
+  
+  <script src="/lib/anime.min.js"></script>
+  <script src="/lib/velocity/velocity.min.js"></script>
+  <script src="/lib/velocity/velocity.ui.min.js"></script>
+
+<script src="/js/utils.js"></script>
+
+<script src="/js/motion.js"></script>
+
+
+<script src="/js/schemes/pisces.js"></script>
+
+
+<script src="/js/next-boot.js"></script>
+
+<script src="/js/bookmark.js"></script>
+
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+  
+
+</body>
+</html>
