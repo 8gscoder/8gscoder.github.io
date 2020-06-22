@@ -154,6 +154,294 @@
   
   
   <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="https://qmloong.github.io/2020/06/04/network-code/networkcoding/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.gif">
+      <meta itemprop="name" content="menglong">
+      <meta itemprop="description" content="Love is a heroic dream in a tired life.🐬">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="qmloong's Blog">
+    </span>
+      <header class="post-header">
+        <h2 class="post-title" itemprop="name headline">
+          
+            <a href="/2020/06/04/network-code/networkcoding/" class="post-title-link" itemprop="url">network-code/networkcoding</a>
+        </h2>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-calendar"></i>
+              </span>
+              <span class="post-meta-item-text">发表于</span>
+              
+
+              <time title="创建时间：2020-06-04 22:47:41 / 修改时间：22:47:53" itemprop="dateCreated datePublished" datetime="2020-06-04T22:47:41+08:00">2020-06-04</time>
+            </span>
+
+          
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+          
+      
+    </div>
+
+    
+    
+    
+      <footer class="post-footer">
+        <div class="post-eof"></div>
+      </footer>
+  </article>
+  
+  
+  
+
+      
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="https://qmloong.github.io/2020/06/03/leetcodes/sort/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.gif">
+      <meta itemprop="name" content="menglong">
+      <meta itemprop="description" content="Love is a heroic dream in a tired life.🐬">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="qmloong's Blog">
+    </span>
+      <header class="post-header">
+        <h2 class="post-title" itemprop="name headline">
+          
+            <a href="/2020/06/03/leetcodes/sort/" class="post-title-link" itemprop="url">leetcodes/sort</a>
+        </h2>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-calendar"></i>
+              </span>
+              <span class="post-meta-item-text">发表于</span>
+
+              <time title="创建时间：2020-06-03 22:58:04" itemprop="dateCreated datePublished" datetime="2020-06-03T22:58:04+08:00">2020-06-03</time>
+            </span>
+              <span class="post-meta-item">
+                <span class="post-meta-item-icon">
+                  <i class="far fa-calendar-check"></i>
+                </span>
+                <span class="post-meta-item-text">更新于</span>
+                <time title="修改时间：2020-06-04 01:28:00" itemprop="dateModified" datetime="2020-06-04T01:28:00+08:00">2020-06-04</time>
+              </span>
+
+          
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+          <h1 id="排序算法"><a href="#排序算法" class="headerlink" title="排序算法"></a>排序算法</h1><h2 id="快排"><a href="#快排" class="headerlink" title="快排"></a>快排</h2><h3 id="推导"><a href="#推导" class="headerlink" title="推导"></a>推导</h3><p>推导可以参考这个图，这只是推导出最优的情况，即每次pivot的坐标都是中间的，最平均的的情况。</p>
+<p>最差情况其实就是pivot的位置每次都是最左边，导致每次partition的时候，不平均的，画成树的样子的话，就是一个只有左孩子的树，变成和普通冒泡排序一样</p>
+<img src="/2020/06/03/leetcodes/sort/v2-318c6eead066aa028df487303f616228_1440w.jpg" alt="img" style="zoom:33%;" />
+
+<h3 id="代码"><a href="#代码" class="headerlink" title="代码"></a>代码</h3><figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">partition</span><span class="params">(arr []<span class="keyword">int</span>, left, right <span class="keyword">int</span>)</span> <span class="title">int</span></span> &#123;</span><br><span class="line">   <span class="keyword">if</span> left &gt;= right &#123;</span><br><span class="line">      <span class="keyword">return</span> left</span><br><span class="line">   &#125;</span><br><span class="line">   pivot := arr[right]</span><br><span class="line">   <span class="keyword">for</span> left &lt; right &#123;</span><br><span class="line">      <span class="keyword">for</span> left &lt; right &amp;&amp; arr[left] &lt;= pivot &#123;</span><br><span class="line">         left++</span><br><span class="line">      &#125;</span><br><span class="line">      <span class="keyword">for</span> left &lt; right &amp;&amp; arr[right] &gt; pivot &#123;</span><br><span class="line">         right--</span><br><span class="line">      &#125;</span><br><span class="line">      arr[left], arr[right] = arr[right], arr[left]</span><br><span class="line">   &#125;</span><br><span class="line">   <span class="keyword">return</span> left</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">qsortImpl</span><span class="params">(arr []<span class="keyword">int</span>, left, right <span class="keyword">int</span>)</span></span> &#123;</span><br><span class="line">   <span class="keyword">if</span> left &gt;= right &#123;</span><br><span class="line">      <span class="keyword">return</span></span><br><span class="line">   &#125;</span><br><span class="line">   p := partition(arr, left, right)</span><br><span class="line">   qsortImpl(arr, left, p<span class="number">-1</span>)</span><br><span class="line">   qsortImpl(arr, p, right)</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">qsort</span><span class="params">(src []<span class="keyword">int</span>)</span> []<span class="title">int</span></span> &#123;</span><br><span class="line">   qsortImpl(src, <span class="number">0</span>, <span class="built_in">len</span>(src)<span class="number">-1</span>)</span><br><span class="line">   <span class="keyword">return</span> src</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+
+      
+    </div>
+
+    
+    
+    
+      <footer class="post-footer">
+        <div class="post-eof"></div>
+      </footer>
+  </article>
+  
+  
+  
+
+      
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="https://qmloong.github.io/2020/05/30/leetcodes/summarize/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.gif">
+      <meta itemprop="name" content="menglong">
+      <meta itemprop="description" content="Love is a heroic dream in a tired life.🐬">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="qmloong's Blog">
+    </span>
+      <header class="post-header">
+        <h2 class="post-title" itemprop="name headline">
+          
+            <a href="/2020/05/30/leetcodes/summarize/" class="post-title-link" itemprop="url">leetcodes/summarize</a>
+        </h2>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-calendar"></i>
+              </span>
+              <span class="post-meta-item-text">发表于</span>
+
+              <time title="创建时间：2020-05-30 23:10:03" itemprop="dateCreated datePublished" datetime="2020-05-30T23:10:03+08:00">2020-05-30</time>
+            </span>
+              <span class="post-meta-item">
+                <span class="post-meta-item-icon">
+                  <i class="far fa-calendar-check"></i>
+                </span>
+                <span class="post-meta-item-text">更新于</span>
+                <time title="修改时间：2020-05-31 00:34:33" itemprop="dateModified" datetime="2020-05-31T00:34:33+08:00">2020-05-31</time>
+              </span>
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-folder"></i>
+              </span>
+              <span class="post-meta-item-text">分类于</span>
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/leetcode/" itemprop="url" rel="index"><span itemprop="name">leetcode</span></a>
+                </span>
+            </span>
+
+          
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+          <h1 id="Summarize"><a href="#Summarize" class="headerlink" title="Summarize"></a>Summarize</h1><h2 id="题记"><a href="#题记" class="headerlink" title="题记"></a>题记</h2><h3 id="数组"><a href="#数组" class="headerlink" title="数组"></a>数组</h3><h4 id="1-两数之和找target（map遍历找）"><a href="#1-两数之和找target（map遍历找）" class="headerlink" title="1. 两数之和找target（map遍历找）"></a>1. 两数之和找target（map遍历找）</h4><h4 id="2-fib数组系列问题（青蛙跳台阶、打家劫舍、最大和的子数组）"><a href="#2-fib数组系列问题（青蛙跳台阶、打家劫舍、最大和的子数组）" class="headerlink" title="2. fib数组系列问题（青蛙跳台阶、打家劫舍、最大和的子数组）"></a>2. fib数组系列问题（青蛙跳台阶、打家劫舍、最大和的子数组）</h4><p>任何dp(n) = dp(n-1) + dp(n-2)类似的递归问题，都可以转化为dp一维数组来解决</p>
+<ol>
+<li>什么时候用DP？<ol>
+<li>最优解的时候，能找到dp公式的时候</li>
+</ol>
+</li>
+<li>如何做DP<ol>
+<li>找到公式</li>
+<li>注意临界值</li>
+<li>注意复用已有的计算结果</li>
+</ol>
+</li>
+</ol>
+
+      
+    </div>
+
+    
+    
+    
+      <footer class="post-footer">
+        <div class="post-eof"></div>
+      </footer>
+  </article>
+  
+  
+  
+
+      
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="https://qmloong.github.io/2020/05/30/go/traps-and-falls/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.gif">
+      <meta itemprop="name" content="menglong">
+      <meta itemprop="description" content="Love is a heroic dream in a tired life.🐬">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="qmloong's Blog">
+    </span>
+      <header class="post-header">
+        <h2 class="post-title" itemprop="name headline">
+          
+            <a href="/2020/05/30/go/traps-and-falls/" class="post-title-link" itemprop="url">go/traps-and-falls</a>
+        </h2>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-calendar"></i>
+              </span>
+              <span class="post-meta-item-text">发表于</span>
+              
+
+              <time title="创建时间：2020-05-30 22:28:21 / 修改时间：22:44:22" itemprop="dateCreated datePublished" datetime="2020-05-30T22:28:21+08:00">2020-05-30</time>
+            </span>
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-folder"></i>
+              </span>
+              <span class="post-meta-item-text">分类于</span>
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/go/" itemprop="url" rel="index"><span itemprop="name">go</span></a>
+                </span>
+            </span>
+
+          
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+          <h1 id="GO-Traps-amp-Falls"><a href="#GO-Traps-amp-Falls" class="headerlink" title="GO Traps&amp;Falls"></a>GO Traps&amp;Falls</h1><h2 id="陷阱"><a href="#陷阱" class="headerlink" title="陷阱"></a>陷阱</h2><h4 id="变量定义"><a href="#变量定义" class="headerlink" title="变量定义"></a>变量定义</h4><ol>
+<li><p><code>var name type</code> 定义出来的变量，默认是零值，以下6个类型全部为nil：slice/map/pointer/channel/func/interface，但是拿<code>[]int{}、map[int]int{}、func(){}</code>来初始化赋值的时候，不是零值</p>
+<figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">var</span> s []<span class="keyword">int</span>  <span class="comment">// s==nil</span></span><br><span class="line"><span class="keyword">var</span> s = []<span class="keyword">int</span>&#123;&#125; <span class="comment">// s!=nil</span></span><br></pre></td></tr></table></figure>
+
+<p>理解<code>var name = []int{}</code>和<code>var name []int</code>的区别是，一个是初始化，一个是声明</p>
+</li>
+</ol>
+
+      
+    </div>
+
+    
+    
+    
+      <footer class="post-footer">
+        <div class="post-eof"></div>
+      </footer>
+  </article>
+  
+  
+  
+
+      
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
     <link itemprop="mainEntityOfPage" href="https://qmloong.github.io/2020/05/29/network/protocol/">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
@@ -606,300 +894,10 @@
   
   
 
-      
-  
-  
-  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
-    <link itemprop="mainEntityOfPage" href="https://qmloong.github.io/2020/05/23/kubernetes/proposal/aggregated-api-servers/">
-
-    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="image" content="/images/avatar.gif">
-      <meta itemprop="name" content="menglong">
-      <meta itemprop="description" content="Love is a heroic dream in a tired life.🐬">
-    </span>
-
-    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="qmloong's Blog">
-    </span>
-      <header class="post-header">
-        <h2 class="post-title" itemprop="name headline">
-          
-            <a href="/2020/05/23/kubernetes/proposal/aggregated-api-servers/" class="post-title-link" itemprop="url">kubernetes/proposal/aggregated-api-servers</a>
-        </h2>
-
-        <div class="post-meta">
-            <span class="post-meta-item">
-              <span class="post-meta-item-icon">
-                <i class="far fa-calendar"></i>
-              </span>
-              <span class="post-meta-item-text">发表于</span>
-              
-
-              <time title="创建时间：2020-05-23 22:27:06 / 修改时间：22:27:45" itemprop="dateCreated datePublished" datetime="2020-05-23T22:27:06+08:00">2020-05-23</time>
-            </span>
-
-          
-
-        </div>
-      </header>
-
-    
-    
-    
-    <div class="post-body" itemprop="articleBody">
-
-      
-          <h1 id="Aggregated-API-Server"><a href="#Aggregated-API-Server" class="headerlink" title="Aggregated API Server"></a>Aggregated API Server</h1>
-      
-    </div>
-
-    
-    
-    
-      <footer class="post-footer">
-        <div class="post-eof"></div>
-      </footer>
-  </article>
-  
-  
-  
-
-      
-  
-  
-  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
-    <link itemprop="mainEntityOfPage" href="https://qmloong.github.io/2020/05/23/design-patterns/delegation/">
-
-    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="image" content="/images/avatar.gif">
-      <meta itemprop="name" content="menglong">
-      <meta itemprop="description" content="Love is a heroic dream in a tired life.🐬">
-    </span>
-
-    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="qmloong's Blog">
-    </span>
-      <header class="post-header">
-        <h2 class="post-title" itemprop="name headline">
-          
-            <a href="/2020/05/23/design-patterns/delegation/" class="post-title-link" itemprop="url">design-patterns/delegation</a>
-        </h2>
-
-        <div class="post-meta">
-            <span class="post-meta-item">
-              <span class="post-meta-item-icon">
-                <i class="far fa-calendar"></i>
-              </span>
-              <span class="post-meta-item-text">发表于</span>
-              
-
-              <time title="创建时间：2020-05-23 21:35:58 / 修改时间：21:43:25" itemprop="dateCreated datePublished" datetime="2020-05-23T21:35:58+08:00">2020-05-23</time>
-            </span>
-            <span class="post-meta-item">
-              <span class="post-meta-item-icon">
-                <i class="far fa-folder"></i>
-              </span>
-              <span class="post-meta-item-text">分类于</span>
-                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-                  <a href="/categories/design-patterns/" itemprop="url" rel="index"><span itemprop="name">design-patterns</span></a>
-                </span>
-            </span>
-
-          
-
-        </div>
-      </header>
-
-    
-    
-    
-    <div class="post-body" itemprop="articleBody">
-
-      
-          <blockquote>
-<p>代理模式，有些时候默写对象不适合自己直接调用目标对象，需要</p>
-</blockquote>
-<h3 id="一、"><a href="#一、" class="headerlink" title="一、"></a>一、</h3>
-      
-    </div>
-
-    
-    
-    
-      <footer class="post-footer">
-        <div class="post-eof"></div>
-      </footer>
-  </article>
-  
-  
-  
-
-      
-  
-  
-  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
-    <link itemprop="mainEntityOfPage" href="https://qmloong.github.io/2020/05/23/kubernetes/kube-apiserver/install-api/install-apis(1)/">
-
-    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="image" content="/images/avatar.gif">
-      <meta itemprop="name" content="menglong">
-      <meta itemprop="description" content="Love is a heroic dream in a tired life.🐬">
-    </span>
-
-    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="qmloong's Blog">
-    </span>
-      <header class="post-header">
-        <h2 class="post-title" itemprop="name headline">
-          
-            <a href="/2020/05/23/kubernetes/kube-apiserver/install-api/install-apis(1)/" class="post-title-link" itemprop="url">kubernetes/kube-apiserver/install-api/install-apis(1)</a>
-        </h2>
-
-        <div class="post-meta">
-            <span class="post-meta-item">
-              <span class="post-meta-item-icon">
-                <i class="far fa-calendar"></i>
-              </span>
-              <span class="post-meta-item-text">发表于</span>
-
-              <time title="创建时间：2020-05-23 21:10:38" itemprop="dateCreated datePublished" datetime="2020-05-23T21:10:38+08:00">2020-05-23</time>
-            </span>
-              <span class="post-meta-item">
-                <span class="post-meta-item-icon">
-                  <i class="far fa-calendar-check"></i>
-                </span>
-                <span class="post-meta-item-text">更新于</span>
-                <time title="修改时间：2020-05-26 09:10:27" itemprop="dateModified" datetime="2020-05-26T09:10:27+08:00">2020-05-26</time>
-              </span>
-            <span class="post-meta-item">
-              <span class="post-meta-item-icon">
-                <i class="far fa-folder"></i>
-              </span>
-              <span class="post-meta-item-text">分类于</span>
-                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-                  <a href="/categories/kubernetes/" itemprop="url" rel="index"><span itemprop="name">kubernetes</span></a>
-                </span>
-            </span>
-
-          
-
-        </div>
-      </header>
-
-    
-    
-    
-    <div class="post-body" itemprop="articleBody">
-
-      
-          <h1 id="INSTALL-APIs"><a href="#INSTALL-APIs" class="headerlink" title="INSTALL APIs"></a>INSTALL APIs</h1><p>在看scheme机制的时候，想找一下注册install apis的地方，发现还很绕..</p>
-          <!--noindex-->
-            <div class="post-button">
-              <a class="btn" href="/2020/05/23/kubernetes/kube-apiserver/install-api/install-apis(1)/#more" rel="contents">
-                阅读全文 &raquo;
-              </a>
-            </div>
-          <!--/noindex-->
-        
-      
-    </div>
-
-    
-    
-    
-      <footer class="post-footer">
-        <div class="post-eof"></div>
-      </footer>
-  </article>
-  
-  
-  
-
-      
-  
-  
-  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
-    <link itemprop="mainEntityOfPage" href="https://qmloong.github.io/2020/05/22/kubernetes/catalogue/">
-
-    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="image" content="/images/avatar.gif">
-      <meta itemprop="name" content="menglong">
-      <meta itemprop="description" content="Love is a heroic dream in a tired life.🐬">
-    </span>
-
-    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="qmloong's Blog">
-    </span>
-      <header class="post-header">
-        <h2 class="post-title" itemprop="name headline">
-          
-            <a href="/2020/05/22/kubernetes/catalogue/" class="post-title-link" itemprop="url">kubernetes/catalogue</a>
-        </h2>
-
-        <div class="post-meta">
-            <span class="post-meta-item">
-              <span class="post-meta-item-icon">
-                <i class="far fa-calendar"></i>
-              </span>
-              <span class="post-meta-item-text">发表于</span>
-
-              <time title="创建时间：2020-05-22 01:25:30" itemprop="dateCreated datePublished" datetime="2020-05-22T01:25:30+08:00">2020-05-22</time>
-            </span>
-              <span class="post-meta-item">
-                <span class="post-meta-item-icon">
-                  <i class="far fa-calendar-check"></i>
-                </span>
-                <span class="post-meta-item-text">更新于</span>
-                <time title="修改时间：2020-06-09 00:52:22" itemprop="dateModified" datetime="2020-06-09T00:52:22+08:00">2020-06-09</time>
-              </span>
-            <span class="post-meta-item">
-              <span class="post-meta-item-icon">
-                <i class="far fa-folder"></i>
-              </span>
-              <span class="post-meta-item-text">分类于</span>
-                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-                  <a href="/categories/kubernetes/" itemprop="url" rel="index"><span itemprop="name">kubernetes</span></a>
-                </span>
-            </span>
-
-          
-
-        </div>
-      </header>
-
-    
-    
-    
-    <div class="post-body" itemprop="articleBody">
-
-      
-          <h1 id="目录"><a href="#目录" class="headerlink" title="目录"></a>目录</h1><p>k8s代码目录结构介绍</p>
-          <!--noindex-->
-            <div class="post-button">
-              <a class="btn" href="/2020/05/22/kubernetes/catalogue/#more" rel="contents">
-                阅读全文 &raquo;
-              </a>
-            </div>
-          <!--/noindex-->
-        
-      
-    </div>
-
-    
-    
-    
-      <footer class="post-footer">
-        <div class="post-eof"></div>
-      </footer>
-  </article>
-  
-  
-  
-
 
   
   <nav class="pagination">
-    <a class="extend prev" rel="prev" href="/"><i class="fa fa-angle-left" aria-label="上一页"></i></a><a class="page-number" href="/">1</a><span class="page-number current">2</span><a class="page-number" href="/page/3/">3</a><a class="page-number" href="/page/4/">4</a><a class="extend next" rel="next" href="/page/3/"><i class="fa fa-angle-right" aria-label="下一页"></i></a>
+    <a class="extend prev" rel="prev" href="/"><i class="fa fa-angle-left" aria-label="上一页"></i></a><a class="page-number" href="/">1</a><span class="page-number current">2</span><a class="page-number" href="/page/3/">3</a><span class="space">&hellip;</span><a class="page-number" href="/page/5/">5</a><a class="extend next" rel="next" href="/page/3/"><i class="fa fa-angle-right" aria-label="下一页"></i></a>
   </nav>
 
 
@@ -965,7 +963,7 @@
       <div class="site-state-item site-state-posts">
           <a href="/archives/">
         
-          <span class="site-state-item-count">37</span>
+          <span class="site-state-item-count">41</span>
           <span class="site-state-item-name">日志</span>
         </a>
       </div>
