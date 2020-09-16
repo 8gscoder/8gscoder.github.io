@@ -1,0 +1,497 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=2">
+<meta name="theme-color" content="#222">
+<meta name="generator" content="Hexo 4.2.0">
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png">
+  <link rel="mask-icon" href="/images/logo.svg" color="#222">
+
+<link rel="stylesheet" href="/css/main.css">
+
+
+<link rel="stylesheet" href="/lib/font-awesome/css/all.min.css">
+
+<script id="hexo-configurations">
+    var NexT = window.NexT || {};
+    var CONFIG = {"hostname":"qmloong.github.io","root":"/","scheme":"Pisces","version":"8.0.0-rc.2","exturl":false,"sidebar":{"position":"left","display":"post","padding":18,"offset":12,"onmobile":false},"copycode":{"enable":true,"show_result":false,"style":"mac"},"back2top":{"enable":true,"sidebar":true,"scrollpercent":true},"bookmark":{"enable":true,"color":"#222","save":"manual"},"fancybox":false,"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"algolia":{"hits":{"per_page":10},"labels":{"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}},"localsearch":{"enable":false,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false},"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}}};
+  </script>
+
+  <meta name="description" content="文件系统什么是文件系统在类Unix操作系统之下，除进程之外，一切皆文件。文件系统是os对硬件设备硬盘使用的一种方式，linux下常见的是ext4，windows下是FAT&#x2F;NTFS 文件系统的分层 内核为了屏蔽下层具体的FS实现，中间用了VFS来隔离，具体的FS只用实现VFS的接口，就能适配内核，将内核和FS解耦。 Sector、Block、Inode、file、file_operations磁盘">
+<meta property="og:type" content="article">
+<meta property="og:title" content="linux&#x2F;filesystem&#x2F;fs">
+<meta property="og:url" content="https://qmloong.github.io/2020/09/08/linux/filesystem/fs/index.html">
+<meta property="og:site_name" content="qmloong&#39;s Blog">
+<meta property="og:description" content="文件系统什么是文件系统在类Unix操作系统之下，除进程之外，一切皆文件。文件系统是os对硬件设备硬盘使用的一种方式，linux下常见的是ext4，windows下是FAT&#x2F;NTFS 文件系统的分层 内核为了屏蔽下层具体的FS实现，中间用了VFS来隔离，具体的FS只用实现VFS的接口，就能适配内核，将内核和FS解耦。 Sector、Block、Inode、file、file_operations磁盘">
+<meta property="og:locale" content="zh_CN">
+<meta property="og:image" content="https://qmloong.github.io/2020/09/08/linux/filesystem/fs/filesystem_diagram.png">
+<meta property="og:image" content="https://qmloong.github.io/2020/09/08/linux/filesystem/fs/952033-20190904181756676-1523246503.png">
+<meta property="og:image" content="https://qmloong.github.io/2020/09/08/linux/filesystem/fs/image-20200910002222566.png">
+<meta property="article:published_time" content="2020-09-08T15:24:16.315Z">
+<meta property="article:modified_time" content="2020-09-10T01:54:18.957Z">
+<meta property="article:author" content="menglong">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="https://qmloong.github.io/2020/09/08/linux/filesystem/fs/filesystem_diagram.png">
+
+<link rel="canonical" href="https://qmloong.github.io/2020/09/08/linux/filesystem/fs/">
+
+
+<script id="page-configurations">
+  // https://hexo.io/docs/variables.html
+  CONFIG.page = {
+    sidebar: "",
+    isHome : false,
+    isPost : true,
+    lang   : 'zh-CN'
+  };
+</script>
+
+  <title>linux/filesystem/fs | qmloong's Blog</title>
+  
+
+
+
+
+
+
+  <noscript>
+  <style>
+  .use-motion .brand,
+  .use-motion .menu-item,
+  .sidebar-inner,
+  .use-motion .post-block,
+  .use-motion .pagination,
+  .use-motion .comments,
+  .use-motion .post-header,
+  .use-motion .post-body,
+  .use-motion .collection-header { opacity: initial; }
+
+  .use-motion .site-title,
+  .use-motion .site-subtitle {
+    opacity: initial;
+    top: initial;
+  }
+
+  .use-motion .logo-line-before i { left: initial; }
+  .use-motion .logo-line-after i { right: initial; }
+  </style>
+</noscript>
+
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage">
+  <div class="container use-motion">
+    <div class="headband"></div>
+
+    <header class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-container">
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="切换导航栏">
+        <span class="toggle-line toggle-line-first"></span>
+        <span class="toggle-line toggle-line-middle"></span>
+        <span class="toggle-line toggle-line-last"></span>
+    </div>
+  </div>
+
+  <div class="site-meta">
+
+    <a href="/" class="brand" rel="start">
+      <span class="logo-line-before"><i></i></span>
+      <h1 class="site-title">qmloong's Blog</h1>
+      <span class="logo-line-after"><i></i></span>
+    </a>
+  </div>
+
+  <div class="site-nav-right">
+    <div class="toggle popup-trigger">
+    </div>
+  </div>
+</div>
+
+
+
+<nav class="site-nav">
+  <ul id="menu" class="main-menu menu">
+        <li class="menu-item menu-item-home">
+
+    <a href="/" rel="section"><i class="fa fa-home fa-fw"></i>首页</a>
+
+  </li>
+        <li class="menu-item menu-item-tags">
+
+    <a href="/tags/" rel="section"><i class="fa fa-tags fa-fw"></i>标签</a>
+
+  </li>
+        <li class="menu-item menu-item-categories">
+
+    <a href="/categories/" rel="section"><i class="fa fa-th fa-fw"></i>分类</a>
+
+  </li>
+        <li class="menu-item menu-item-archives">
+
+    <a href="/archives/" rel="section"><i class="fa fa-archive fa-fw"></i>归档</a>
+
+  </li>
+  </ul>
+</nav>
+
+
+
+
+</div>
+    </header>
+
+    
+  <div class="reading-progress-bar"></div>
+  <a role="button" class="book-mark-link book-mark-link-fixed"></a>
+
+
+    <main class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          
+
+          <div class="content post posts-expand">
+            
+
+    
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="https://qmloong.github.io/2020/09/08/linux/filesystem/fs/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.gif">
+      <meta itemprop="name" content="menglong">
+      <meta itemprop="description" content="Love is a heroic dream in a tired life.🐬">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="qmloong's Blog">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          linux/filesystem/fs
+        </h1>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-calendar"></i>
+              </span>
+              <span class="post-meta-item-text">发表于</span>
+
+              <time title="创建时间：2020-09-08 23:24:16" itemprop="dateCreated datePublished" datetime="2020-09-08T23:24:16+08:00">2020-09-08</time>
+            </span>
+              <span class="post-meta-item">
+                <span class="post-meta-item-icon">
+                  <i class="far fa-calendar-check"></i>
+                </span>
+                <span class="post-meta-item-text">更新于</span>
+                <time title="修改时间：2020-09-10 09:54:18" itemprop="dateModified" datetime="2020-09-10T09:54:18+08:00">2020-09-10</time>
+              </span>
+
+          
+            <span class="post-meta-item" title="阅读次数" id="busuanzi_container_page_pv" style="display: none;">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-eye"></i>
+              </span>
+              <span class="post-meta-item-text">阅读次数：</span>
+              <span id="busuanzi_value_page_pv"></span>
+            </span>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+        <h1 id="文件系统"><a href="#文件系统" class="headerlink" title="文件系统"></a>文件系统</h1><h2 id="什么是文件系统"><a href="#什么是文件系统" class="headerlink" title="什么是文件系统"></a>什么是文件系统</h2><p>在类Unix操作系统之下，除进程之外，一切皆文件。文件系统是os对硬件设备硬盘使用的一种方式，linux下常见的是ext4，windows下是FAT/NTFS</p>
+<h2 id="文件系统的分层"><a href="#文件系统的分层" class="headerlink" title="文件系统的分层"></a>文件系统的分层</h2><p><img src="/2020/09/08/linux/filesystem/fs/filesystem_diagram.png" alt="img"></p>
+<p>内核为了屏蔽下层具体的FS实现，中间用了VFS来隔离，具体的FS只用实现VFS的接口，就能适配内核，将内核和FS解耦。</p>
+<h2 id="Sector、Block、Inode、file、file-operations"><a href="#Sector、Block、Inode、file、file-operations" class="headerlink" title="Sector、Block、Inode、file、file_operations"></a>Sector、Block、Inode、file、file_operations</h2><p>磁盘的存储最小单位是<strong>sector</strong>扇区，但是sector的单位512B，所以如果要找一个大的10Mb文件的话，需要读磁盘20480次，所以就有了「逻辑区块<strong>Block</strong>」，这样只要设置好Block和Sector的对应关系（1block=4sectors，4KB），就可以大幅度减少磁盘IO次数，但是越大就会越浪费，越小效率就越低。</p>
+<p><strong>inode</strong>是EXT文件系统用于记录block的属性（所属者、可读写执行、类型-/d/s/l/..、创建修改时间、字节数、file链接数、具体设备编号及设备指针）用的结构体，另外还会记录文件数据位于的block位置。</p>
+<p><strong>file</strong>才是linux记录进程实际打开文件的结构体，也就是常说的文件描述符表项，进程有个文件描述符表是[]file类型，而我们说的fd则是这个表的Index，系统调用open的实现很容易理解，入参是文件路径，调用内实现是在这个进程的文件描述表中新加一个file结构体，返回索引，inode会增加计数。</p>
+<p><strong>file_operations</strong>记录了设备读取的函数指针</p>
+<h2 id="设备文件devfs和udev"><a href="#设备文件devfs和udev" class="headerlink" title="设备文件devfs和udev"></a>设备文件devfs和udev</h2><p>什么是设备文件？类unix操作系统都是基于文件概念的，所以对于os来说，增删设备也是抽象成文件，有统一的io接口来操作设备，而设备文件就是代表着一个“设备”，设备文件分为两种：块和字符，其实还有一种比较特殊的是网络设备。</p>
+<ul>
+<li>块设备：一般带有缓冲区，可以随机读取的，比如write的时候可以设置指针指向的位置，常见的就是硬盘（云硬盘）</li>
+<li>字符设备：一般都是有连续的数据流，带有顺序，不可随机读取的，常见的有键盘、串口、调制解调器</li>
+<li>网络设备：特殊设备的驱动，负责接收和发送数据帧，可能是物理帧也可能是ip数据包，取决于网络驱动，网络设备是net_device结构体，通过register_netdev注册到内核。和其他设备不通。</li>
+</ul>
+<h2 id="tty设备？pts终端？rzsz的原理？"><a href="#tty设备？pts终端？rzsz的原理？" class="headerlink" title="tty设备？pts终端？rzsz的原理？"></a>tty设备？pts终端？rzsz的原理？</h2><ol>
+<li><p>tty设备是一种特殊的字符设备，对应着物理显示器设备，大家都知道，最初的计算机由于价格昂贵，因此，一台计算机一般是由多个人同时使用的。在这种情况下一台计算机需要连接上许多套键盘和显示器来供多个人使用。但是其实现在已经很少有真实的物理tty设备了，基本都软件仿真终端，都是在内核实现的。</p>
+</li>
+<li><p>pts终端就是伪终端</p>
+<blockquote>
+<p> 为了便于将终端仿真移入用户空间，同时仍保持 TTY 子系统(TTY 子系统指 TTY 驱动和行规范)的完整，伪终端被发明了出来(pseudo terminal 或 pty)。伪终端在内核中分为两部分，分别是 master side 和 在 TTY 驱动中实现的 slave side。注意上图中的 xterm，这是一个运行在用户态的终端仿真程序，比如 Ubuntu Desktop 中的 GNOME Termina<br><img src="/2020/09/08/linux/filesystem/fs/952033-20190904181756676-1523246503.png" alt="img"></p>
+</blockquote>
+</li>
+<li><p>那我们通过ssh进行的rzsz又是个啥鸡巴原理呢？</p>
+<p>​    网上找了一张图，很清晰~</p>
+<p>当使用本地的Terminal连接到ssh服务之后，ssh-server会fork一个shell，这个shell会关联一个pts虚拟的终端设备，ssh-server会接受到终端的键盘输入，然后写到对应的pts设备，shell收到对应的stdin之后会有输出，输出的结果会被ssh-server通过网络协议传输回对应的terminal的ssh客户端</p>
+<p><img src="/2020/09/08/linux/filesystem/fs/image-20200910002222566.png" alt="image-20200910002222566"></p>
+</li>
+</ol>
+<h2 id="云硬盘挂载？什么是挂载？"><a href="#云硬盘挂载？什么是挂载？" class="headerlink" title="云硬盘挂载？什么是挂载？"></a>云硬盘挂载？什么是挂载？</h2><p>云硬盘是一种虚拟块设备，和虚拟机配合使用，挂载到虚拟机的指定目录下。</p>
+<h2 id="常见的linux关于文件系统、查看设备的命令？"><a href="#常见的linux关于文件系统、查看设备的命令？" class="headerlink" title="常见的linux关于文件系统、查看设备的命令？"></a>常见的linux关于文件系统、查看设备的命令？</h2><ol>
+<li><p>df - report file system disk space usage</p>
+<ol>
+<li>df -h</li>
+<li>df -h /etc</li>
+</ol>
+</li>
+<li><p>du - estimate file space usage 看文件的使用情况</p>
+<ol>
+<li>du -h</li>
+</ol>
+</li>
+<li><p>fdisk - manipulate disk partition table 查看硬盘分区</p>
+<ol>
+<li>fdisk -l</li>
+</ol>
+</li>
+<li><p>lsblk - list block devices 专门查看系统中的块设备</p>
+<ol>
+<li>lsblk -a</li>
+</ol>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">vda    251:0    0   50G  0 disk</span><br><span class="line">└─vda1 251:1    0   50G  0 part /</span><br><span class="line"></span><br><span class="line"><span class="comment"># vda表示一种设备，251位主设备号，一种主设备号标志一种设备类型，用同一种设备驱动程序读取块设备，</span></span><br></pre></td></tr></table></figure>
+
+</li>
+</ol>
+<h2 id="题外：用户空间和内核空间通信方式：-proc文件、netlink、sysfs"><a href="#题外：用户空间和内核空间通信方式：-proc文件、netlink、sysfs" class="headerlink" title="题外：用户空间和内核空间通信方式：/proc文件、netlink、sysfs"></a>题外：用户空间和内核空间通信方式：/proc文件、netlink、sysfs</h2>
+    </div>
+
+    
+    
+    
+
+      <footer class="post-footer">
+
+        
+
+
+        
+    <div class="post-nav">
+      <div class="post-nav-item">
+    <a href="/2020/08/01/network/netlink/" rel="prev" title="network/netlink">
+      <i class="fa fa-chevron-left"></i> network/netlink
+    </a></div>
+      <div class="post-nav-item">
+    <a href="/2020/09/10/network/http/" rel="next" title="network/http">
+      network/http <i class="fa fa-chevron-right"></i>
+    </a></div>
+    </div>
+      </footer>
+    
+  </article>
+  
+  
+  
+
+
+
+          </div>
+          
+
+<script>
+  window.addEventListener('tabs:register', () => {
+    let { activeClass } = CONFIG.comments;
+    if (CONFIG.comments.storage) {
+      activeClass = localStorage.getItem('comments_active') || activeClass;
+    }
+    if (activeClass) {
+      let activeTab = document.querySelector(`a[href="#comment-${activeClass}"]`);
+      if (activeTab) {
+        activeTab.click();
+      }
+    }
+  });
+  if (CONFIG.comments.storage) {
+    window.addEventListener('tabs:click', event => {
+      if (!event.target.matches('.tabs-comment .tab-content .tab-pane')) return;
+      let commentClass = event.target.classList[1];
+      localStorage.setItem('comments_active', commentClass);
+    });
+  }
+</script>
+
+        </div>
+          
+  
+  <div class="toggle sidebar-toggle">
+    <span class="toggle-line toggle-line-first"></span>
+    <span class="toggle-line toggle-line-middle"></span>
+    <span class="toggle-line toggle-line-last"></span>
+  </div>
+
+  <aside class="sidebar">
+    <div class="sidebar-inner">
+
+      <ul class="sidebar-nav motion-element">
+        <li class="sidebar-nav-toc">
+          文章目录
+        </li>
+        <li class="sidebar-nav-overview">
+          站点概览
+        </li>
+      </ul>
+
+      <!--noindex-->
+      <div class="post-toc-wrap sidebar-panel">
+          <div class="post-toc motion-element"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#文件系统"><span class="nav-number">1.</span> <span class="nav-text">文件系统</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#什么是文件系统"><span class="nav-number">1.1.</span> <span class="nav-text">什么是文件系统</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#文件系统的分层"><span class="nav-number">1.2.</span> <span class="nav-text">文件系统的分层</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#Sector、Block、Inode、file、file-operations"><span class="nav-number">1.3.</span> <span class="nav-text">Sector、Block、Inode、file、file_operations</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#设备文件devfs和udev"><span class="nav-number">1.4.</span> <span class="nav-text">设备文件devfs和udev</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#tty设备？pts终端？rzsz的原理？"><span class="nav-number">1.5.</span> <span class="nav-text">tty设备？pts终端？rzsz的原理？</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#云硬盘挂载？什么是挂载？"><span class="nav-number">1.6.</span> <span class="nav-text">云硬盘挂载？什么是挂载？</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#常见的linux关于文件系统、查看设备的命令？"><span class="nav-number">1.7.</span> <span class="nav-text">常见的linux关于文件系统、查看设备的命令？</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#题外：用户空间和内核空间通信方式：-proc文件、netlink、sysfs"><span class="nav-number">1.8.</span> <span class="nav-text">题外：用户空间和内核空间通信方式：&#x2F;proc文件、netlink、sysfs</span></a></li></ol></li></ol></div>
+      </div>
+      <!--/noindex-->
+
+      <div class="site-overview-wrap sidebar-panel">
+        <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+  <p class="site-author-name" itemprop="name">menglong</p>
+  <div class="site-description" itemprop="description">Love is a heroic dream in a tired life.🐬</div>
+</div>
+<div class="site-state-wrap motion-element">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+          <a href="/archives/">
+        
+          <span class="site-state-item-count">50</span>
+          <span class="site-state-item-name">日志</span>
+        </a>
+      </div>
+      <div class="site-state-item site-state-categories">
+            <a href="/categories/">
+          
+        <span class="site-state-item-count">9</span>
+        <span class="site-state-item-name">分类</span></a>
+      </div>
+      <div class="site-state-item site-state-tags">
+            <a href="/tags/">
+          
+        <span class="site-state-item-count">24</span>
+        <span class="site-state-item-name">标签</span></a>
+      </div>
+  </nav>
+</div>
+  <div class="links-of-author motion-element">
+      <span class="links-of-author-item">
+        <a href="https://github.com/qmloong" title="GitHub → https:&#x2F;&#x2F;github.com&#x2F;qmloong" rel="noopener" target="_blank"><i class="fab fa-github fa-fw"></i>GitHub</a>
+      </span>
+      <span class="links-of-author-item">
+        <a href="mailto:qmlfighting@gmail.com" title="E-Mail → mailto:qmlfighting@gmail.com" rel="noopener" target="_blank"><i class="fa fa-envelope fa-fw"></i>E-Mail</a>
+      </span>
+  </div>
+
+
+
+      </div>
+        <div class="back-to-top motion-element">
+          <i class="fa fa-arrow-up"></i>
+          <span>0%</span>
+        </div>
+
+    </div>
+  </aside>
+  <div id="sidebar-dimmer"></div>
+
+
+      </div>
+    </main>
+
+    <footer class="footer">
+      <div class="footer-inner">
+        
+
+        
+
+<div class="copyright">
+  
+  &copy; 
+  <span itemprop="copyrightYear">2020</span>
+  <span class="with-love">
+    <i class="fa fa-heart"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">menglong</span>
+</div>
+  <div class="powered-by">由 <a href="https://hexo.io/" class="theme-link" rel="noopener" target="_blank">Hexo</a> & <a href="https://theme-next.js.org/pisces/" class="theme-link" rel="noopener" target="_blank">NexT.Pisces</a> 强力驱动
+  </div>
+
+        
+<div class="busuanzi-count">
+  <script async src="https://busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+    <span class="post-meta-item" id="busuanzi_container_site_uv" style="display: none;">
+      <span class="post-meta-item-icon">
+        <i class="fa fa-user"></i>
+      </span>
+      <span class="site-uv" title="总访客量">
+        <span id="busuanzi_value_site_uv"></span>
+      </span>
+    </span>
+    <span class="post-meta-divider">|</span>
+    <span class="post-meta-item" id="busuanzi_container_site_pv" style="display: none;">
+      <span class="post-meta-item-icon">
+        <i class="fa fa-eye"></i>
+      </span>
+      <span class="site-pv" title="总访问量">
+        <span id="busuanzi_value_site_pv"></span>
+      </span>
+    </span>
+</div>
+
+
+
+
+
+
+
+
+      </div>
+    </footer>
+  </div>
+
+  
+  <script src="/lib/anime.min.js"></script>
+  <script src="/lib/velocity/velocity.min.js"></script>
+  <script src="/lib/velocity/velocity.ui.min.js"></script>
+
+<script src="/js/utils.js"></script>
+
+<script src="/js/motion.js"></script>
+
+
+<script src="/js/schemes/pisces.js"></script>
+
+
+<script src="/js/next-boot.js"></script>
+
+<script src="/js/bookmark.js"></script>
+
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+  
+
+</body>
+</html>

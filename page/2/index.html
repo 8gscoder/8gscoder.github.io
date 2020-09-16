@@ -154,6 +154,600 @@
   
   
   <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="https://qmloong.github.io/2020/06/14/kubernetes/kube-apiserver/authn&authz/overview/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.gif">
+      <meta itemprop="name" content="menglong">
+      <meta itemprop="description" content="Love is a heroic dream in a tired life.🐬">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="qmloong's Blog">
+    </span>
+      <header class="post-header">
+        <h2 class="post-title" itemprop="name headline">
+          
+            <a href="/2020/06/14/kubernetes/kube-apiserver/authn&authz/overview/" class="post-title-link" itemprop="url">kubernetes/kube-apiserver/authn&authz/overview</a>
+        </h2>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-calendar"></i>
+              </span>
+              <span class="post-meta-item-text">发表于</span>
+              
+
+              <time title="创建时间：2020-06-14 22:12:53 / 修改时间：22:19:41" itemprop="dateCreated datePublished" datetime="2020-06-14T22:12:53+08:00">2020-06-14</time>
+            </span>
+
+          
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+          <h2 id="Kubernetes访问控制"><a href="#Kubernetes访问控制" class="headerlink" title="Kubernetes访问控制"></a>Kubernetes访问控制</h2><p>当不同的子账户都拥有访问同一个TKE Kubernetes集群资源权限的之后，如何保证不同的子账户，对于集群有着不同的角色和权限呢？让我们来首先从社区的Kubernetes访问链路开始分析整个过程，从而向您介绍TKE是如何实现容器服务子账户对接Kubernetes的认证授权体系。</p>
+<h3 id="Overview"><a href="#Overview" class="headerlink" title="Overview"></a>Overview</h3><p>首先从宏观的角度看下Kubernetes的请求链路是如何进行的。</p>
+<p><img src="/2020/06/14/kubernetes/kube-apiserver/authn&authz/overview/access-control-overview.svg" alt="Diagram of request handling steps for Kubernetes API request"></p>
+<p>图片来源于k8s社区官网。</p>
+<p>可以大概了解到一个请求的链路是依次通过Authentication（认证，简称Authn）、Authorization（授权，简称Authz）、AdmissionControl（准入控制），从而获取到后端ETCD的数据。</p>
+<p>从图中可以看到Authn、Authz、AdmissionControl是由多个模块组成的，每个步骤都有多种方式构成的。</p>
+<p>下面我们来一次看下准入过程中的每个步骤吧。</p>
+<h3 id="Kubernetes认证"><a href="#Kubernetes认证" class="headerlink" title="Kubernetes认证"></a>Kubernetes认证</h3><p>认证的过程的证明user身份的过程。</p>
+<p>Kubernetes中有两类用户，一类是ServiceAccount，一类是集群真实的用户。</p>
+<p>ServiceAccount账户是由Kubernetes提供API（资源）进行创建和管理的，ServiceAccount可以认为是特殊的Secret资源，可用户集群内资源访问APIServer的认证所用。通过可以通过mount的方式挂载到Pod内进行使用。</p>
+<p>真实的用户通常是从外部发起请求访问APIServer，由管理员进行管理认证凭证，而Kubernetes本身不管理任何的用户和凭证信息的，即所有的用户都是逻辑上的用户，无法通过API调用Kubernetes API进行创建真实用户。</p>
+<p>Kubernetes认证的方式众多，常见的有TLS客户端证书双向认证、BearerToken认证、BasicAuthorization或认证代理（WebHook）</p>
+<p>所有的认证方式都是以插件的形式串联在认证链路中，只要有一种认证方式通过，即可通过认证模块，且后续的认证方式不会被执行。</p>
+<p>在此处参考一点点Kubernetes APIServer Authentication模块的代码，可以发现，任何的认证方式都是一下Interface的实现方式都是接收http Request请求，然后会返回一个user.Info的结构体，一个bool，以及一个error</p>
+<figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// Request attempts to extract authentication information from a request and returns</span></span><br><span class="line"><span class="comment">// information about the current user and true if successful, false if not successful,</span></span><br><span class="line"><span class="comment">// or an error if the request could not be checked.</span></span><br><span class="line"><span class="keyword">type</span> Request <span class="keyword">interface</span> &#123;</span><br><span class="line">   AuthenticateRequest(req *http.Request) (user.Info, <span class="keyword">bool</span>, error)</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>user.Info中包含了用户的信息，包括UserName、UUID、Group、Extra。</p>
+<p>bool返回了用户是否通过认证，false的话即返回无法通过认证，即返回401错误。</p>
+<p>error则返回了当Request无法被检查的错误，如果遇到错误则会继续进行下一种注册的方式进行认证。</p>
+<p>如果认证通过，则会把user.Info写入到到请求的context中，后续请求过程可以随时获取用户信息，比如授权时进行鉴权。</p>
+<p>下面我会以Kubernetes代码中的认证方式顺序，并加以TKE开启的认证方式来向你介绍TKE创建的Kubernetes集群默认的认证策略。</p>
+<h4 id="RequestHeader"><a href="#RequestHeader" class="headerlink" title="RequestHeader"></a>RequestHeader</h4><p>正向代理用到的，TODO</p>
+<h4 id="Basic-Authentication"><a href="#Basic-Authentication" class="headerlink" title="Basic Authentication"></a>Basic Authentication</h4><p>APIServer启动参数<code>--basic-auth-file=SOMEFILE</code>指定basic认证的csv文件，在APIServer启动之后修改此文件都不会生效，需要重启APIServer来更新basic authentication的token。csv文件格式为：<code>token,user,uid,&quot;group1,group2,group3&quot;</code>。</p>
+<p>请求时，需要指定HTTP Header中Authentication为Basic，并跟上Base64Encode(user:passward)值。</p>
+<p>为了方便起见，目前TKE的集群都会指定一个system:masters组（此组默认绑定集群的admin权限）的basic authentication的token csv文件。</p>
+<h4 id="x509客户端证书"><a href="#x509客户端证书" class="headerlink" title="x509客户端证书"></a>x509客户端证书</h4><p>APIServer启动参数<code>--client-ca-file=SOMEFILE</code>指定CA证书，而在TKE的K8S集群创建过程中，会对集群进行自签名CA密钥和证书用于管理，如果用户下发的客户端证书是由此CA证书的密钥签发的，那么就可以通过客户端证书认证，并使用客户端证书中的CommonName、Group字段分别作为Kubernetes的UserInfo中Username和Group信息。</p>
+<p>目前TKE对接子账户都是通过自签名的CA凭证进行签发子账户Uin对应CN的客户端证书。</p>
+<h4 id="Bearer-Token"><a href="#Bearer-Token" class="headerlink" title="Bearer Token"></a>Bearer Token</h4><p>Bearer Token的认证方式包含很多，比如启动参数指定的、ServiceAccount（也是一种BeaerToken）、BootstrapToken、OIDCIssure、WebhookToken</p>
+<h5 id="默认指定Token-csv文件"><a href="#默认指定Token-csv文件" class="headerlink" title="默认指定Token csv文件"></a><strong>默认指定Token csv文件</strong></h5><p>APIServer启动参数<code>--token-auth-file=SOMEFILE</code>指定Bearer Token认证的csv文件。和Basic Authentication方式相似，只不过请求APIServer时，指定的HTTP认证方式为Bearer方式。此Bearer后直接跟passward即可。csv文件格式为：<code>password,user,uid,&quot;group1,group2,group3&quot;</code>。</p>
+<p>请求时，需要指定HTTP Header中Authentication为Bearer，并跟上Base64Encode(user:passward)值。</p>
+<p>为了方便起见，目前TKE的集群都会指定一个system:masters组（此组默认绑定集群的admin权限）的bearer token csv文件。</p>
+<h5 id="ServiceAccount"><a href="#ServiceAccount" class="headerlink" title="ServiceAccount"></a><strong>ServiceAccount</strong></h5><p>这种方式即之前提到的“两种用户”中常见的集群内认证方式，ServiceAccount。</p>
+<h5 id="BootstrapToken"><a href="#BootstrapToken" class="headerlink" title="BootstrapToken"></a><strong>BootstrapToken</strong></h5><p>此项开关在Kubernetes v1.18版本中才为stable版本，此类Token是专门用来引导集群安装使用的，需要配合controller-manager的TokenCleaner。</p>
+<h5 id="OpenID-Connect-Tokens"><a href="#OpenID-Connect-Tokens" class="headerlink" title="OpenID Connect Tokens"></a><strong>OpenID Connect Tokens</strong></h5><p>OIDCToken的认证方式是结合OAuth2向身份提供方获取ID Token来访问APIServer。</p>
+<p>如需要开启此项功能，需要在APIServer的启动参数中指定oidc的配置参数，例如<code>--oidc-issuer-url</code>指定oidc身份提供方的地址，<code>--oidc-client-id</code>指定身份提供方侧的账户ID，<code>--oidc-username-claim</code>身份提供方的用户名。</p>
+<p>具体可参考<a href="https://kubernetes.io/docs/reference/access-authn-authz/authentication/#openid-connect-tokens" target="_blank" rel="noopener">Kubernetes官方文档</a></p>
+<h5 id="Webhook-Token-Server"><a href="#Webhook-Token-Server" class="headerlink" title="Webhook Token Server"></a><strong>Webhook Token Server</strong></h5><p>Webhook Token是一种hook的方式来校验是否认证通过。</p>
+<p>APIServer启动参数<code>--authentication-token-webhook-config-file</code>及<code>--authentication-token-webhook-cache-ttl</code>来分别指定Webhook地址以及token的cache ttl。</p>
+<p>若APiServer开启此方式进行认证校验，则在接受到用户的Request之后，会包装Bearer Token成一个<code>TokenReview</code>发送给WebHookServer，Server端接收到之后会进行校验，并返回<code>TokenReview</code>接口，在status字段中进行反馈是否通过校验通过和user.Info信息。</p>
+<h5 id="Anonymous-requests"><a href="#Anonymous-requests" class="headerlink" title="Anonymous requests"></a><strong>Anonymous requests</strong></h5><h3 id="Kubernetes授权"><a href="#Kubernetes授权" class="headerlink" title="Kubernetes授权"></a>Kubernetes授权</h3><p>当Request通过Kube-APIServer的认证模块之后，就会来到鉴权模块。通过上面的讲解了解到可以认证的过程，会进行构建用户的RequestInfo，其中包含用户信息，包括UserName、UUID、Group、Extra。</p>
+
+      
+    </div>
+
+    
+    
+    
+      <footer class="post-footer">
+        <div class="post-eof"></div>
+      </footer>
+  </article>
+  
+  
+  
+
+      
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="https://qmloong.github.io/2020/06/12/design-patterns/strategy/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.gif">
+      <meta itemprop="name" content="menglong">
+      <meta itemprop="description" content="Love is a heroic dream in a tired life.🐬">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="qmloong's Blog">
+    </span>
+      <header class="post-header">
+        <h2 class="post-title" itemprop="name headline">
+          
+            <a href="/2020/06/12/design-patterns/strategy/" class="post-title-link" itemprop="url">design-patterns/strategy</a>
+        </h2>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-calendar"></i>
+              </span>
+              <span class="post-meta-item-text">发表于</span>
+              
+
+              <time title="创建时间：2020-06-12 00:58:06 / 修改时间：01:00:50" itemprop="dateCreated datePublished" datetime="2020-06-12T00:58:06+08:00">2020-06-12</time>
+            </span>
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-folder"></i>
+              </span>
+              <span class="post-meta-item-text">分类于</span>
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/design-patterns/" itemprop="url" rel="index"><span itemprop="name">design-patterns</span></a>
+                </span>
+            </span>
+
+          
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+          <h1 id="Strategy"><a href="#Strategy" class="headerlink" title="Strategy"></a>Strategy</h1><p>策略模式，依赖多种算法的时候，把算法交接出去，算法的改动不影响调用方</p>
+<p>K8s里面每个资源都会写自己的Stratedy，然后注册到Store核心结构体上。</p>
+<p><img src="/2020/06/12/design-patterns/strategy/image-20200612010023971.png" alt="image-20200612010023971"></p>
+<p><img src="/2020/06/12/design-patterns/strategy/image-20200612010046745.png" alt="image-20200612010046745"></p>
+
+      
+    </div>
+
+    
+    
+    
+      <footer class="post-footer">
+        <div class="post-eof"></div>
+      </footer>
+  </article>
+  
+  
+  
+
+      
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="https://qmloong.github.io/2020/06/10/kubernetes/kube-apiserver/other-feature/admission-controller/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.gif">
+      <meta itemprop="name" content="menglong">
+      <meta itemprop="description" content="Love is a heroic dream in a tired life.🐬">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="qmloong's Blog">
+    </span>
+      <header class="post-header">
+        <h2 class="post-title" itemprop="name headline">
+          
+            <a href="/2020/06/10/kubernetes/kube-apiserver/other-feature/admission-controller/" class="post-title-link" itemprop="url">kubernetes/kube-apiserver/other-feature/admission-controller</a>
+        </h2>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-calendar"></i>
+              </span>
+              <span class="post-meta-item-text">发表于</span>
+
+              <time title="创建时间：2020-06-10 00:48:26" itemprop="dateCreated datePublished" datetime="2020-06-10T00:48:26+08:00">2020-06-10</time>
+            </span>
+              <span class="post-meta-item">
+                <span class="post-meta-item-icon">
+                  <i class="far fa-calendar-check"></i>
+                </span>
+                <span class="post-meta-item-text">更新于</span>
+                <time title="修改时间：2020-06-14 22:37:28" itemprop="dateModified" datetime="2020-06-14T22:37:28+08:00">2020-06-14</time>
+              </span>
+
+          
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+          <h1 id="Admission-Controller"><a href="#Admission-Controller" class="headerlink" title="Admission-Controller"></a>Admission-Controller</h1><h2 id="什么是admission-controller？"><a href="#什么是admission-controller？" class="headerlink" title="什么是admission-controller？"></a>什么是admission-controller？</h2><blockquote>
+<p>In a nutshell, Kubernetes admission controllers are plugins that govern and enforce how the cluster is used.</p>
+</blockquote>
+<p>admission controller是k8s的插件，用来管理和强制用户如何来操作集群。</p>
+<p>Admission controller主要分为两个phase，一个是mutating，一个是validating。这两个阶段都是在authn&amp;authz之后的，mutating做的变更准入，就是会对request的resource，进行转换，比如填充默认的requestLimit？而validating admission的意思就是验证准入，比如校验pod副本数必须大于2。</p>
+          <!--noindex-->
+            <div class="post-button">
+              <a class="btn" href="/2020/06/10/kubernetes/kube-apiserver/other-feature/admission-controller/#more" rel="contents">
+                阅读全文 &raquo;
+              </a>
+            </div>
+          <!--/noindex-->
+        
+      
+    </div>
+
+    
+    
+    
+      <footer class="post-footer">
+        <div class="post-eof"></div>
+      </footer>
+  </article>
+  
+  
+  
+
+      
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="https://qmloong.github.io/2020/06/09/kubernetes/network/k8s-network/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.gif">
+      <meta itemprop="name" content="menglong">
+      <meta itemprop="description" content="Love is a heroic dream in a tired life.🐬">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="qmloong's Blog">
+    </span>
+      <header class="post-header">
+        <h2 class="post-title" itemprop="name headline">
+          
+            <a href="/2020/06/09/kubernetes/network/k8s-network/" class="post-title-link" itemprop="url">kubernetes/network/k8s-network</a>
+        </h2>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-calendar"></i>
+              </span>
+              <span class="post-meta-item-text">发表于</span>
+
+              <time title="创建时间：2020-06-09 17:18:49" itemprop="dateCreated datePublished" datetime="2020-06-09T17:18:49+08:00">2020-06-09</time>
+            </span>
+              <span class="post-meta-item">
+                <span class="post-meta-item-icon">
+                  <i class="far fa-calendar-check"></i>
+                </span>
+                <span class="post-meta-item-text">更新于</span>
+                <time title="修改时间：2020-06-27 22:43:35" itemprop="dateModified" datetime="2020-06-27T22:43:35+08:00">2020-06-27</time>
+              </span>
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-folder"></i>
+              </span>
+              <span class="post-meta-item-text">分类于</span>
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/kubernetes/" itemprop="url" rel="index"><span itemprop="name">kubernetes</span></a>
+                </span>
+            </span>
+
+          
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+          <h1 id="单机容器网络"><a href="#单机容器网络" class="headerlink" title="单机容器网络"></a>单机容器网络</h1><h3 id="容器bridge网络模式"><a href="#容器bridge网络模式" class="headerlink" title="容器bridge网络模式"></a>容器bridge网络模式</h3><p>首先container1的network namespace内默认路由会走到eth0，而eth0实际是一个veth pair设备。对端是挂载docker0网桥上的一个虚拟网卡，而挂载到虚拟网桥上的虚拟网卡会弱化成docker0网桥的一个端口（此端口为三层设备的端口），他不具备处理数据包的能力，流入该网卡的数据包会直接到托管的网桥上进行处理，即docker0网桥扮演着二层交换机设备，和三层路由器设备。container2同理。</p>
+<p>容器内路由示例</p>
+<figure class="highlight routeros"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">$ route</span><br><span class="line">Kernel<span class="built_in"> IP routing </span>tableDestination Gateway Genmask Flags Metric Ref Use Iface</span><br><span class="line">default 172.17.0.1 0.0.0.0 UG 0 0 0 eth0</span><br><span class="line">172.17.0.0 0.0.0.0 255.255.0.0 U 0 0 0 eth0</span><br></pre></td></tr></table></figure>
+
+<p>默认路由走docker0，由docker0处理，而172.17.0.0/16即容器网段的话，需要内核协议栈直接发包，直接发的话需要考虑进行ARP。</p>
+<p>route命令返回Gataway是0.0.0.0的，表示是直连，数据包应该经过eth0直接发往目的主机。</p>
+<h3 id="container1想要访问container2的场景分析"><a href="#container1想要访问container2的场景分析" class="headerlink" title="container1想要访问container2的场景分析"></a>container1想要访问container2的场景分析</h3><p><img src="/2020/06/09/kubernetes/network/k8s-network/e0d28e0371f93af619e91a86eda99a66.png" alt="img"></p>
+<p>container1(172.17.0.2)发送目的地址为container2(172.17.0.3)的数据包，首先依据默认路由将数据包发送至eth0虚拟网卡，但是由于默认路由是0.0.0.0，所以是直接发送，即需要知道172.17.0.3的Mac地址，进行ARP协议，而发送ARP协议docker0就会收到，收到之后docker0也发在网桥设备上扮演交换机的角色进行广播ARP，172.17.0.3容器就会收到，然后返回自己的Mac地址。之后container1就可以直接发送数据包</p>
+<h3 id="宿主机上进程想要访问container1时的场景分析"><a href="#宿主机上进程想要访问container1时的场景分析" class="headerlink" title="宿主机上进程想要访问container1时的场景分析"></a>宿主机上进程想要访问container1时的场景分析</h3><p><img src="/2020/06/09/kubernetes/network/k8s-network/9fb381d1e49318bb6a67bda3f9db6901.png" alt="img"></p>
+<p>宿主机发包，ip route发现应该发往docker0，发往docker0之后docker0就会进行转发到对于的veth，容器内对端的eth0就会收到数据。</p>
+<h3 id="container1想要访问宿主机路由可达的场景分析"><a href="#container1想要访问宿主机路由可达的场景分析" class="headerlink" title="container1想要访问宿主机路由可达的场景分析"></a>container1想要访问宿主机路由可达的场景分析</h3><p><img src="/2020/06/09/kubernetes/network/k8s-network/90bd630c0723ea8a1fb7ccd738ad1f95.png" alt="img"></p>
+<p>eth0访问主机子网内的其他宿主机的话，包经过docker0，到达宿主机，通过宿主机路由规则进行转发，到达Node2</p>
+<h3 id="容器host网络模式"><a href="#容器host网络模式" class="headerlink" title="容器host网络模式"></a>容器host网络模式</h3><p>和宿主机公用网络，容器没有单独的network namespace。这样性能好，但是需要考虑端口冲突</p>
+<h1 id="跨宿主机网络互通"><a href="#跨宿主机网络互通" class="headerlink" title="跨宿主机网络互通"></a>跨宿主机网络互通</h1><p><img src="/2020/06/09/kubernetes/network/k8s-network/b4387a992352109398a66d1dbe6e413d.png" alt="img"></p>
+<p>如何在Node1上的容器访问Node2，因为Node之间默认没有路由配置的话，无法知道其他容器应该如何转发，所以需要需要在宿主机上进行配置路由规则，构建一层overlay网络，或者需要做一层特殊的网桥配置。</p>
+<p>Flannel是CoreOS公司出的一个容器网络解决方案，是一种框架。有host-gw模式、UDP、VXLAN模式。</p>
+<h3 id="UDP模式"><a href="#UDP模式" class="headerlink" title="UDP模式"></a>UDP模式</h3><p><img src="/2020/06/09/kubernetes/network/k8s-network/8332564c0547bf46d1fbba2a1e0e166c.jpg" alt="img"></p>
+<p>通过Node1上的flannel0虚拟TUN网桥（TUN，隧道，Linux内核支持，用户态和内核态之间传递数据包），flannel0的用户态进程就是flanneld进程，收到数据包会转发给flanneld监听的8285端口，flanneld回去查子网对应的信息，信息存在etcd中。封装UDP包发送到对端Node2的flanneld，而TUN设备进程收到数据包后会直接传入内核flannel0，根据路由转发到Node2的docker0，接收到之后进入容器网络。</p>
+<p>但是UDP模式存在性能问题：</p>
+<p><img src="/2020/06/09/kubernetes/network/k8s-network/84caa6dc3f9dcdf8b88b56bd2e22138d.png" alt="img"></p>
+<p>container1到docker0是一次必要的跨用户态和内核态数据拷贝。flannel0需要再拷贝给flanneld，flanneld还需要再拷贝给eth0走主机网络协议栈转发UDP包。进行了3次跨内核态拷贝。</p>
+<h3 id="VXLAN"><a href="#VXLAN" class="headerlink" title="VXLAN"></a>VXLAN</h3><p><img src="/2020/06/09/kubernetes/network/k8s-network/03185fab251a833fef7ed6665d5049f5.jpg" alt="img"></p>
+<p>VXLAN（Virtual Extensible LAN 虚拟可扩展局域网）是内核支持的一种网络虚拟化技术，原理是在宿主机上通过一张特殊的“隧道口”设备——VTEP（VXLAN Tunnel End Point VXLAN 虚拟隧道端点），这个和UDP模式的flanneld的工作很像，传入进去的数据包都会被对端的flanneld进程收到，而VXLAN模式下，传入VTEP设备的数据包都会被对端的VTEP接收到。</p>
+<p>container1和container2的传输实际内核的处理流程是：</p>
+<p>container1有目标容器的ip地址，经过docker0的数据包在宿主机的路由下（该路由表明Node2上的vxlan ip cidr都走到固定的网关，该网关ip即Node2的VTEP设备的ip，是在Node2加入到vxlan网络的时候注册到每个节点上的）会到本机Node1的VTEP设备（flannel.1），VTEP设备会将数据包补充二层需要的MAC地址并包装为数据帧，这个MAC地址是在Node2注册进vxlan的时候注入进来的，是由flannel网络下每个flanneld进程进行注入的数据，即Node2的VTEP设备ip），此后，包装好了VXLAN的数据头包装UDP，传入到Node1宿主机，但是宿主机并不知道该发往哪个宿主机，因为Node1的宿主机只知道这是一个VTEP发出的普通的UDP包，而该数据包应该发往哪个宿主机呢？并没有一个VTEP和宿主机IP的对应关系，所以flanneld还会在FDB中维护一个flannel VTEP的Mac对应宿主机IP的映射。有了目的主机IP就很容易的发往到Node2了。包装的头部如下图：</p>
+<p><img src="/2020/06/09/kubernetes/network/k8s-network/8cede8f74a57617494027ba137383f85.jpg" alt="img"></p>
+<p><strong>一点疑惑：</strong></p>
+<p>问：为什么要用UDP来封装VXLAN隧道用到的Header？</p>
+<p>答：</p>
+<p>1、不需要可靠。因为这个udp里面包裹的是tcp的内容，收发双端如果发现丢包，还是会重传的。<br>2、局域网环境下，可靠性有一定保障，不会因为使用了udp造成频繁丢包。<br>3、udp开销小。</p>
+<p>问：VTEP信息和所在NodeIP是如何下发的？</p>
+<p>答：各个node会将自己的vtep信息上报给apiserver，apiserver将信息同步给各个节点的flanneld，flanneld通过netlink下发，完成信息的同步</p>
+<p>问：VXLAN使用UDP的话，UDP的端口是干嘛用的？</p>
+<p>VXLAN协议规范指出：目的端口需要使用固定的端口号，源端口可以固定也可以随机，具体参考VXLAN文档吧</p>
+<p><strong>DIY VXLAN</strong>：<a href="https://github.com/mz1999/blog/blob/master/docs/docker-overlay-networks.md" target="_blank" rel="noopener">https://github.com/mz1999/blog/blob/master/docs/docker-overlay-networks.md</a></p>
+<h1 id="k8S网络-amp-CNI"><a href="#k8S网络-amp-CNI" class="headerlink" title="k8S网络&amp;CNI"></a>k8S网络&amp;CNI</h1>
+      
+    </div>
+
+    
+    
+    
+      <footer class="post-footer">
+        <div class="post-eof"></div>
+      </footer>
+  </article>
+  
+  
+  
+
+      
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="https://qmloong.github.io/2020/06/09/kubernetes/proposal/api-conventions/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.gif">
+      <meta itemprop="name" content="menglong">
+      <meta itemprop="description" content="Love is a heroic dream in a tired life.🐬">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="qmloong's Blog">
+    </span>
+      <header class="post-header">
+        <h2 class="post-title" itemprop="name headline">
+          
+            <a href="/2020/06/09/kubernetes/proposal/api-conventions/" class="post-title-link" itemprop="url">kubernetes/proposal/api-conventions</a>
+        </h2>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-calendar"></i>
+              </span>
+              <span class="post-meta-item-text">发表于</span>
+              
+
+              <time title="创建时间：2020-06-09 00:48:34 / 修改时间：00:50:34" itemprop="dateCreated datePublished" datetime="2020-06-09T00:48:34+08:00">2020-06-09</time>
+            </span>
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-folder"></i>
+              </span>
+              <span class="post-meta-item-text">分类于</span>
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/kubernetes/" itemprop="url" rel="index"><span itemprop="name">kubernetes</span></a>
+                </span>
+            </span>
+
+          
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+          <h1 id="API规范"><a href="#API规范" class="headerlink" title="API规范"></a>API规范</h1><p>这篇proposal是定义一个API的流程规范，有兴趣的可以阅读<a href="https://github.com/kubernetes/community/blob/master/contributors/devel/sig-architecture/api-conventions.md" target="_blank" rel="noopener">原文</a></p>
+          <!--noindex-->
+            <div class="post-button">
+              <a class="btn" href="/2020/06/09/kubernetes/proposal/api-conventions/#more" rel="contents">
+                阅读全文 &raquo;
+              </a>
+            </div>
+          <!--/noindex-->
+        
+      
+    </div>
+
+    
+    
+    
+      <footer class="post-footer">
+        <div class="post-eof"></div>
+      </footer>
+  </article>
+  
+  
+  
+
+      
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="https://qmloong.github.io/2020/06/08/kubernetes/proposal/api-change/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.gif">
+      <meta itemprop="name" content="menglong">
+      <meta itemprop="description" content="Love is a heroic dream in a tired life.🐬">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="qmloong's Blog">
+    </span>
+      <header class="post-header">
+        <h2 class="post-title" itemprop="name headline">
+          
+            <a href="/2020/06/08/kubernetes/proposal/api-change/" class="post-title-link" itemprop="url">kubernetes/proposal/api-change</a>
+        </h2>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-calendar"></i>
+              </span>
+              <span class="post-meta-item-text">发表于</span>
+
+              <time title="创建时间：2020-06-08 23:01:51" itemprop="dateCreated datePublished" datetime="2020-06-08T23:01:51+08:00">2020-06-08</time>
+            </span>
+              <span class="post-meta-item">
+                <span class="post-meta-item-icon">
+                  <i class="far fa-calendar-check"></i>
+                </span>
+                <span class="post-meta-item-text">更新于</span>
+                <time title="修改时间：2020-06-09 00:49:26" itemprop="dateModified" datetime="2020-06-09T00:49:26+08:00">2020-06-09</time>
+              </span>
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-folder"></i>
+              </span>
+              <span class="post-meta-item-text">分类于</span>
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/kubernetes/" itemprop="url" rel="index"><span itemprop="name">kubernetes</span></a>
+                </span>
+            </span>
+
+          
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+          <h1 id="API变更规范"><a href="#API变更规范" class="headerlink" title="API变更规范"></a>API变更规范</h1><p>这篇proposal是变更规范，通过这篇变更规范，来理解多版本的API是如何工作的，有兴趣可以读一读<a href="https://github.com/kubernetes/community/blob/master/contributors/devel/sig-architecture/api_changes.md#readme" target="_blank" rel="noopener">原文</a>。也会涉及定义一个API的流程，而详细的设计API的规范文档，是<a href="https://github.com/kubernetes/community/blob/master/contributors/devel/sig-architecture/api-conventions.md" target="_blank" rel="noopener">这篇</a></p>
+          <!--noindex-->
+            <div class="post-button">
+              <a class="btn" href="/2020/06/08/kubernetes/proposal/api-change/#more" rel="contents">
+                阅读全文 &raquo;
+              </a>
+            </div>
+          <!--/noindex-->
+        
+      
+    </div>
+
+    
+    
+    
+      <footer class="post-footer">
+        <div class="post-eof"></div>
+      </footer>
+  </article>
+  
+  
+  
+
+      
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="https://qmloong.github.io/2020/06/08/kubernetes/kube-controller-manager/workqueue/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.gif">
+      <meta itemprop="name" content="menglong">
+      <meta itemprop="description" content="Love is a heroic dream in a tired life.🐬">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="qmloong's Blog">
+    </span>
+      <header class="post-header">
+        <h2 class="post-title" itemprop="name headline">
+          
+            <a href="/2020/06/08/kubernetes/kube-controller-manager/workqueue/" class="post-title-link" itemprop="url">kubernetes/kube-controller-manager/workqueue</a>
+        </h2>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-calendar"></i>
+              </span>
+              <span class="post-meta-item-text">发表于</span>
+
+              <time title="创建时间：2020-06-08 01:20:42" itemprop="dateCreated datePublished" datetime="2020-06-08T01:20:42+08:00">2020-06-08</time>
+            </span>
+              <span class="post-meta-item">
+                <span class="post-meta-item-icon">
+                  <i class="far fa-calendar-check"></i>
+                </span>
+                <span class="post-meta-item-text">更新于</span>
+                <time title="修改时间：2020-06-09 00:51:04" itemprop="dateModified" datetime="2020-06-09T00:51:04+08:00">2020-06-09</time>
+              </span>
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-folder"></i>
+              </span>
+              <span class="post-meta-item-text">分类于</span>
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/kubernetes/" itemprop="url" rel="index"><span itemprop="name">kubernetes</span></a>
+                </span>
+            </span>
+
+          
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+          <h1 id="WorkQueue"><a href="#WorkQueue" class="headerlink" title="WorkQueue"></a>WorkQueue</h1><h2 id="为什么需要WokrQueue"><a href="#为什么需要WokrQueue" class="headerlink" title="为什么需要WokrQueue"></a>为什么需要WokrQueue</h2><ol>
+<li>chan不好吗？chan不是可以实现带buffer的chan吗？</li>
+<li>需要workqueue的原因不是抛弃chan不用，而是对chan进行包装，因为原生的chan功能太单一，无法实现丰富的场景</li>
+<li>kubernetes的controller众多，而informer也只是事件通知，参考之前的总览图可以，在业务逻辑处理和informer通知事件到来之间，需要一层缓存来解耦业务逻辑和事件通知，不可以让事件通知阻塞在业务逻辑的处理上，因为一般业务逻辑处理可能是比较耗时的。这也是为什么informer的EventHandler的BestPractices是只做简单的对比和入队操作。防止业务逻辑处理拉胯掉informer的事件通知。</li>
+</ol>
+          <!--noindex-->
+            <div class="post-button">
+              <a class="btn" href="/2020/06/08/kubernetes/kube-controller-manager/workqueue/#more" rel="contents">
+                阅读全文 &raquo;
+              </a>
+            </div>
+          <!--/noindex-->
+        
+      
+    </div>
+
+    
+    
+    
+      <footer class="post-footer">
+        <div class="post-eof"></div>
+      </footer>
+  </article>
+  
+  
+  
+
+      
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
     <link itemprop="mainEntityOfPage" href="https://qmloong.github.io/2020/06/08/go/concurrency/">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
@@ -404,539 +998,6 @@
   
   
 
-      
-  
-  
-  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
-    <link itemprop="mainEntityOfPage" href="https://qmloong.github.io/2020/06/03/leetcodes/sort/">
-
-    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="image" content="/images/avatar.gif">
-      <meta itemprop="name" content="menglong">
-      <meta itemprop="description" content="Love is a heroic dream in a tired life.🐬">
-    </span>
-
-    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="qmloong's Blog">
-    </span>
-      <header class="post-header">
-        <h2 class="post-title" itemprop="name headline">
-          
-            <a href="/2020/06/03/leetcodes/sort/" class="post-title-link" itemprop="url">leetcodes/sort</a>
-        </h2>
-
-        <div class="post-meta">
-            <span class="post-meta-item">
-              <span class="post-meta-item-icon">
-                <i class="far fa-calendar"></i>
-              </span>
-              <span class="post-meta-item-text">发表于</span>
-
-              <time title="创建时间：2020-06-03 22:58:04" itemprop="dateCreated datePublished" datetime="2020-06-03T22:58:04+08:00">2020-06-03</time>
-            </span>
-              <span class="post-meta-item">
-                <span class="post-meta-item-icon">
-                  <i class="far fa-calendar-check"></i>
-                </span>
-                <span class="post-meta-item-text">更新于</span>
-                <time title="修改时间：2020-06-04 01:28:00" itemprop="dateModified" datetime="2020-06-04T01:28:00+08:00">2020-06-04</time>
-              </span>
-
-          
-
-        </div>
-      </header>
-
-    
-    
-    
-    <div class="post-body" itemprop="articleBody">
-
-      
-          <h1 id="排序算法"><a href="#排序算法" class="headerlink" title="排序算法"></a>排序算法</h1><h2 id="快排"><a href="#快排" class="headerlink" title="快排"></a>快排</h2><h3 id="推导"><a href="#推导" class="headerlink" title="推导"></a>推导</h3><p>推导可以参考这个图，这只是推导出最优的情况，即每次pivot的坐标都是中间的，最平均的的情况。</p>
-<p>最差情况其实就是pivot的位置每次都是最左边，导致每次partition的时候，不平均的，画成树的样子的话，就是一个只有左孩子的树，变成和普通冒泡排序一样</p>
-<img src="/2020/06/03/leetcodes/sort/v2-318c6eead066aa028df487303f616228_1440w.jpg" alt="img" style="zoom:33%;" />
-
-<h3 id="代码"><a href="#代码" class="headerlink" title="代码"></a>代码</h3><figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">partition</span><span class="params">(arr []<span class="keyword">int</span>, left, right <span class="keyword">int</span>)</span> <span class="title">int</span></span> &#123;</span><br><span class="line">   <span class="keyword">if</span> left &gt;= right &#123;</span><br><span class="line">      <span class="keyword">return</span> left</span><br><span class="line">   &#125;</span><br><span class="line">   pivot := arr[right]</span><br><span class="line">   <span class="keyword">for</span> left &lt; right &#123;</span><br><span class="line">      <span class="keyword">for</span> left &lt; right &amp;&amp; arr[left] &lt;= pivot &#123;</span><br><span class="line">         left++</span><br><span class="line">      &#125;</span><br><span class="line">      <span class="keyword">for</span> left &lt; right &amp;&amp; arr[right] &gt; pivot &#123;</span><br><span class="line">         right--</span><br><span class="line">      &#125;</span><br><span class="line">      arr[left], arr[right] = arr[right], arr[left]</span><br><span class="line">   &#125;</span><br><span class="line">   <span class="keyword">return</span> left</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">qsortImpl</span><span class="params">(arr []<span class="keyword">int</span>, left, right <span class="keyword">int</span>)</span></span> &#123;</span><br><span class="line">   <span class="keyword">if</span> left &gt;= right &#123;</span><br><span class="line">      <span class="keyword">return</span></span><br><span class="line">   &#125;</span><br><span class="line">   p := partition(arr, left, right)</span><br><span class="line">   qsortImpl(arr, left, p<span class="number">-1</span>)</span><br><span class="line">   qsortImpl(arr, p, right)</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">qsort</span><span class="params">(src []<span class="keyword">int</span>)</span> []<span class="title">int</span></span> &#123;</span><br><span class="line">   qsortImpl(src, <span class="number">0</span>, <span class="built_in">len</span>(src)<span class="number">-1</span>)</span><br><span class="line">   <span class="keyword">return</span> src</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-
-
-      
-    </div>
-
-    
-    
-    
-      <footer class="post-footer">
-        <div class="post-eof"></div>
-      </footer>
-  </article>
-  
-  
-  
-
-      
-  
-  
-  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
-    <link itemprop="mainEntityOfPage" href="https://qmloong.github.io/2020/05/30/leetcodes/summarize/">
-
-    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="image" content="/images/avatar.gif">
-      <meta itemprop="name" content="menglong">
-      <meta itemprop="description" content="Love is a heroic dream in a tired life.🐬">
-    </span>
-
-    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="qmloong's Blog">
-    </span>
-      <header class="post-header">
-        <h2 class="post-title" itemprop="name headline">
-          
-            <a href="/2020/05/30/leetcodes/summarize/" class="post-title-link" itemprop="url">leetcodes/summarize</a>
-        </h2>
-
-        <div class="post-meta">
-            <span class="post-meta-item">
-              <span class="post-meta-item-icon">
-                <i class="far fa-calendar"></i>
-              </span>
-              <span class="post-meta-item-text">发表于</span>
-
-              <time title="创建时间：2020-05-30 23:10:03" itemprop="dateCreated datePublished" datetime="2020-05-30T23:10:03+08:00">2020-05-30</time>
-            </span>
-              <span class="post-meta-item">
-                <span class="post-meta-item-icon">
-                  <i class="far fa-calendar-check"></i>
-                </span>
-                <span class="post-meta-item-text">更新于</span>
-                <time title="修改时间：2020-05-31 00:34:33" itemprop="dateModified" datetime="2020-05-31T00:34:33+08:00">2020-05-31</time>
-              </span>
-            <span class="post-meta-item">
-              <span class="post-meta-item-icon">
-                <i class="far fa-folder"></i>
-              </span>
-              <span class="post-meta-item-text">分类于</span>
-                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-                  <a href="/categories/leetcode/" itemprop="url" rel="index"><span itemprop="name">leetcode</span></a>
-                </span>
-            </span>
-
-          
-
-        </div>
-      </header>
-
-    
-    
-    
-    <div class="post-body" itemprop="articleBody">
-
-      
-          <h1 id="Summarize"><a href="#Summarize" class="headerlink" title="Summarize"></a>Summarize</h1><h2 id="题记"><a href="#题记" class="headerlink" title="题记"></a>题记</h2><h3 id="数组"><a href="#数组" class="headerlink" title="数组"></a>数组</h3><h4 id="1-两数之和找target（map遍历找）"><a href="#1-两数之和找target（map遍历找）" class="headerlink" title="1. 两数之和找target（map遍历找）"></a>1. 两数之和找target（map遍历找）</h4><h4 id="2-fib数组系列问题（青蛙跳台阶、打家劫舍、最大和的子数组）"><a href="#2-fib数组系列问题（青蛙跳台阶、打家劫舍、最大和的子数组）" class="headerlink" title="2. fib数组系列问题（青蛙跳台阶、打家劫舍、最大和的子数组）"></a>2. fib数组系列问题（青蛙跳台阶、打家劫舍、最大和的子数组）</h4><p>任何dp(n) = dp(n-1) + dp(n-2)类似的递归问题，都可以转化为dp一维数组来解决</p>
-<ol>
-<li>什么时候用DP？<ol>
-<li>最优解的时候，能找到dp公式的时候</li>
-</ol>
-</li>
-<li>如何做DP<ol>
-<li>找到公式</li>
-<li>注意临界值</li>
-<li>注意复用已有的计算结果</li>
-</ol>
-</li>
-</ol>
-
-      
-    </div>
-
-    
-    
-    
-      <footer class="post-footer">
-        <div class="post-eof"></div>
-      </footer>
-  </article>
-  
-  
-  
-
-      
-  
-  
-  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
-    <link itemprop="mainEntityOfPage" href="https://qmloong.github.io/2020/05/30/go/traps-and-falls/">
-
-    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="image" content="/images/avatar.gif">
-      <meta itemprop="name" content="menglong">
-      <meta itemprop="description" content="Love is a heroic dream in a tired life.🐬">
-    </span>
-
-    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="qmloong's Blog">
-    </span>
-      <header class="post-header">
-        <h2 class="post-title" itemprop="name headline">
-          
-            <a href="/2020/05/30/go/traps-and-falls/" class="post-title-link" itemprop="url">go/traps-and-falls</a>
-        </h2>
-
-        <div class="post-meta">
-            <span class="post-meta-item">
-              <span class="post-meta-item-icon">
-                <i class="far fa-calendar"></i>
-              </span>
-              <span class="post-meta-item-text">发表于</span>
-              
-
-              <time title="创建时间：2020-05-30 22:28:21 / 修改时间：22:44:22" itemprop="dateCreated datePublished" datetime="2020-05-30T22:28:21+08:00">2020-05-30</time>
-            </span>
-            <span class="post-meta-item">
-              <span class="post-meta-item-icon">
-                <i class="far fa-folder"></i>
-              </span>
-              <span class="post-meta-item-text">分类于</span>
-                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-                  <a href="/categories/go/" itemprop="url" rel="index"><span itemprop="name">go</span></a>
-                </span>
-            </span>
-
-          
-
-        </div>
-      </header>
-
-    
-    
-    
-    <div class="post-body" itemprop="articleBody">
-
-      
-          <h1 id="GO-Traps-amp-Falls"><a href="#GO-Traps-amp-Falls" class="headerlink" title="GO Traps&amp;Falls"></a>GO Traps&amp;Falls</h1><h2 id="陷阱"><a href="#陷阱" class="headerlink" title="陷阱"></a>陷阱</h2><h4 id="变量定义"><a href="#变量定义" class="headerlink" title="变量定义"></a>变量定义</h4><ol>
-<li><p><code>var name type</code> 定义出来的变量，默认是零值，以下6个类型全部为nil：slice/map/pointer/channel/func/interface，但是拿<code>[]int{}、map[int]int{}、func(){}</code>来初始化赋值的时候，不是零值</p>
-<figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">var</span> s []<span class="keyword">int</span>  <span class="comment">// s==nil</span></span><br><span class="line"><span class="keyword">var</span> s = []<span class="keyword">int</span>&#123;&#125; <span class="comment">// s!=nil</span></span><br></pre></td></tr></table></figure>
-
-<p>理解<code>var name = []int{}</code>和<code>var name []int</code>的区别是，一个是初始化，一个是声明</p>
-</li>
-</ol>
-
-      
-    </div>
-
-    
-    
-    
-      <footer class="post-footer">
-        <div class="post-eof"></div>
-      </footer>
-  </article>
-  
-  
-  
-
-      
-  
-  
-  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
-    <link itemprop="mainEntityOfPage" href="https://qmloong.github.io/2020/05/29/network/concept/">
-
-    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="image" content="/images/avatar.gif">
-      <meta itemprop="name" content="menglong">
-      <meta itemprop="description" content="Love is a heroic dream in a tired life.🐬">
-    </span>
-
-    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="qmloong's Blog">
-    </span>
-      <header class="post-header">
-        <h2 class="post-title" itemprop="name headline">
-          
-            <a href="/2020/05/29/network/concept/" class="post-title-link" itemprop="url">network/concept</a>
-        </h2>
-
-        <div class="post-meta">
-            <span class="post-meta-item">
-              <span class="post-meta-item-icon">
-                <i class="far fa-calendar"></i>
-              </span>
-              <span class="post-meta-item-text">发表于</span>
-
-              <time title="创建时间：2020-05-29 00:37:47" itemprop="dateCreated datePublished" datetime="2020-05-29T00:37:47+08:00">2020-05-29</time>
-            </span>
-              <span class="post-meta-item">
-                <span class="post-meta-item-icon">
-                  <i class="far fa-calendar-check"></i>
-                </span>
-                <span class="post-meta-item-text">更新于</span>
-                <time title="修改时间：2020-06-28 22:24:14" itemprop="dateModified" datetime="2020-06-28T22:24:14+08:00">2020-06-28</time>
-              </span>
-
-          
-
-        </div>
-      </header>
-
-    
-    
-    
-    <div class="post-body" itemprop="articleBody">
-
-      
-          <hr>
-<hr>
-<p>今天看RPC的时候，看到这样的一句话，顿悟，感觉这是对网络协议的一种高度概括：</p>
-<blockquote>
-<p>越底层，代码越复杂、灵活性越高、效率越高；越上层，抽象封装的越好、代码越简单、效率越差。</p>
-</blockquote>
-<p>TUN设备：在 Linux 中，TUN 设备是一种工作在三层（Network Layer）的虚拟网络设备。TUN 设备的功能非常简单，即：在操作系统内核和用户应用程序之间传递 IP 包。以 flannel0 设备为例：像上面提到的情况，当操作系统将一个 IP 包发送给 flannel0 设备之后，flannel0 就会把这个 IP 包，交给创建这个设备的应用程序，也就是 Flannel 进程。这是一个从内核态（Linux 操作系统）向用户态（Flannel 进程）的流动方向。</p>
-
-      
-    </div>
-
-    
-    
-    
-      <footer class="post-footer">
-        <div class="post-eof"></div>
-      </footer>
-  </article>
-  
-  
-  
-
-      
-  
-  
-  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
-    <link itemprop="mainEntityOfPage" href="https://qmloong.github.io/2020/05/27/kubernetes/issure/scheme/">
-
-    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="image" content="/images/avatar.gif">
-      <meta itemprop="name" content="menglong">
-      <meta itemprop="description" content="Love is a heroic dream in a tired life.🐬">
-    </span>
-
-    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="qmloong's Blog">
-    </span>
-      <header class="post-header">
-        <h2 class="post-title" itemprop="name headline">
-          
-            <a href="/2020/05/27/kubernetes/issure/scheme/" class="post-title-link" itemprop="url">kubernetes/issure/scheme</a>
-        </h2>
-
-        <div class="post-meta">
-            <span class="post-meta-item">
-              <span class="post-meta-item-icon">
-                <i class="far fa-calendar"></i>
-              </span>
-              <span class="post-meta-item-text">发表于</span>
-
-              <time title="创建时间：2020-05-27 07:48:07" itemprop="dateCreated datePublished" datetime="2020-05-27T07:48:07+08:00">2020-05-27</time>
-            </span>
-              <span class="post-meta-item">
-                <span class="post-meta-item-icon">
-                  <i class="far fa-calendar-check"></i>
-                </span>
-                <span class="post-meta-item-text">更新于</span>
-                <time title="修改时间：2020-06-09 00:52:02" itemprop="dateModified" datetime="2020-06-09T00:52:02+08:00">2020-06-09</time>
-              </span>
-            <span class="post-meta-item">
-              <span class="post-meta-item-icon">
-                <i class="far fa-folder"></i>
-              </span>
-              <span class="post-meta-item-text">分类于</span>
-                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-                  <a href="/categories/kubernetes/" itemprop="url" rel="index"><span itemprop="name">kubernetes</span></a>
-                </span>
-            </span>
-
-          
-
-        </div>
-      </header>
-
-    
-    
-    
-    <div class="post-body" itemprop="articleBody">
-
-      
-          <h1 id="7111-Proposal-Long-term-evolution-of-runtime-Scheme-conversion-Scheme"><a href="#7111-Proposal-Long-term-evolution-of-runtime-Scheme-conversion-Scheme" class="headerlink" title="7111-Proposal: Long term evolution of runtime.Scheme / conversion.Scheme"></a>7111-Proposal: Long term evolution of runtime.Scheme / conversion.Scheme</h1><p><a href="https://github.com/kubernetes/kubernetes/issues/7111" target="_blank" rel="noopener">https://github.com/kubernetes/kubernetes/issues/7111</a></p>
-<p>15年时候的issure，<strong><a href="https://github.com/smarterclayton" target="_blank" rel="noopener">smarterclayton</a></strong> 提出start to break down runtime.Scheme</p>
-          <!--noindex-->
-            <div class="post-button">
-              <a class="btn" href="/2020/05/27/kubernetes/issure/scheme/#more" rel="contents">
-                阅读全文 &raquo;
-              </a>
-            </div>
-          <!--/noindex-->
-        
-      
-    </div>
-
-    
-    
-    
-      <footer class="post-footer">
-        <div class="post-eof"></div>
-      </footer>
-  </article>
-  
-  
-  
-
-      
-  
-  
-  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
-    <link itemprop="mainEntityOfPage" href="https://qmloong.github.io/2020/05/26/kubernetes/issure/unversion-type/">
-
-    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="image" content="/images/avatar.gif">
-      <meta itemprop="name" content="menglong">
-      <meta itemprop="description" content="Love is a heroic dream in a tired life.🐬">
-    </span>
-
-    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="qmloong's Blog">
-    </span>
-      <header class="post-header">
-        <h2 class="post-title" itemprop="name headline">
-          
-            <a href="/2020/05/26/kubernetes/issure/unversion-type/" class="post-title-link" itemprop="url">kubernetes/issure/unversion-type</a>
-        </h2>
-
-        <div class="post-meta">
-            <span class="post-meta-item">
-              <span class="post-meta-item-icon">
-                <i class="far fa-calendar"></i>
-              </span>
-              <span class="post-meta-item-text">发表于</span>
-
-              <time title="创建时间：2020-05-26 07:56:55" itemprop="dateCreated datePublished" datetime="2020-05-26T07:56:55+08:00">2020-05-26</time>
-            </span>
-              <span class="post-meta-item">
-                <span class="post-meta-item-icon">
-                  <i class="far fa-calendar-check"></i>
-                </span>
-                <span class="post-meta-item-text">更新于</span>
-                <time title="修改时间：2020-06-09 00:51:59" itemprop="dateModified" datetime="2020-06-09T00:51:59+08:00">2020-06-09</time>
-              </span>
-
-          
-
-        </div>
-      </header>
-
-    
-    
-    
-    <div class="post-body" itemprop="articleBody">
-
-      
-          <a id="more"></a>
-
-<p><img src="/2020/05/26/kubernetes/issure/unversion-type/image-20200526075706724.png" alt="image-20200526075706724"></p>
-<p><a href="https://github.com/kubernetes/kubernetes/issues/19018" target="_blank" rel="noopener">https://github.com/kubernetes/kubernetes/issues/19018</a></p>
-<p>TODO</p>
-
-      
-    </div>
-
-    
-    
-    
-      <footer class="post-footer">
-        <div class="post-eof"></div>
-      </footer>
-  </article>
-  
-  
-  
-
-      
-  
-  
-  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
-    <link itemprop="mainEntityOfPage" href="https://qmloong.github.io/2020/05/26/kubernetes/kube-apiserver/install-api/install-apis(3)/">
-
-    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="image" content="/images/avatar.gif">
-      <meta itemprop="name" content="menglong">
-      <meta itemprop="description" content="Love is a heroic dream in a tired life.🐬">
-    </span>
-
-    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="qmloong's Blog">
-    </span>
-      <header class="post-header">
-        <h2 class="post-title" itemprop="name headline">
-          
-            <a href="/2020/05/26/kubernetes/kube-apiserver/install-api/install-apis(3)/" class="post-title-link" itemprop="url">kubernetes/kube-apiserver/install-api/install-apis(3)</a>
-        </h2>
-
-        <div class="post-meta">
-            <span class="post-meta-item">
-              <span class="post-meta-item-icon">
-                <i class="far fa-calendar"></i>
-              </span>
-              <span class="post-meta-item-text">发表于</span>
-
-              <time title="创建时间：2020-05-26 07:50:45" itemprop="dateCreated datePublished" datetime="2020-05-26T07:50:45+08:00">2020-05-26</time>
-            </span>
-              <span class="post-meta-item">
-                <span class="post-meta-item-icon">
-                  <i class="far fa-calendar-check"></i>
-                </span>
-                <span class="post-meta-item-text">更新于</span>
-                <time title="修改时间：2020-06-09 00:51:46" itemprop="dateModified" datetime="2020-06-09T00:51:46+08:00">2020-06-09</time>
-              </span>
-            <span class="post-meta-item">
-              <span class="post-meta-item-icon">
-                <i class="far fa-folder"></i>
-              </span>
-              <span class="post-meta-item-text">分类于</span>
-                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-                  <a href="/categories/kubernetes/" itemprop="url" rel="index"><span itemprop="name">kubernetes</span></a>
-                </span>
-            </span>
-
-          
-
-        </div>
-      </header>
-
-    
-    
-    
-    <div class="post-body" itemprop="articleBody">
-
-      
-          <h1 id="Install-APIS"><a href="#Install-APIS" class="headerlink" title="Install-APIS"></a>Install-APIS</h1><p>在installAPIResource的时候，发现不是拿apiGroupInfo进行注册的，而是先构造了个APIGroupVersion的结构，然后调用APIGroupVersion.InstallREST，看下这块是如何做注册的。</p>
-          <!--noindex-->
-            <div class="post-button">
-              <a class="btn" href="/2020/05/26/kubernetes/kube-apiserver/install-api/install-apis(3)/#more" rel="contents">
-                阅读全文 &raquo;
-              </a>
-            </div>
-          <!--/noindex-->
-        
-      
-    </div>
-
-    
-    
-    
-      <footer class="post-footer">
-        <div class="post-eof"></div>
-      </footer>
-  </article>
-  
-  
-  
-
 
   
   <nav class="pagination">
@@ -1006,7 +1067,7 @@
       <div class="site-state-item site-state-posts">
           <a href="/archives/">
         
-          <span class="site-state-item-count">43</span>
+          <span class="site-state-item-count">50</span>
           <span class="site-state-item-name">日志</span>
         </a>
       </div>

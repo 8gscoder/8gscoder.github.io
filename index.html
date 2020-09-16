@@ -154,6 +154,544 @@
   
   
   <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="https://qmloong.github.io/2020/09/12/network/ssh/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.gif">
+      <meta itemprop="name" content="menglong">
+      <meta itemprop="description" content="Love is a heroic dream in a tired life.🐬">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="qmloong's Blog">
+    </span>
+      <header class="post-header">
+        <h2 class="post-title" itemprop="name headline">
+          
+            <a href="/2020/09/12/network/ssh/" class="post-title-link" itemprop="url">network/ssh</a>
+        </h2>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-calendar"></i>
+              </span>
+              <span class="post-meta-item-text">发表于</span>
+              
+
+              <time title="创建时间：2020-09-12 16:41:54 / 修改时间：21:16:52" itemprop="dateCreated datePublished" datetime="2020-09-12T16:41:54+08:00">2020-09-12</time>
+            </span>
+
+          
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+          <h1 id="SSH-amp-Proxy-amp-隧道"><a href="#SSH-amp-Proxy-amp-隧道" class="headerlink" title="SSH &amp; Proxy &amp; 隧道"></a>SSH &amp; Proxy &amp; 隧道</h1><p>经常用ssh，但是从来没有好好的研究过ssh的协议原理，周末太无聊了，就看下这块叭。</p>
+<p>ssh是一种能够在非安全的网络链路上，实现信息的加密、完整可靠传输。</p>
+<p>ssh以非对称加密实现身份的验证，通常可以用密码登录和密钥登录。</p>
+<p>ssh在tcp之下，这也是为什么ssh可以做转发隧道的原因，可以包装tcp/udp协议。</p>
+<h2 id="SSH的-L-R-D参数"><a href="#SSH的-L-R-D参数" class="headerlink" title="SSH的-L/-R/-D参数"></a>SSH的-L/-R/-D参数</h2><h3 id="L-bind-address-port-host-hostport"><a href="#L-bind-address-port-host-hostport" class="headerlink" title="-L [bind_address:]port:host:hostport"></a>-L [bind_address:]port:host:hostport</h3><blockquote>
+<p>Specifies that the given port on the local (client) host is to be forwarded to the given host and port on the remote side.</p>
+</blockquote>
+<p>正向代理，本地绑定一个端口，再指定一个host:hostport，所有访问本地这个port的流量都会通过这个ssh链接转发到对端的host:hostport上。</p>
+<p>-R [bind_address:]port:host:hostport</p>
+<blockquote>
+<p> Specifies that the given port on the remote (server) host is to be forwarded to the given host and port on the local side.This works by allocating a socket to listen to port on the remote side, and whenever a connection is made to this port, the connection is forwarded over the secure channel,  and a connection is made to host port hostport from the local machine.</p>
+</blockquote>
+<p>反向代理，指定对端port，host和hostport是本地可以访问的一个地址，那么链接建立完毕之后，对端主机访问这个port的流量就相当于转发到本地能够访问的host:hostport上。<strong>这是一种内网穿透技术，比如内网主机A和B和公网主机C，只有A可以访问公网，B不可以，如果B上有敏感数据的话，在A上进行-R把B的某些内网服务端口暴露给了C上的某个端口，那么外网就可以自由自在的进行访问B的内网服务了</strong></p>
+<p>-D  [bind_address:]port</p>
+<blockquote>
+<p>Specifies a local ``dynamic’’ application-level port forwarding.  This works by allocating a socket to listen to port on the local side, optionally  bound to the specified bind_address.  Whenever a connection is made to this port, the connection is forwarded over the secure channel, and the application protocol is then used to determine where to connect to from the remote machine.  Currently the SOCKS4 and SOCKS5 protocols are supported, and ssh will act as a SOCKS server.  Only root can forward privileged ports.  Dynamic port forwardings can also be specified in the configuration file.</p>
+</blockquote>
+<p>socks5代理，相当于本地起一个socks5代理。所有流量配置了socks5代理转发到本地的这个端口，都会被当做是在remote主机上进行发包一样。</p>
+<blockquote>
+<p><strong>socks5和http代理的区别？</strong></p>
+<p>socks是一种协议是SOCKetS的缩写，位于会话层和传输层之间，socks5是发展过来是一个版本，socks5的代理是基于tcp的，简历</p>
+</blockquote>
+<h2 id="proxy"><a href="#proxy" class="headerlink" title="proxy"></a>proxy</h2><p>ssh的-L/-R/-D只是简单的提供了代理机制，ssh反向链接会因为超时而关闭。</p>
+<p>想了想用golang写一个代理会不会很简单呢？查查资料看看咋搞的。</p>
+<h2 id="隧道"><a href="#隧道" class="headerlink" title="隧道"></a>隧道</h2>
+      
+    </div>
+
+    
+    
+    
+      <footer class="post-footer">
+        <div class="post-eof"></div>
+      </footer>
+  </article>
+  
+  
+  
+
+      
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="https://qmloong.github.io/2020/09/10/cloud-native/istio/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.gif">
+      <meta itemprop="name" content="menglong">
+      <meta itemprop="description" content="Love is a heroic dream in a tired life.🐬">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="qmloong's Blog">
+    </span>
+      <header class="post-header">
+        <h2 class="post-title" itemprop="name headline">
+          
+            <a href="/2020/09/10/cloud-native/istio/" class="post-title-link" itemprop="url">cloud-native/istio</a>
+        </h2>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-calendar"></i>
+              </span>
+              <span class="post-meta-item-text">发表于</span>
+              
+
+              <time title="创建时间：2020-09-10 18:09:30 / 修改时间：18:09:42" itemprop="dateCreated datePublished" datetime="2020-09-10T18:09:30+08:00">2020-09-10</time>
+            </span>
+
+          
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+          <h1 id="Istio"><a href="#Istio" class="headerlink" title="Istio"></a>Istio</h1>
+      
+    </div>
+
+    
+    
+    
+      <footer class="post-footer">
+        <div class="post-eof"></div>
+      </footer>
+  </article>
+  
+  
+  
+
+      
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="https://qmloong.github.io/2020/09/10/cloud-native/knative/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.gif">
+      <meta itemprop="name" content="menglong">
+      <meta itemprop="description" content="Love is a heroic dream in a tired life.🐬">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="qmloong's Blog">
+    </span>
+      <header class="post-header">
+        <h2 class="post-title" itemprop="name headline">
+          
+            <a href="/2020/09/10/cloud-native/knative/" class="post-title-link" itemprop="url">cloud-native/knative</a>
+        </h2>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-calendar"></i>
+              </span>
+              <span class="post-meta-item-text">发表于</span>
+
+              <time title="创建时间：2020-09-10 18:09:18" itemprop="dateCreated datePublished" datetime="2020-09-10T18:09:18+08:00">2020-09-10</time>
+            </span>
+              <span class="post-meta-item">
+                <span class="post-meta-item-icon">
+                  <i class="far fa-calendar-check"></i>
+                </span>
+                <span class="post-meta-item-text">更新于</span>
+                <time title="修改时间：2020-09-14 21:38:33" itemprop="dateModified" datetime="2020-09-14T21:38:33+08:00">2020-09-14</time>
+              </span>
+
+          
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+          <h1 id="Knative"><a href="#Knative" class="headerlink" title="Knative"></a>Knative</h1><h2 id="Knative-Serving"><a href="#Knative-Serving" class="headerlink" title="Knative Serving"></a>Knative Serving</h2><p>Knative Serving基于k8s的无状态服务，快速部署、弹性伸缩、容器资源调度、多版本管理，和istio的服务治理能力，实现serveless应用or函数部署。</p>
+<ul>
+<li>快速部署serverless应用</li>
+<li>自动伸缩</li>
+<li>基于istio的路由和网络编程</li>
+<li>代码快照，其实就是k8s rs的多版本化管理</li>
+</ul>
+<h2 id="Knative-Serving的CRD资源"><a href="#Knative-Serving的CRD资源" class="headerlink" title="Knative Serving的CRD资源"></a>Knative Serving的CRD资源</h2><p><img src="/2020/09/10/cloud-native/knative/42bd1041a25845626e36258d090a8085.png" alt="Knative 系列（三）：Serving篇"></p>
+<h3 id="Service"><a href="#Service" class="headerlink" title="Service"></a>Service</h3><p>Service资源是一个可以管理workload所有生命周期的资源定义，他包括了Route、Configuration、Revision</p>
+<h3 id="Route"><a href="#Route" class="headerlink" title="Route"></a>Route</h3><p>配置endpoint对应到哪个revision</p>
+<h3 id="Configuration"><a href="#Configuration" class="headerlink" title="Configuration"></a>Configuration</h3><p>记录保持部署所需的状态，可以理解为</p>
+<h3 id="Revision"><a href="#Revision" class="headerlink" title="Revision"></a>Revision</h3><h3 id="Serving-原理"><a href="#Serving-原理" class="headerlink" title="Serving 原理"></a>Serving 原理</h3><p>Serving 总共有 5 个组件，其中 4 个在 knative-serving 这个 namespace 下面，是 controller 、webhook 、autoscaler、activator 这四个组件；还有一个 queue, 运行在每个应用的 pod 里，作为 pod 的 sidecar 存在。</p>
+<p>\1. Controller 负载 Service 整个生命周期的管理，涉及、Configuration、Route、Revision 等的 CURD。<br>\2. Webhook 主要负责创建和更新的参数校验。<br>\3. Autoscaler 根据应用的请求并发量对应用扩缩容。<br>\4. Activator 在应用缩容到 0 后，拦截用户的请求，通知 autoscaler 启动相应应用实例，等待启动后将请求转发。<br>\5. Queue 负载拦截转发给 Pod 的请求，用于统计 Pod 的请求并发量等，autoscaler 会访问 queue 获取相应数据对应用扩缩容。</p>
+
+      
+    </div>
+
+    
+    
+    
+      <footer class="post-footer">
+        <div class="post-eof"></div>
+      </footer>
+  </article>
+  
+  
+  
+
+      
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="https://qmloong.github.io/2020/09/10/network/http/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.gif">
+      <meta itemprop="name" content="menglong">
+      <meta itemprop="description" content="Love is a heroic dream in a tired life.🐬">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="qmloong's Blog">
+    </span>
+      <header class="post-header">
+        <h2 class="post-title" itemprop="name headline">
+          
+            <a href="/2020/09/10/network/http/" class="post-title-link" itemprop="url">network/http</a>
+        </h2>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-calendar"></i>
+              </span>
+              <span class="post-meta-item-text">发表于</span>
+
+              <time title="创建时间：2020-09-10 13:18:56" itemprop="dateCreated datePublished" datetime="2020-09-10T13:18:56+08:00">2020-09-10</time>
+            </span>
+              <span class="post-meta-item">
+                <span class="post-meta-item-icon">
+                  <i class="far fa-calendar-check"></i>
+                </span>
+                <span class="post-meta-item-text">更新于</span>
+                <time title="修改时间：2020-09-12 20:21:15" itemprop="dateModified" datetime="2020-09-12T20:21:15+08:00">2020-09-12</time>
+              </span>
+
+          
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+          <h1 id="HTTP"><a href="#HTTP" class="headerlink" title="HTTP"></a>HTTP</h1><h2 id="http的长连接和短链接？"><a href="#http的长连接和短链接？" class="headerlink" title="http的长连接和短链接？"></a>http的长连接和短链接？</h2><p>http是基于tcp的，所以http的长连接和短链接都依赖tcp的长短链接。</p>
+<p>tcp是面向连接的，会进行三次握手四次回收建立socket连接，<strong>TCP本身没有长短连接的说法</strong>，完全是取决于上层协议怎么使用TCP</p>
+<ul>
+<li>短连接：每次传输都重新握手和挥手</li>
+<li>长连接：建立连接之后保持连接，不进行挥手操作，TCP协议里没有保活部分，但是OS都会进行keep-alive</li>
+</ul>
+<p>而http的短链接在/2020/09/10/network/http/1.0之前都是默认短链接，在/2020/09/10/network/http/1.1之后默认都是Keep-alive的。<code>Connection:keep-alive</code></p>
+<p>思考：</p>
+<p>长连接的会带来的问题，Server端不主动断开连接的话，如何知道哪些client是活跃的，哪些是不活跃的呢？连接满了之后如何进行清理老连接呢？</p>
+<p>TODO</p>
+<h2 id="Golang-http实现分析"><a href="#Golang-http实现分析" class="headerlink" title="Golang http实现分析"></a>Golang http实现分析</h2><p><a href="https://blog.csdn.net/kdpujie/article/details/73177179" target="_blank" rel="noopener">https://blog.csdn.net/kdpujie/article/details/73177179</a></p>
+<p><a href="https://xiequan.info/go-http-client%E8%BF%9E%E6%8E%A5%E4%BC%98%E5%8C%96/" target="_blank" rel="noopener">https://xiequan.info/go-http-client%E8%BF%9E%E6%8E%A5%E4%BC%98%E5%8C%96/</a></p>
+
+      
+    </div>
+
+    
+    
+    
+      <footer class="post-footer">
+        <div class="post-eof"></div>
+      </footer>
+  </article>
+  
+  
+  
+
+      
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="https://qmloong.github.io/2020/09/08/linux/filesystem/fs/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.gif">
+      <meta itemprop="name" content="menglong">
+      <meta itemprop="description" content="Love is a heroic dream in a tired life.🐬">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="qmloong's Blog">
+    </span>
+      <header class="post-header">
+        <h2 class="post-title" itemprop="name headline">
+          
+            <a href="/2020/09/08/linux/filesystem/fs/" class="post-title-link" itemprop="url">linux/filesystem/fs</a>
+        </h2>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-calendar"></i>
+              </span>
+              <span class="post-meta-item-text">发表于</span>
+
+              <time title="创建时间：2020-09-08 23:24:16" itemprop="dateCreated datePublished" datetime="2020-09-08T23:24:16+08:00">2020-09-08</time>
+            </span>
+              <span class="post-meta-item">
+                <span class="post-meta-item-icon">
+                  <i class="far fa-calendar-check"></i>
+                </span>
+                <span class="post-meta-item-text">更新于</span>
+                <time title="修改时间：2020-09-10 09:54:18" itemprop="dateModified" datetime="2020-09-10T09:54:18+08:00">2020-09-10</time>
+              </span>
+
+          
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+          <h1 id="文件系统"><a href="#文件系统" class="headerlink" title="文件系统"></a>文件系统</h1><h2 id="什么是文件系统"><a href="#什么是文件系统" class="headerlink" title="什么是文件系统"></a>什么是文件系统</h2><p>在类Unix操作系统之下，除进程之外，一切皆文件。文件系统是os对硬件设备硬盘使用的一种方式，linux下常见的是ext4，windows下是FAT/NTFS</p>
+<h2 id="文件系统的分层"><a href="#文件系统的分层" class="headerlink" title="文件系统的分层"></a>文件系统的分层</h2><p><img src="/2020/09/08/linux/filesystem/fs/filesystem_diagram.png" alt="img"></p>
+<p>内核为了屏蔽下层具体的FS实现，中间用了VFS来隔离，具体的FS只用实现VFS的接口，就能适配内核，将内核和FS解耦。</p>
+<h2 id="Sector、Block、Inode、file、file-operations"><a href="#Sector、Block、Inode、file、file-operations" class="headerlink" title="Sector、Block、Inode、file、file_operations"></a>Sector、Block、Inode、file、file_operations</h2><p>磁盘的存储最小单位是<strong>sector</strong>扇区，但是sector的单位512B，所以如果要找一个大的10Mb文件的话，需要读磁盘20480次，所以就有了「逻辑区块<strong>Block</strong>」，这样只要设置好Block和Sector的对应关系（1block=4sectors，4KB），就可以大幅度减少磁盘IO次数，但是越大就会越浪费，越小效率就越低。</p>
+<p><strong>inode</strong>是EXT文件系统用于记录block的属性（所属者、可读写执行、类型-/d/s/l/..、创建修改时间、字节数、file链接数、具体设备编号及设备指针）用的结构体，另外还会记录文件数据位于的block位置。</p>
+<p><strong>file</strong>才是linux记录进程实际打开文件的结构体，也就是常说的文件描述符表项，进程有个文件描述符表是[]file类型，而我们说的fd则是这个表的Index，系统调用open的实现很容易理解，入参是文件路径，调用内实现是在这个进程的文件描述表中新加一个file结构体，返回索引，inode会增加计数。</p>
+<p><strong>file_operations</strong>记录了设备读取的函数指针</p>
+<h2 id="设备文件devfs和udev"><a href="#设备文件devfs和udev" class="headerlink" title="设备文件devfs和udev"></a>设备文件devfs和udev</h2><p>什么是设备文件？类unix操作系统都是基于文件概念的，所以对于os来说，增删设备也是抽象成文件，有统一的io接口来操作设备，而设备文件就是代表着一个“设备”，设备文件分为两种：块和字符，其实还有一种比较特殊的是网络设备。</p>
+<ul>
+<li>块设备：一般带有缓冲区，可以随机读取的，比如write的时候可以设置指针指向的位置，常见的就是硬盘（云硬盘）</li>
+<li>字符设备：一般都是有连续的数据流，带有顺序，不可随机读取的，常见的有键盘、串口、调制解调器</li>
+<li>网络设备：特殊设备的驱动，负责接收和发送数据帧，可能是物理帧也可能是ip数据包，取决于网络驱动，网络设备是net_device结构体，通过register_netdev注册到内核。和其他设备不通。</li>
+</ul>
+<h2 id="tty设备？pts终端？rzsz的原理？"><a href="#tty设备？pts终端？rzsz的原理？" class="headerlink" title="tty设备？pts终端？rzsz的原理？"></a>tty设备？pts终端？rzsz的原理？</h2><ol>
+<li><p>tty设备是一种特殊的字符设备，对应着物理显示器设备，大家都知道，最初的计算机由于价格昂贵，因此，一台计算机一般是由多个人同时使用的。在这种情况下一台计算机需要连接上许多套键盘和显示器来供多个人使用。但是其实现在已经很少有真实的物理tty设备了，基本都软件仿真终端，都是在内核实现的。</p>
+</li>
+<li><p>pts终端就是伪终端</p>
+<blockquote>
+<p> 为了便于将终端仿真移入用户空间，同时仍保持 TTY 子系统(TTY 子系统指 TTY 驱动和行规范)的完整，伪终端被发明了出来(pseudo terminal 或 pty)。伪终端在内核中分为两部分，分别是 master side 和 在 TTY 驱动中实现的 slave side。注意上图中的 xterm，这是一个运行在用户态的终端仿真程序，比如 Ubuntu Desktop 中的 GNOME Termina<br><img src="/2020/09/08/linux/filesystem/fs/952033-20190904181756676-1523246503.png" alt="img"></p>
+</blockquote>
+</li>
+<li><p>那我们通过ssh进行的rzsz又是个啥鸡巴原理呢？</p>
+<p>​    网上找了一张图，很清晰~</p>
+<p>当使用本地的Terminal连接到ssh服务之后，ssh-server会fork一个shell，这个shell会关联一个pts虚拟的终端设备，ssh-server会接受到终端的键盘输入，然后写到对应的pts设备，shell收到对应的stdin之后会有输出，输出的结果会被ssh-server通过网络协议传输回对应的terminal的ssh客户端</p>
+<p><img src="/2020/09/08/linux/filesystem/fs/image-20200910002222566.png" alt="image-20200910002222566"></p>
+</li>
+</ol>
+<h2 id="云硬盘挂载？什么是挂载？"><a href="#云硬盘挂载？什么是挂载？" class="headerlink" title="云硬盘挂载？什么是挂载？"></a>云硬盘挂载？什么是挂载？</h2><p>云硬盘是一种虚拟块设备，和虚拟机配合使用，挂载到虚拟机的指定目录下。</p>
+<h2 id="常见的linux关于文件系统、查看设备的命令？"><a href="#常见的linux关于文件系统、查看设备的命令？" class="headerlink" title="常见的linux关于文件系统、查看设备的命令？"></a>常见的linux关于文件系统、查看设备的命令？</h2><ol>
+<li><p>df - report file system disk space usage</p>
+<ol>
+<li>df -h</li>
+<li>df -h /etc</li>
+</ol>
+</li>
+<li><p>du - estimate file space usage 看文件的使用情况</p>
+<ol>
+<li>du -h</li>
+</ol>
+</li>
+<li><p>fdisk - manipulate disk partition table 查看硬盘分区</p>
+<ol>
+<li>fdisk -l</li>
+</ol>
+</li>
+<li><p>lsblk - list block devices 专门查看系统中的块设备</p>
+<ol>
+<li>lsblk -a</li>
+</ol>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">vda    251:0    0   50G  0 disk</span><br><span class="line">└─vda1 251:1    0   50G  0 part /</span><br><span class="line"></span><br><span class="line"><span class="comment"># vda表示一种设备，251位主设备号，一种主设备号标志一种设备类型，用同一种设备驱动程序读取块设备，</span></span><br></pre></td></tr></table></figure>
+
+</li>
+</ol>
+<h2 id="题外：用户空间和内核空间通信方式：-proc文件、netlink、sysfs"><a href="#题外：用户空间和内核空间通信方式：-proc文件、netlink、sysfs" class="headerlink" title="题外：用户空间和内核空间通信方式：/proc文件、netlink、sysfs"></a>题外：用户空间和内核空间通信方式：/proc文件、netlink、sysfs</h2>
+      
+    </div>
+
+    
+    
+    
+      <footer class="post-footer">
+        <div class="post-eof"></div>
+      </footer>
+  </article>
+  
+  
+  
+
+      
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="https://qmloong.github.io/2020/08/01/network/netlink/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.gif">
+      <meta itemprop="name" content="menglong">
+      <meta itemprop="description" content="Love is a heroic dream in a tired life.🐬">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="qmloong's Blog">
+    </span>
+      <header class="post-header">
+        <h2 class="post-title" itemprop="name headline">
+          
+            <a href="/2020/08/01/network/netlink/" class="post-title-link" itemprop="url">network/netlink</a>
+        </h2>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-calendar"></i>
+              </span>
+              <span class="post-meta-item-text">发表于</span>
+              
+
+              <time title="创建时间：2020-08-01 14:40:03 / 修改时间：15:15:45" itemprop="dateCreated datePublished" datetime="2020-08-01T14:40:03+08:00">2020-08-01</time>
+            </span>
+
+          
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+          <h1 id="Netlink-Socket"><a href="#Netlink-Socket" class="headerlink" title="Netlink Socket"></a>Netlink Socket</h1><p>Netlink socket是一种kernal和user space之间通信的一种方式，也是一种IPC，注意，netlink socket不是网络socket，只可用于主机内的进程通信，socket是通过进程pid来标志的。</p>
+<p>其他常见的kernel和user space之间通信的方式有sysctl、系统调用、procfs和ioctl，但是都是一种user-&gt;kernal的方式，且是同步、单工通信。</p>
+<p>而netlink socket协议族则更加灵活，且可以自己定制protol参数，通过insmod命令插入内核即可。</p>
+
+      
+    </div>
+
+    
+    
+    
+      <footer class="post-footer">
+        <div class="post-eof"></div>
+      </footer>
+  </article>
+  
+  
+  
+
+      
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="https://qmloong.github.io/2020/07/23/kubelet%E5%B7%A5%E4%BD%9C%E5%8E%9F%E7%90%86/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.gif">
+      <meta itemprop="name" content="menglong">
+      <meta itemprop="description" content="Love is a heroic dream in a tired life.🐬">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="qmloong's Blog">
+    </span>
+      <header class="post-header">
+        <h2 class="post-title" itemprop="name headline">
+          
+            <a href="/2020/07/23/kubelet%E5%B7%A5%E4%BD%9C%E5%8E%9F%E7%90%86/" class="post-title-link" itemprop="url">kubelet工作原理</a>
+        </h2>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-calendar"></i>
+              </span>
+              <span class="post-meta-item-text">发表于</span>
+
+              <time title="创建时间：2020-07-23 12:55:27" itemprop="dateCreated datePublished" datetime="2020-07-23T12:55:27+08:00">2020-07-23</time>
+            </span>
+              <span class="post-meta-item">
+                <span class="post-meta-item-icon">
+                  <i class="far fa-calendar-check"></i>
+                </span>
+                <span class="post-meta-item-text">更新于</span>
+                <time title="修改时间：2020-09-08 23:22:48" itemprop="dateModified" datetime="2020-09-08T23:22:48+08:00">2020-09-08</time>
+              </span>
+
+          
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+          <p>![img](Untitled 1/914e097aed10b9ff39b509759f8b1d03.png)</p>
+<p><img src="https://static001.geekbang.org/resource/image/70/38/7016633777ec41da74905bfb91ae7b38.png" alt="img"></p>
+<p>![img](Untitled 1/7016633777ec41da74905bfb91ae7b38-20200723125716188.png)</p>
+
+      
+    </div>
+
+    
+    
+    
+      <footer class="post-footer">
+        <div class="post-eof"></div>
+      </footer>
+  </article>
+  
+  
+  
+
+      
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
     <link itemprop="mainEntityOfPage" href="https://qmloong.github.io/2020/07/13/life/%E8%AE%B0/">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
@@ -177,10 +715,16 @@
                 <i class="far fa-calendar"></i>
               </span>
               <span class="post-meta-item-text">发表于</span>
-              
 
-              <time title="创建时间：2020-07-13 18:06:35 / 修改时间：23:46:49" itemprop="dateCreated datePublished" datetime="2020-07-13T18:06:35+08:00">2020-07-13</time>
+              <time title="创建时间：2020-07-13 18:06:35" itemprop="dateCreated datePublished" datetime="2020-07-13T18:06:35+08:00">2020-07-13</time>
             </span>
+              <span class="post-meta-item">
+                <span class="post-meta-item-icon">
+                  <i class="far fa-calendar-check"></i>
+                </span>
+                <span class="post-meta-item-text">更新于</span>
+                <time title="修改时间：2020-07-14 20:45:32" itemprop="dateModified" datetime="2020-07-14T20:45:32+08:00">2020-07-14</time>
+              </span>
 
           
 
@@ -199,7 +743,7 @@
 <blockquote>
 <p>9号晚上7:15飞南京，10号中午去苏州看下刚出生的小塞班，傍晚去无锡找骚骚，12号中午从无锡回南京，陪陪二姐晚上飞回深圳</p>
 </blockquote>
-<p>​    万万没想到事情安排满满当当，中间却来了那么多乱七八糟的事情。</p>
+<p>​    简简单单的行程，中间却来了那么多乱七八糟的事情。</p>
 <p>​    10号到无锡的时候，居然发现无锡人民95%都没有带口罩，出高铁的时候，非要注册“锡康码”才可换去一张像酒店色情小广告一样的卡片，在出站口的时候把卡片丢进纸盒即可出站，这矫情的苏南人做事情也是这么矫情。</p>
 <p>​    遇到骚骚之后，看他那球样还是商务风，一点也没变，还是那么骚气，我心里有些事情导致不是特别的开心，一起吃海底捞、唱歌也没有很放的开，就特别想喝点酒，后来去了一家气氛还可的小酒吧pub喝了点才放开点。其实我是比较想先聊聊天的啦，聊一聊最近过得咋样啊，喝点酒就想bb，不亏是我，但是其实也没聊多少，好朋友一起玩的多了还是比较熟，而且骚骚可能也比较内心保守，许多事情他也不愿意当着syl面前聊，虽然我是觉得无所谓的。只是谈及到结婚的问题之后发现骚骚也有在担心的问题，虽然家里可能有点钱，但是精神小伙也4有尊严滴，想自己owner起来，不想结婚还要花家里钱。可能就是这样，家境差一点早熟一点的孩子在工作之前在学校无论是大学还是高中的时候，都是在愁后面我没钱怎么办，以后一个月工资都不够换房贷怎么办，拿着家里一个月1000块的生活费，手机屏摔坏了连着给小米4换6块山寨屏也暂不出钱换手机，曾经最惨的时候2天就花了9块钱（一是当时没钱二是真不想吃饭哈），而家境好一点的孩子成熟一点的孩子工作之前焦点可能就是放在我的生活该怎么样才有意思，花钱没压力。但是反而工作之后现在薪资可能是比骚骚高好多，我对于钱的认知越来越模糊，或者说金钱观变的有点不太正常了，现在觉得赚那些钱又有什么意思呢？花钱也有点大手大脚的，用我们沭阳话说就是烧不熟、火烧火燎的，但是骚骚对钱的认知应该是在我之上的，他工作之后思想独立，虽然不至于说不拿家里一分钱但是起码有自己的意识（即使我还是很反感骚骚到哪都抢着付钱的做法）。我一直都觉得我们家其实也不穷，但是有些观念，有些意识入了你的脑子，他一辈子都改不了，思考了一下发现我的金钱观应该是有问题的，无论是学生时代，还是工作之后，都隐隐约约透露着一点病态。</p>
 <p>​    之后我们去宾馆打掼蛋（一种淮安扑克的玩法），不得不说骚骚给我们定的宾馆还是挺不错的哈，高大上，书记做事情还是挺靠谱的。</p>
@@ -207,9 +751,10 @@
 <p>​    第二天起来，眼睛还没睁开就听见小舒怡说骚骚给点了早餐外卖，里面有我最喜欢的汤包，还有些肯德基的早餐。哇咔咔，香。</p>
 <p>​    起来之后，饭点了，到楼下，才知道原来骚骚是开车来的无锡，丫的，这货给我的感觉咋让我感觉自己是小p孩，毕竟我连驾照都没考hh，人家都开车自己来无锡了，我们坐上骚骚的小广本，去往syl的阿姨在太湖景区里的饭店吃饭。一路上车里放的全是骚骚的歌，几人开开心心的去“樱花山庄”了。他那一路车开的还是那个球样，跟高中时候坐他的骚紫的电瓶车一样——需要自备塑料袋。</p>
 <p>​    到之后见到了syl的阿姨和樱花山庄，感觉和syl气质上有点像，给我感觉有点那种日本女人的感觉，干净、端庄、优雅。我是不太会酒桌上这些乱七八糟的礼仪的，骚骚是很不错的，相比我肯定老练太多，她阿姨还夸骚骚情商高了，hh。后面就是在太湖景区里面逛园子。无锡那边的雨天跟深圳一样烦人，走点路浑身就胶黏的。</p>
+<p>​    // TODO 樱花山庄pic</p>
 <p>​    晚上的时候又遇到了问题，日常骚骚发脾气，就因为分开打车错了地址，两个地方还很近，syl和小舒怡还有个myq，三个女人一块，大概是聊天聊上了，没有接到电话，骚骚就大发脾气，后来电话打通了上来一顿骂，见面了也是一顿冷眼。然后一起去想吃的那家韩式料理发现人超多，要排两个小时队，最后无奈去了一家没啥人的牛蛙，两个人都在那摆着冷脸，看骚骚那样都要掀桌子了。我也是醉了，那会儿我觉得他情商是负数…无论是什么原因，这架吵成这样是有原因的，骚骚在我这里看来最大的问题就是太自我，控制欲太强，太大男子主义，家庭环境影响、自己的性格原因、自己接触的周围那帮人。我很想推荐他看看那本书，前几个习惯都是在讲关于如何“修身”的，印象特别深的积极主动和以终为始，我每次吵完架我经常特别的内疚，后来听我导师推荐了这本书之后我慢慢的发现问题的所在，之前什么所谓的换位思考，居然得到了理论支撑，而且如果你每次都以一套处事方式来思考自身的话，你会发现所有的问题都可以套进去，无非就是自己总结一下思考这次为什么吵架？带来的影响是什么？是好是坏？后续怎么才能不吵架？现在我慢慢开始觉得生活中的一些你可能感到很匪夷所思的事情，都是可以从中学到东西或者找到一些方式去解决、避免的。如果你觉得吵架不好，那么你给自己下的目标首先应该是以后不吵架，但是许多人往往可能就定下这个目标之后就没有任何的改变，甚至在又一次吵架的时候更加自责、更加质疑自己为人，但是其实最重要的原因就是没有深入去思考这次为什么吵架，解决吵架最根本的原因绝不是你意识到吵架不好以后不能吵架，而且要主动去fix一下这次遇到的问题。具体怎么做的话，我是觉得说出来很可笑，那其实就是：1.做好自己2.换位思考。对应的就是积极主动和以终为始。你如果想改变别人，让别人不跟你吵架，首先你得先从自己出发啊，你自己就没有一点问题吗？在这次吵架中，不考虑别人做的不对的地方，你自己有哪些不对的先想想？至于如果你综合思考之后发现对方更离谱的话，那可能真的就不适合在一块了。其次再换位思考一下，你可能比较好奇人家为什么这次突然就不说话，不主动去“哄”你了，可能是人家对你已经放弃治疗了，也可能是因为周围环境因素，比如有朋友在人家都是爱面子的，为什么要过来哄你一个男生。。算了不多比比了，总之男女之间的吵架也是值得深究的一门学科，如何吵好架，值得自己好好摸索摸索…</p>
 <p>​    之后终于喝了点啤酒，加上我们稍微缓和缓和气氛，两人才开口说话了。</p>
-<p>​    我和骚骚在吃饭的时候为了劝骚骚，跟他喝了三瓶啤酒🍺。。而且喝的巨他妈的快，啤酒这东西我到现在都觉得就是用来折磨人的。。又苦又有气，喝多了还不断要上厕所尿尿。。之后我们就去了MIU，无锡的一个club，气氛还可喔，之前一直想蹦迪，上次在江西和夏明九一块的时候，没喝酒去MUSE白嫖的，玩的很尬，两个人就像个二球，尬在里面。所以这次我想着骚骚也是没去过club，刚好我最近考核完想释放一下压力，就点了个散台，遇到的那个花臂女销售看起来好像有点diss我没有买她30块的一包纸巾，人没了，后来一个服务员小哥，长得我感觉有点像阿水，小哥给我说他也可以给我开散台，要喝啥，然后点了个480的伏特加套餐（大概是假酒喝的味道感觉怪怪的），阿水看起来还挺年轻的，我问他卡座低消多少哇他说一千出头吧，问我要开的话也可以帮我开，后来问了下靠近DJ的卡座没了，就算了。简单跟阿水说了几句话，我说绿茶为啥变成果汁了呀，他说都这样，没事，然后还给我说你要还想要果汁的话他可以偷偷给我拿，我看他手就要去拿旁边桌上的果汁了赶紧给他说算了算了我们不需要。后来看骚骚好像也不是特别放得开的，我就想带带气氛吧，就和骚骚喝酒，club的音乐声音是整的释压，我整个人都放开来了，玩玩骰子，酒越喝越多，看骚骚，我想给他喝点又不怕他明天开不了车回家，就没派他喝酒，叫他注意点明天还要开车，骚骚找我去上厕所，其实我不想上，但是陪他去了一趟就是想跟他说几句话的，当时喝的头有点晕了大概是给他说了些不要老是凶人家小大姐，人家小大姐人不错，对你也挺好，不要那绝气样。也不知道他听没听见去，反正我该说的也就这些了，骚骚不是那种能听我说话的人，固执的一批，在我这块的tag，就是外向、搞笑、气氛组组长、有时候成熟有时候幼稚、固执、家里小娇宝、爱发脾气，大概是说啥也听不进去的辣种，回去之后彻底喝大了，场子也热起来了，说话基本都靠在耳边吼才能听见，骚骚一直bb说驴来放个炮（酒吧里那种爆纸片的玩意儿），喝高了之后也萨比了，专门找了阿水（其实可以找其他服务员，但是我觉得阿水人不错就专门去找他拍了拍肩膀），我给他耳边吼说那个炮多少钱呀我也要玩，他给我说，两百，但是推荐我玩那个二氧化碳那个干冰，那个好玩比放炮的划算，我吼算了我朋友就想要哪个炮，给我上一个，后来他就post机一下我，没几分钟他带来了炮，叫我放，我丢，我tm害怕的，我说兄弟你来！我不敢放，他说没事的就按一下开关哈哈，我就举起来狠狠的按一下，爆出来的纸片，虽然只二百块钱， 让我有一种“撒币”的感觉hhh，真的释压，之前超喜欢听DJ喜欢那种低音炮的重响，都是自己周五在家抱着9420自己嗨，喝点小酒自己嗨，在club的气氛还是不一样的，小喜欢，以后还想去（小瘾）。酒的后劲上来了，后面我也不太清醒了，迷糊中看看小怡好像看我眼神不太一样，我在想可能小怡没放开？第一次来少喝点，就稍微叫她少喝点好蹦，然后我记得是给syl说少喝点你不能喝还是啥的，然后又给骚骚说你不要影响明天开车嚎，再后来就真迷迷糊糊了，之后好像阿水给我偷了一瓶伏特加，我吓一跳，我蹦的太嗨，就拳头🤜轻轻锤了一下他胸吼了句谢谢。再后面的我越来越迷糊了，只记得又和骚骚去了趟厕所，遇到了个大花臂听我在和骚骚说沭阳话，就过来搭讪，小兄弟自我介绍说是98的我说我是96的上来就一口一个哥，说最喜欢在外地遇到老乡了，我也是，不知道为啥就感觉这人让我想起来我那些小学同学没上初中或者没上高中辍学在外打工的朋友，很亲切（喝高了），然后加了微信，应该是个销售吧，后面我就搂着去散台了。后面我发现喝有点高了，而且慢慢的有点慌了感觉意识不太清晰，刚好小舒要去卫生间。后面的事情就真的一点都连不起来了，都是些片段。比如骚骚脸色苍白，肚皮发凉，我突然一下慌了，感觉要出事了；吼着阿水说带我朋友出去打120，我给你一千块，阿水说不是钱的问题他在工作出不去；骚骚被抬出酒吧躺在地上，脸色苍白冒冷汗，我吓死了以为是死掉了，坐在地上哭，脑子都是骚骚死了怎么办，我没照顾好朋友；坐在120车上低头哭；坐在急救室门口板凳上哭；“抢救室”蓝底白字灯牌“；“护士，卫生间在哪”；心里难受，凉水冲头；syl在水池旁边好像给我说啥了；小舒怡带我回宾馆…..至于中间是如何怎么连接起来的，一点影响都没了….</p>
+<p>​    我和骚骚在吃饭的时候为了劝骚骚，跟他喝了三瓶啤酒🍺。。而且喝的巨他妈的快，啤酒这东西我到现在都觉得就是用来折磨人的。。又苦又有气，喝多了还不断要上厕所尿尿。。之后我们就去了MIU，无锡的一个club，气氛还可喔，之前一直想蹦迪，上次在江西和夏明九一块的时候，没喝酒去MUSE白嫖的，玩的很尬，两个人就像个二球，尬在里面。所以这次我想着骚骚也是没去过club，刚好我最近考核完想释放一下压力，就点了个散台，遇到的那个花臂女销售看起来好像有点diss我没有买她30块的一包纸巾，人没了，后来一个服务员小哥，长得我感觉有点像阿水，小哥给我说他也可以给我开散台，要喝啥，然后点了个480的伏特加套餐（大概是假酒喝的味道感觉怪怪的），阿水看起来还挺年轻的，我问他卡座低消多少哇他说一千出头吧，问我要开的话也可以帮我开，后来问了下靠近DJ的卡座没了，就算了。简单跟阿水说了几句话，我说绿茶为啥变成果汁了呀，他说都这样，没事，然后还给我说你要还想要果汁的话他可以偷偷给我拿，我看他手就要去拿旁边桌上的果汁了赶紧给他说算了算了我们不需要。后来看骚骚好像也不是特别放得开的，我就想带带气氛吧，就和骚骚喝酒，club的音乐声音是整的释压，我整个人都放开来了，玩玩骰子，酒越喝越多，看骚骚，我想给他喝点又不怕他明天开不了车回家，就没派他喝酒，叫他注意点明天还要开车，骚骚找我去上厕所，其实我不想上，但是陪他去了一趟就是想跟他说几句话的，当时喝的头有点晕了大概是给他说了些不要老是凶人家小大姐，人家小大姐人不错，对你也挺好，不要那绝气样。也不知道他听没听见去，反正我该说的也就这些了，骚骚不是那种能听我说话的人，固执的一批，在我这块的tag，就是外向、搞笑、气氛组组长、有时候成熟有时候幼稚、固执、家里小娇宝、爱发脾气，大概是说啥也听不进去的辣种，回去之后彻底喝大了，场子也热起来了，说话基本都靠在耳边吼才能听见，骚骚一直bb说驴来放个炮（酒吧里那种爆纸片的玩意儿），喝高了之后也萨比了，专门找了阿水（其实可以找其他服务员，但是我觉得阿水人不错就专门去找他拍了拍肩膀），我给他耳边吼说那个炮多少钱呀我也要玩，他给我说，两百，但是推荐我玩那个二氧化碳那个干冰，那个好玩比放炮的划算，我吼算了我朋友就想要哪个炮，给我上一个，后来他就post机一下我，没几分钟他带来了炮，叫我放，我丢，我tm害怕的，我说兄弟你来！我不敢放，他说没事的就按一下开关哈哈，我就举起来狠狠的按一下，爆出来的纸片，虽然只二百块钱， 让我有一种“撒币”的感觉hhh，真的释压，之前超喜欢听DJ喜欢那种低音炮的重响，都是自己周五在家抱着9420自己嗨，喝点小酒自己嗨，在club的气氛还是不一样的，小喜欢，以后还想去（小瘾）。酒的后劲上来了，后面我也不太清醒了，迷糊中看看小怡好像看我眼神不太一样，我在想可能小怡没放开？第一次来少喝点，就稍微叫她少喝点好蹦，然后我记得是给syl说少喝点你不能喝还是啥的，然后又给骚骚说你不要影响明天开车嚎，再后来就真迷迷糊糊了，之后好像阿水给我偷偷上了一瓶伏特加，我吓一跳，我蹦的太嗨，就拳头🤜轻轻锤了一下他胸吼了句谢谢。再后面的我越来越迷糊了，只记得又和骚骚去了趟厕所，遇到了个大花臂听我在和骚骚说沭阳话，就过来搭讪，小兄弟自我介绍说是98的我说我是96的上来就一口一个哥，说最喜欢在外地遇到老乡了，我也是，不知道为啥就感觉这人让我想起来我那些小学同学没上初中或者没上高中辍学在外打工的朋友，很亲切（喝高了），然后加了微信，应该是个销售吧，后面我就搂着去散台了。后面我发现喝有点高了，而且慢慢的有点慌了感觉意识不太清晰，刚好小舒要去卫生间。后面的事情就真的一点都连不起来了，都是些片段。比如骚骚脸色苍白，肚皮发凉，我突然一下慌了，感觉要出事了；吼着阿水说带我朋友出去打120，我给你一千块，阿水说不是钱的问题他在工作出不去；骚骚被抬出酒吧躺在地上，脸色苍白冒冷汗，我吓死了以为是死掉了，坐在地上哭，脑子都是骚骚死了怎么办，我没照顾好朋友；坐在120车上低头哭；坐在急救室门口板凳上哭；“抢救室”蓝底白字灯牌“；“护士，卫生间在哪”；心里难受，凉水冲头；syl在水池旁边好像给我说啥了；小舒怡带我回宾馆…..至于中间是如何怎么连接起来的，一点影响都没了….</p>
 <p>​    凌晨的时候骚骚被syl架着送回来了，看到他睁眼说话，脸色好了许多，我心里也放心了。</p>
 <p>​    第二天早上起来一点感觉也没了，后来下去买扑克牌的时候喝了瓶红牛一直胃开始难受（萨比了）。早上去骚骚那屋坐了会感觉这一夜真tmd丰富多彩…</p>
 <p>​    回南京晚上坐飞机回深了，高铁上出租车上地铁上，头疼胃犯恶心，小怡看起来也累的不行，脸色难看，一直目送我进安检才离开，每次都是一样的不舍…这次连难过的力气都没了。</p>
@@ -360,10 +905,16 @@
                 <i class="far fa-calendar"></i>
               </span>
               <span class="post-meta-item-text">发表于</span>
-              
 
-              <time title="创建时间：2020-06-28 22:24:17 / 修改时间：22:24:44" itemprop="dateCreated datePublished" datetime="2020-06-28T22:24:17+08:00">2020-06-28</time>
+              <time title="创建时间：2020-06-28 22:24:17" itemprop="dateCreated datePublished" datetime="2020-06-28T22:24:17+08:00">2020-06-28</time>
             </span>
+              <span class="post-meta-item">
+                <span class="post-meta-item-icon">
+                  <i class="far fa-calendar-check"></i>
+                </span>
+                <span class="post-meta-item-text">更新于</span>
+                <time title="修改时间：2020-09-09 00:48:45" itemprop="dateModified" datetime="2020-09-09T00:48:45+08:00">2020-09-09</time>
+              </span>
 
           
 
@@ -455,600 +1006,6 @@
   
   
 
-      
-  
-  
-  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
-    <link itemprop="mainEntityOfPage" href="https://qmloong.github.io/2020/06/14/kubernetes/kube-apiserver/authn&authz/overview/">
-
-    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="image" content="/images/avatar.gif">
-      <meta itemprop="name" content="menglong">
-      <meta itemprop="description" content="Love is a heroic dream in a tired life.🐬">
-    </span>
-
-    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="qmloong's Blog">
-    </span>
-      <header class="post-header">
-        <h2 class="post-title" itemprop="name headline">
-          
-            <a href="/2020/06/14/kubernetes/kube-apiserver/authn&authz/overview/" class="post-title-link" itemprop="url">kubernetes/kube-apiserver/authn&authz/overview</a>
-        </h2>
-
-        <div class="post-meta">
-            <span class="post-meta-item">
-              <span class="post-meta-item-icon">
-                <i class="far fa-calendar"></i>
-              </span>
-              <span class="post-meta-item-text">发表于</span>
-              
-
-              <time title="创建时间：2020-06-14 22:12:53 / 修改时间：22:19:41" itemprop="dateCreated datePublished" datetime="2020-06-14T22:12:53+08:00">2020-06-14</time>
-            </span>
-
-          
-
-        </div>
-      </header>
-
-    
-    
-    
-    <div class="post-body" itemprop="articleBody">
-
-      
-          <h2 id="Kubernetes访问控制"><a href="#Kubernetes访问控制" class="headerlink" title="Kubernetes访问控制"></a>Kubernetes访问控制</h2><p>当不同的子账户都拥有访问同一个TKE Kubernetes集群资源权限的之后，如何保证不同的子账户，对于集群有着不同的角色和权限呢？让我们来首先从社区的Kubernetes访问链路开始分析整个过程，从而向您介绍TKE是如何实现容器服务子账户对接Kubernetes的认证授权体系。</p>
-<h3 id="Overview"><a href="#Overview" class="headerlink" title="Overview"></a>Overview</h3><p>首先从宏观的角度看下Kubernetes的请求链路是如何进行的。</p>
-<p><img src="/2020/06/14/kubernetes/kube-apiserver/authn&authz/overview/access-control-overview.svg" alt="Diagram of request handling steps for Kubernetes API request"></p>
-<p>图片来源于k8s社区官网。</p>
-<p>可以大概了解到一个请求的链路是依次通过Authentication（认证，简称Authn）、Authorization（授权，简称Authz）、AdmissionControl（准入控制），从而获取到后端ETCD的数据。</p>
-<p>从图中可以看到Authn、Authz、AdmissionControl是由多个模块组成的，每个步骤都有多种方式构成的。</p>
-<p>下面我们来一次看下准入过程中的每个步骤吧。</p>
-<h3 id="Kubernetes认证"><a href="#Kubernetes认证" class="headerlink" title="Kubernetes认证"></a>Kubernetes认证</h3><p>认证的过程的证明user身份的过程。</p>
-<p>Kubernetes中有两类用户，一类是ServiceAccount，一类是集群真实的用户。</p>
-<p>ServiceAccount账户是由Kubernetes提供API（资源）进行创建和管理的，ServiceAccount可以认为是特殊的Secret资源，可用户集群内资源访问APIServer的认证所用。通过可以通过mount的方式挂载到Pod内进行使用。</p>
-<p>真实的用户通常是从外部发起请求访问APIServer，由管理员进行管理认证凭证，而Kubernetes本身不管理任何的用户和凭证信息的，即所有的用户都是逻辑上的用户，无法通过API调用Kubernetes API进行创建真实用户。</p>
-<p>Kubernetes认证的方式众多，常见的有TLS客户端证书双向认证、BearerToken认证、BasicAuthorization或认证代理（WebHook）</p>
-<p>所有的认证方式都是以插件的形式串联在认证链路中，只要有一种认证方式通过，即可通过认证模块，且后续的认证方式不会被执行。</p>
-<p>在此处参考一点点Kubernetes APIServer Authentication模块的代码，可以发现，任何的认证方式都是一下Interface的实现方式都是接收http Request请求，然后会返回一个user.Info的结构体，一个bool，以及一个error</p>
-<figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// Request attempts to extract authentication information from a request and returns</span></span><br><span class="line"><span class="comment">// information about the current user and true if successful, false if not successful,</span></span><br><span class="line"><span class="comment">// or an error if the request could not be checked.</span></span><br><span class="line"><span class="keyword">type</span> Request <span class="keyword">interface</span> &#123;</span><br><span class="line">   AuthenticateRequest(req *http.Request) (user.Info, <span class="keyword">bool</span>, error)</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-
-<p>user.Info中包含了用户的信息，包括UserName、UUID、Group、Extra。</p>
-<p>bool返回了用户是否通过认证，false的话即返回无法通过认证，即返回401错误。</p>
-<p>error则返回了当Request无法被检查的错误，如果遇到错误则会继续进行下一种注册的方式进行认证。</p>
-<p>如果认证通过，则会把user.Info写入到到请求的context中，后续请求过程可以随时获取用户信息，比如授权时进行鉴权。</p>
-<p>下面我会以Kubernetes代码中的认证方式顺序，并加以TKE开启的认证方式来向你介绍TKE创建的Kubernetes集群默认的认证策略。</p>
-<h4 id="RequestHeader"><a href="#RequestHeader" class="headerlink" title="RequestHeader"></a>RequestHeader</h4><p>正向代理用到的，TODO</p>
-<h4 id="Basic-Authentication"><a href="#Basic-Authentication" class="headerlink" title="Basic Authentication"></a>Basic Authentication</h4><p>APIServer启动参数<code>--basic-auth-file=SOMEFILE</code>指定basic认证的csv文件，在APIServer启动之后修改此文件都不会生效，需要重启APIServer来更新basic authentication的token。csv文件格式为：<code>token,user,uid,&quot;group1,group2,group3&quot;</code>。</p>
-<p>请求时，需要指定HTTP Header中Authentication为Basic，并跟上Base64Encode(user:passward)值。</p>
-<p>为了方便起见，目前TKE的集群都会指定一个system:masters组（此组默认绑定集群的admin权限）的basic authentication的token csv文件。</p>
-<h4 id="x509客户端证书"><a href="#x509客户端证书" class="headerlink" title="x509客户端证书"></a>x509客户端证书</h4><p>APIServer启动参数<code>--client-ca-file=SOMEFILE</code>指定CA证书，而在TKE的K8S集群创建过程中，会对集群进行自签名CA密钥和证书用于管理，如果用户下发的客户端证书是由此CA证书的密钥签发的，那么就可以通过客户端证书认证，并使用客户端证书中的CommonName、Group字段分别作为Kubernetes的UserInfo中Username和Group信息。</p>
-<p>目前TKE对接子账户都是通过自签名的CA凭证进行签发子账户Uin对应CN的客户端证书。</p>
-<h4 id="Bearer-Token"><a href="#Bearer-Token" class="headerlink" title="Bearer Token"></a>Bearer Token</h4><p>Bearer Token的认证方式包含很多，比如启动参数指定的、ServiceAccount（也是一种BeaerToken）、BootstrapToken、OIDCIssure、WebhookToken</p>
-<h5 id="默认指定Token-csv文件"><a href="#默认指定Token-csv文件" class="headerlink" title="默认指定Token csv文件"></a><strong>默认指定Token csv文件</strong></h5><p>APIServer启动参数<code>--token-auth-file=SOMEFILE</code>指定Bearer Token认证的csv文件。和Basic Authentication方式相似，只不过请求APIServer时，指定的HTTP认证方式为Bearer方式。此Bearer后直接跟passward即可。csv文件格式为：<code>password,user,uid,&quot;group1,group2,group3&quot;</code>。</p>
-<p>请求时，需要指定HTTP Header中Authentication为Bearer，并跟上Base64Encode(user:passward)值。</p>
-<p>为了方便起见，目前TKE的集群都会指定一个system:masters组（此组默认绑定集群的admin权限）的bearer token csv文件。</p>
-<h5 id="ServiceAccount"><a href="#ServiceAccount" class="headerlink" title="ServiceAccount"></a><strong>ServiceAccount</strong></h5><p>这种方式即之前提到的“两种用户”中常见的集群内认证方式，ServiceAccount。</p>
-<h5 id="BootstrapToken"><a href="#BootstrapToken" class="headerlink" title="BootstrapToken"></a><strong>BootstrapToken</strong></h5><p>此项开关在Kubernetes v1.18版本中才为stable版本，此类Token是专门用来引导集群安装使用的，需要配合controller-manager的TokenCleaner。</p>
-<h5 id="OpenID-Connect-Tokens"><a href="#OpenID-Connect-Tokens" class="headerlink" title="OpenID Connect Tokens"></a><strong>OpenID Connect Tokens</strong></h5><p>OIDCToken的认证方式是结合OAuth2向身份提供方获取ID Token来访问APIServer。</p>
-<p>如需要开启此项功能，需要在APIServer的启动参数中指定oidc的配置参数，例如<code>--oidc-issuer-url</code>指定oidc身份提供方的地址，<code>--oidc-client-id</code>指定身份提供方侧的账户ID，<code>--oidc-username-claim</code>身份提供方的用户名。</p>
-<p>具体可参考<a href="https://kubernetes.io/docs/reference/access-authn-authz/authentication/#openid-connect-tokens" target="_blank" rel="noopener">Kubernetes官方文档</a></p>
-<h5 id="Webhook-Token-Server"><a href="#Webhook-Token-Server" class="headerlink" title="Webhook Token Server"></a><strong>Webhook Token Server</strong></h5><p>Webhook Token是一种hook的方式来校验是否认证通过。</p>
-<p>APIServer启动参数<code>--authentication-token-webhook-config-file</code>及<code>--authentication-token-webhook-cache-ttl</code>来分别指定Webhook地址以及token的cache ttl。</p>
-<p>若APiServer开启此方式进行认证校验，则在接受到用户的Request之后，会包装Bearer Token成一个<code>TokenReview</code>发送给WebHookServer，Server端接收到之后会进行校验，并返回<code>TokenReview</code>接口，在status字段中进行反馈是否通过校验通过和user.Info信息。</p>
-<h5 id="Anonymous-requests"><a href="#Anonymous-requests" class="headerlink" title="Anonymous requests"></a><strong>Anonymous requests</strong></h5><h3 id="Kubernetes授权"><a href="#Kubernetes授权" class="headerlink" title="Kubernetes授权"></a>Kubernetes授权</h3><p>当Request通过Kube-APIServer的认证模块之后，就会来到鉴权模块。通过上面的讲解了解到可以认证的过程，会进行构建用户的RequestInfo，其中包含用户信息，包括UserName、UUID、Group、Extra。</p>
-
-      
-    </div>
-
-    
-    
-    
-      <footer class="post-footer">
-        <div class="post-eof"></div>
-      </footer>
-  </article>
-  
-  
-  
-
-      
-  
-  
-  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
-    <link itemprop="mainEntityOfPage" href="https://qmloong.github.io/2020/06/12/design-patterns/strategy/">
-
-    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="image" content="/images/avatar.gif">
-      <meta itemprop="name" content="menglong">
-      <meta itemprop="description" content="Love is a heroic dream in a tired life.🐬">
-    </span>
-
-    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="qmloong's Blog">
-    </span>
-      <header class="post-header">
-        <h2 class="post-title" itemprop="name headline">
-          
-            <a href="/2020/06/12/design-patterns/strategy/" class="post-title-link" itemprop="url">design-patterns/strategy</a>
-        </h2>
-
-        <div class="post-meta">
-            <span class="post-meta-item">
-              <span class="post-meta-item-icon">
-                <i class="far fa-calendar"></i>
-              </span>
-              <span class="post-meta-item-text">发表于</span>
-              
-
-              <time title="创建时间：2020-06-12 00:58:06 / 修改时间：01:00:50" itemprop="dateCreated datePublished" datetime="2020-06-12T00:58:06+08:00">2020-06-12</time>
-            </span>
-            <span class="post-meta-item">
-              <span class="post-meta-item-icon">
-                <i class="far fa-folder"></i>
-              </span>
-              <span class="post-meta-item-text">分类于</span>
-                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-                  <a href="/categories/design-patterns/" itemprop="url" rel="index"><span itemprop="name">design-patterns</span></a>
-                </span>
-            </span>
-
-          
-
-        </div>
-      </header>
-
-    
-    
-    
-    <div class="post-body" itemprop="articleBody">
-
-      
-          <h1 id="Strategy"><a href="#Strategy" class="headerlink" title="Strategy"></a>Strategy</h1><p>策略模式，依赖多种算法的时候，把算法交接出去，算法的改动不影响调用方</p>
-<p>K8s里面每个资源都会写自己的Stratedy，然后注册到Store核心结构体上。</p>
-<p><img src="/2020/06/12/design-patterns/strategy/image-20200612010023971.png" alt="image-20200612010023971"></p>
-<p><img src="/2020/06/12/design-patterns/strategy/image-20200612010046745.png" alt="image-20200612010046745"></p>
-
-      
-    </div>
-
-    
-    
-    
-      <footer class="post-footer">
-        <div class="post-eof"></div>
-      </footer>
-  </article>
-  
-  
-  
-
-      
-  
-  
-  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
-    <link itemprop="mainEntityOfPage" href="https://qmloong.github.io/2020/06/10/kubernetes/kube-apiserver/other-feature/admission-controller/">
-
-    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="image" content="/images/avatar.gif">
-      <meta itemprop="name" content="menglong">
-      <meta itemprop="description" content="Love is a heroic dream in a tired life.🐬">
-    </span>
-
-    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="qmloong's Blog">
-    </span>
-      <header class="post-header">
-        <h2 class="post-title" itemprop="name headline">
-          
-            <a href="/2020/06/10/kubernetes/kube-apiserver/other-feature/admission-controller/" class="post-title-link" itemprop="url">kubernetes/kube-apiserver/other-feature/admission-controller</a>
-        </h2>
-
-        <div class="post-meta">
-            <span class="post-meta-item">
-              <span class="post-meta-item-icon">
-                <i class="far fa-calendar"></i>
-              </span>
-              <span class="post-meta-item-text">发表于</span>
-
-              <time title="创建时间：2020-06-10 00:48:26" itemprop="dateCreated datePublished" datetime="2020-06-10T00:48:26+08:00">2020-06-10</time>
-            </span>
-              <span class="post-meta-item">
-                <span class="post-meta-item-icon">
-                  <i class="far fa-calendar-check"></i>
-                </span>
-                <span class="post-meta-item-text">更新于</span>
-                <time title="修改时间：2020-06-14 22:37:28" itemprop="dateModified" datetime="2020-06-14T22:37:28+08:00">2020-06-14</time>
-              </span>
-
-          
-
-        </div>
-      </header>
-
-    
-    
-    
-    <div class="post-body" itemprop="articleBody">
-
-      
-          <h1 id="Admission-Controller"><a href="#Admission-Controller" class="headerlink" title="Admission-Controller"></a>Admission-Controller</h1><h2 id="什么是admission-controller？"><a href="#什么是admission-controller？" class="headerlink" title="什么是admission-controller？"></a>什么是admission-controller？</h2><blockquote>
-<p>In a nutshell, Kubernetes admission controllers are plugins that govern and enforce how the cluster is used.</p>
-</blockquote>
-<p>admission controller是k8s的插件，用来管理和强制用户如何来操作集群。</p>
-<p>Admission controller主要分为两个phase，一个是mutating，一个是validating。这两个阶段都是在authn&amp;authz之后的，mutating做的变更准入，就是会对request的resource，进行转换，比如填充默认的requestLimit？而validating admission的意思就是验证准入，比如校验pod副本数必须大于2。</p>
-          <!--noindex-->
-            <div class="post-button">
-              <a class="btn" href="/2020/06/10/kubernetes/kube-apiserver/other-feature/admission-controller/#more" rel="contents">
-                阅读全文 &raquo;
-              </a>
-            </div>
-          <!--/noindex-->
-        
-      
-    </div>
-
-    
-    
-    
-      <footer class="post-footer">
-        <div class="post-eof"></div>
-      </footer>
-  </article>
-  
-  
-  
-
-      
-  
-  
-  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
-    <link itemprop="mainEntityOfPage" href="https://qmloong.github.io/2020/06/09/kubernetes/network/k8s-network/">
-
-    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="image" content="/images/avatar.gif">
-      <meta itemprop="name" content="menglong">
-      <meta itemprop="description" content="Love is a heroic dream in a tired life.🐬">
-    </span>
-
-    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="qmloong's Blog">
-    </span>
-      <header class="post-header">
-        <h2 class="post-title" itemprop="name headline">
-          
-            <a href="/2020/06/09/kubernetes/network/k8s-network/" class="post-title-link" itemprop="url">kubernetes/network/k8s-network</a>
-        </h2>
-
-        <div class="post-meta">
-            <span class="post-meta-item">
-              <span class="post-meta-item-icon">
-                <i class="far fa-calendar"></i>
-              </span>
-              <span class="post-meta-item-text">发表于</span>
-
-              <time title="创建时间：2020-06-09 17:18:49" itemprop="dateCreated datePublished" datetime="2020-06-09T17:18:49+08:00">2020-06-09</time>
-            </span>
-              <span class="post-meta-item">
-                <span class="post-meta-item-icon">
-                  <i class="far fa-calendar-check"></i>
-                </span>
-                <span class="post-meta-item-text">更新于</span>
-                <time title="修改时间：2020-06-27 22:43:35" itemprop="dateModified" datetime="2020-06-27T22:43:35+08:00">2020-06-27</time>
-              </span>
-            <span class="post-meta-item">
-              <span class="post-meta-item-icon">
-                <i class="far fa-folder"></i>
-              </span>
-              <span class="post-meta-item-text">分类于</span>
-                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-                  <a href="/categories/kubernetes/" itemprop="url" rel="index"><span itemprop="name">kubernetes</span></a>
-                </span>
-            </span>
-
-          
-
-        </div>
-      </header>
-
-    
-    
-    
-    <div class="post-body" itemprop="articleBody">
-
-      
-          <h1 id="单机容器网络"><a href="#单机容器网络" class="headerlink" title="单机容器网络"></a>单机容器网络</h1><h3 id="容器bridge网络模式"><a href="#容器bridge网络模式" class="headerlink" title="容器bridge网络模式"></a>容器bridge网络模式</h3><p>首先container1的network namespace内默认路由会走到eth0，而eth0实际是一个veth pair设备。对端是挂载docker0网桥上的一个虚拟网卡，而挂载到虚拟网桥上的虚拟网卡会弱化成docker0网桥的一个端口（此端口为三层设备的端口），他不具备处理数据包的能力，流入该网卡的数据包会直接到托管的网桥上进行处理，即docker0网桥扮演着二层交换机设备，和三层路由器设备。container2同理。</p>
-<p>容器内路由示例</p>
-<figure class="highlight routeros"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">$ route</span><br><span class="line">Kernel<span class="built_in"> IP routing </span>tableDestination Gateway Genmask Flags Metric Ref Use Iface</span><br><span class="line">default 172.17.0.1 0.0.0.0 UG 0 0 0 eth0</span><br><span class="line">172.17.0.0 0.0.0.0 255.255.0.0 U 0 0 0 eth0</span><br></pre></td></tr></table></figure>
-
-<p>默认路由走docker0，由docker0处理，而172.17.0.0/16即容器网段的话，需要内核协议栈直接发包，直接发的话需要考虑进行ARP。</p>
-<p>route命令返回Gataway是0.0.0.0的，表示是直连，数据包应该经过eth0直接发往目的主机。</p>
-<h3 id="container1想要访问container2的场景分析"><a href="#container1想要访问container2的场景分析" class="headerlink" title="container1想要访问container2的场景分析"></a>container1想要访问container2的场景分析</h3><p><img src="/2020/06/09/kubernetes/network/k8s-network/e0d28e0371f93af619e91a86eda99a66.png" alt="img"></p>
-<p>container1(172.17.0.2)发送目的地址为container2(172.17.0.3)的数据包，首先依据默认路由将数据包发送至eth0虚拟网卡，但是由于默认路由是0.0.0.0，所以是直接发送，即需要知道172.17.0.3的Mac地址，进行ARP协议，而发送ARP协议docker0就会收到，收到之后docker0也发在网桥设备上扮演交换机的角色进行广播ARP，172.17.0.3容器就会收到，然后返回自己的Mac地址。之后container1就可以直接发送数据包</p>
-<h3 id="宿主机上进程想要访问container1时的场景分析"><a href="#宿主机上进程想要访问container1时的场景分析" class="headerlink" title="宿主机上进程想要访问container1时的场景分析"></a>宿主机上进程想要访问container1时的场景分析</h3><p><img src="/2020/06/09/kubernetes/network/k8s-network/9fb381d1e49318bb6a67bda3f9db6901.png" alt="img"></p>
-<p>宿主机发包，ip route发现应该发往docker0，发往docker0之后docker0就会进行转发到对于的veth，容器内对端的eth0就会收到数据。</p>
-<h3 id="container1想要访问宿主机路由可达的场景分析"><a href="#container1想要访问宿主机路由可达的场景分析" class="headerlink" title="container1想要访问宿主机路由可达的场景分析"></a>container1想要访问宿主机路由可达的场景分析</h3><p><img src="/2020/06/09/kubernetes/network/k8s-network/90bd630c0723ea8a1fb7ccd738ad1f95.png" alt="img"></p>
-<p>eth0访问主机子网内的其他宿主机的话，包经过docker0，到达宿主机，通过宿主机路由规则进行转发，到达Node2</p>
-<h3 id="容器host网络模式"><a href="#容器host网络模式" class="headerlink" title="容器host网络模式"></a>容器host网络模式</h3><p>和宿主机公用网络，容器没有单独的network namespace。这样性能好，但是需要考虑端口冲突</p>
-<h1 id="跨宿主机网络互通"><a href="#跨宿主机网络互通" class="headerlink" title="跨宿主机网络互通"></a>跨宿主机网络互通</h1><p><img src="/2020/06/09/kubernetes/network/k8s-network/b4387a992352109398a66d1dbe6e413d.png" alt="img"></p>
-<p>如何在Node1上的容器访问Node2，因为Node之间默认没有路由配置的话，无法知道其他容器应该如何转发，所以需要需要在宿主机上进行配置路由规则，构建一层overlay网络，或者需要做一层特殊的网桥配置。</p>
-<p>Flannel是CoreOS公司出的一个容器网络解决方案，是一种框架。有host-gw模式、UDP、VXLAN模式。</p>
-<h3 id="UDP模式"><a href="#UDP模式" class="headerlink" title="UDP模式"></a>UDP模式</h3><p><img src="/2020/06/09/kubernetes/network/k8s-network/8332564c0547bf46d1fbba2a1e0e166c.jpg" alt="img"></p>
-<p>通过Node1上的flannel0虚拟TUN网桥（TUN，隧道，Linux内核支持，用户态和内核态之间传递数据包），flannel0的用户态进程就是flanneld进程，收到数据包会转发给flanneld监听的8285端口，flanneld回去查子网对应的信息，信息存在etcd中。封装UDP包发送到对端Node2的flanneld，而TUN设备进程收到数据包后会直接传入内核flannel0，根据路由转发到Node2的docker0，接收到之后进入容器网络。</p>
-<p>但是UDP模式存在性能问题：</p>
-<p><img src="/2020/06/09/kubernetes/network/k8s-network/84caa6dc3f9dcdf8b88b56bd2e22138d.png" alt="img"></p>
-<p>container1到docker0是一次必要的跨用户态和内核态数据拷贝。flannel0需要再拷贝给flanneld，flanneld还需要再拷贝给eth0走主机网络协议栈转发UDP包。进行了3次跨内核态拷贝。</p>
-<h3 id="VXLAN"><a href="#VXLAN" class="headerlink" title="VXLAN"></a>VXLAN</h3><p><img src="/2020/06/09/kubernetes/network/k8s-network/03185fab251a833fef7ed6665d5049f5.jpg" alt="img"></p>
-<p>VXLAN（Virtual Extensible LAN 虚拟可扩展局域网）是内核支持的一种网络虚拟化技术，原理是在宿主机上通过一张特殊的“隧道口”设备——VTEP（VXLAN Tunnel End Point VXLAN 虚拟隧道端点），这个和UDP模式的flanneld的工作很像，传入进去的数据包都会被对端的flanneld进程收到，而VXLAN模式下，传入VTEP设备的数据包都会被对端的VTEP接收到。</p>
-<p>container1和container2的传输实际内核的处理流程是：</p>
-<p>container1有目标容器的ip地址，经过docker0的数据包在宿主机的路由下（该路由表明Node2上的vxlan ip cidr都走到固定的网关，该网关ip即Node2的VTEP设备的ip，是在Node2加入到vxlan网络的时候注册到每个节点上的）会到本机Node1的VTEP设备（flannel.1），VTEP设备会将数据包补充二层需要的MAC地址并包装为数据帧，这个MAC地址是在Node2注册进vxlan的时候注入进来的，是由flannel网络下每个flanneld进程进行注入的数据，即Node2的VTEP设备ip），此后，包装好了VXLAN的数据头包装UDP，传入到Node1宿主机，但是宿主机并不知道该发往哪个宿主机，因为Node1的宿主机只知道这是一个VTEP发出的普通的UDP包，而该数据包应该发往哪个宿主机呢？并没有一个VTEP和宿主机IP的对应关系，所以flanneld还会在FDB中维护一个flannel VTEP的Mac对应宿主机IP的映射。有了目的主机IP就很容易的发往到Node2了。包装的头部如下图：</p>
-<p><img src="/2020/06/09/kubernetes/network/k8s-network/8cede8f74a57617494027ba137383f85.jpg" alt="img"></p>
-<p><strong>一点疑惑：</strong></p>
-<p>问：为什么要用UDP来封装VXLAN隧道用到的Header？</p>
-<p>答：</p>
-<p>1、不需要可靠。因为这个udp里面包裹的是tcp的内容，收发双端如果发现丢包，还是会重传的。<br>2、局域网环境下，可靠性有一定保障，不会因为使用了udp造成频繁丢包。<br>3、udp开销小。</p>
-<p>问：VTEP信息和所在NodeIP是如何下发的？</p>
-<p>答：各个node会将自己的vtep信息上报给apiserver，apiserver将信息同步给各个节点的flanneld，flanneld通过netlink下发，完成信息的同步</p>
-<p>问：VXLAN使用UDP的话，UDP的端口是干嘛用的？</p>
-<p>VXLAN协议规范指出：目的端口需要使用固定的端口号，源端口可以固定也可以随机，具体参考VXLAN文档吧</p>
-<p><strong>DIY VXLAN</strong>：<a href="https://github.com/mz1999/blog/blob/master/docs/docker-overlay-networks.md" target="_blank" rel="noopener">https://github.com/mz1999/blog/blob/master/docs/docker-overlay-networks.md</a></p>
-<h1 id="k8S网络-amp-CNI"><a href="#k8S网络-amp-CNI" class="headerlink" title="k8S网络&amp;CNI"></a>k8S网络&amp;CNI</h1>
-      
-    </div>
-
-    
-    
-    
-      <footer class="post-footer">
-        <div class="post-eof"></div>
-      </footer>
-  </article>
-  
-  
-  
-
-      
-  
-  
-  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
-    <link itemprop="mainEntityOfPage" href="https://qmloong.github.io/2020/06/09/kubernetes/proposal/api-conventions/">
-
-    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="image" content="/images/avatar.gif">
-      <meta itemprop="name" content="menglong">
-      <meta itemprop="description" content="Love is a heroic dream in a tired life.🐬">
-    </span>
-
-    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="qmloong's Blog">
-    </span>
-      <header class="post-header">
-        <h2 class="post-title" itemprop="name headline">
-          
-            <a href="/2020/06/09/kubernetes/proposal/api-conventions/" class="post-title-link" itemprop="url">kubernetes/proposal/api-conventions</a>
-        </h2>
-
-        <div class="post-meta">
-            <span class="post-meta-item">
-              <span class="post-meta-item-icon">
-                <i class="far fa-calendar"></i>
-              </span>
-              <span class="post-meta-item-text">发表于</span>
-              
-
-              <time title="创建时间：2020-06-09 00:48:34 / 修改时间：00:50:34" itemprop="dateCreated datePublished" datetime="2020-06-09T00:48:34+08:00">2020-06-09</time>
-            </span>
-            <span class="post-meta-item">
-              <span class="post-meta-item-icon">
-                <i class="far fa-folder"></i>
-              </span>
-              <span class="post-meta-item-text">分类于</span>
-                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-                  <a href="/categories/kubernetes/" itemprop="url" rel="index"><span itemprop="name">kubernetes</span></a>
-                </span>
-            </span>
-
-          
-
-        </div>
-      </header>
-
-    
-    
-    
-    <div class="post-body" itemprop="articleBody">
-
-      
-          <h1 id="API规范"><a href="#API规范" class="headerlink" title="API规范"></a>API规范</h1><p>这篇proposal是定义一个API的流程规范，有兴趣的可以阅读<a href="https://github.com/kubernetes/community/blob/master/contributors/devel/sig-architecture/api-conventions.md" target="_blank" rel="noopener">原文</a></p>
-          <!--noindex-->
-            <div class="post-button">
-              <a class="btn" href="/2020/06/09/kubernetes/proposal/api-conventions/#more" rel="contents">
-                阅读全文 &raquo;
-              </a>
-            </div>
-          <!--/noindex-->
-        
-      
-    </div>
-
-    
-    
-    
-      <footer class="post-footer">
-        <div class="post-eof"></div>
-      </footer>
-  </article>
-  
-  
-  
-
-      
-  
-  
-  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
-    <link itemprop="mainEntityOfPage" href="https://qmloong.github.io/2020/06/08/kubernetes/proposal/api-change/">
-
-    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="image" content="/images/avatar.gif">
-      <meta itemprop="name" content="menglong">
-      <meta itemprop="description" content="Love is a heroic dream in a tired life.🐬">
-    </span>
-
-    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="qmloong's Blog">
-    </span>
-      <header class="post-header">
-        <h2 class="post-title" itemprop="name headline">
-          
-            <a href="/2020/06/08/kubernetes/proposal/api-change/" class="post-title-link" itemprop="url">kubernetes/proposal/api-change</a>
-        </h2>
-
-        <div class="post-meta">
-            <span class="post-meta-item">
-              <span class="post-meta-item-icon">
-                <i class="far fa-calendar"></i>
-              </span>
-              <span class="post-meta-item-text">发表于</span>
-
-              <time title="创建时间：2020-06-08 23:01:51" itemprop="dateCreated datePublished" datetime="2020-06-08T23:01:51+08:00">2020-06-08</time>
-            </span>
-              <span class="post-meta-item">
-                <span class="post-meta-item-icon">
-                  <i class="far fa-calendar-check"></i>
-                </span>
-                <span class="post-meta-item-text">更新于</span>
-                <time title="修改时间：2020-06-09 00:49:26" itemprop="dateModified" datetime="2020-06-09T00:49:26+08:00">2020-06-09</time>
-              </span>
-            <span class="post-meta-item">
-              <span class="post-meta-item-icon">
-                <i class="far fa-folder"></i>
-              </span>
-              <span class="post-meta-item-text">分类于</span>
-                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-                  <a href="/categories/kubernetes/" itemprop="url" rel="index"><span itemprop="name">kubernetes</span></a>
-                </span>
-            </span>
-
-          
-
-        </div>
-      </header>
-
-    
-    
-    
-    <div class="post-body" itemprop="articleBody">
-
-      
-          <h1 id="API变更规范"><a href="#API变更规范" class="headerlink" title="API变更规范"></a>API变更规范</h1><p>这篇proposal是变更规范，通过这篇变更规范，来理解多版本的API是如何工作的，有兴趣可以读一读<a href="https://github.com/kubernetes/community/blob/master/contributors/devel/sig-architecture/api_changes.md#readme" target="_blank" rel="noopener">原文</a>。也会涉及定义一个API的流程，而详细的设计API的规范文档，是<a href="https://github.com/kubernetes/community/blob/master/contributors/devel/sig-architecture/api-conventions.md" target="_blank" rel="noopener">这篇</a></p>
-          <!--noindex-->
-            <div class="post-button">
-              <a class="btn" href="/2020/06/08/kubernetes/proposal/api-change/#more" rel="contents">
-                阅读全文 &raquo;
-              </a>
-            </div>
-          <!--/noindex-->
-        
-      
-    </div>
-
-    
-    
-    
-      <footer class="post-footer">
-        <div class="post-eof"></div>
-      </footer>
-  </article>
-  
-  
-  
-
-      
-  
-  
-  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
-    <link itemprop="mainEntityOfPage" href="https://qmloong.github.io/2020/06/08/kubernetes/kube-controller-manager/workqueue/">
-
-    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="image" content="/images/avatar.gif">
-      <meta itemprop="name" content="menglong">
-      <meta itemprop="description" content="Love is a heroic dream in a tired life.🐬">
-    </span>
-
-    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="qmloong's Blog">
-    </span>
-      <header class="post-header">
-        <h2 class="post-title" itemprop="name headline">
-          
-            <a href="/2020/06/08/kubernetes/kube-controller-manager/workqueue/" class="post-title-link" itemprop="url">kubernetes/kube-controller-manager/workqueue</a>
-        </h2>
-
-        <div class="post-meta">
-            <span class="post-meta-item">
-              <span class="post-meta-item-icon">
-                <i class="far fa-calendar"></i>
-              </span>
-              <span class="post-meta-item-text">发表于</span>
-
-              <time title="创建时间：2020-06-08 01:20:42" itemprop="dateCreated datePublished" datetime="2020-06-08T01:20:42+08:00">2020-06-08</time>
-            </span>
-              <span class="post-meta-item">
-                <span class="post-meta-item-icon">
-                  <i class="far fa-calendar-check"></i>
-                </span>
-                <span class="post-meta-item-text">更新于</span>
-                <time title="修改时间：2020-06-09 00:51:04" itemprop="dateModified" datetime="2020-06-09T00:51:04+08:00">2020-06-09</time>
-              </span>
-            <span class="post-meta-item">
-              <span class="post-meta-item-icon">
-                <i class="far fa-folder"></i>
-              </span>
-              <span class="post-meta-item-text">分类于</span>
-                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-                  <a href="/categories/kubernetes/" itemprop="url" rel="index"><span itemprop="name">kubernetes</span></a>
-                </span>
-            </span>
-
-          
-
-        </div>
-      </header>
-
-    
-    
-    
-    <div class="post-body" itemprop="articleBody">
-
-      
-          <h1 id="WorkQueue"><a href="#WorkQueue" class="headerlink" title="WorkQueue"></a>WorkQueue</h1><h2 id="为什么需要WokrQueue"><a href="#为什么需要WokrQueue" class="headerlink" title="为什么需要WokrQueue"></a>为什么需要WokrQueue</h2><ol>
-<li>chan不好吗？chan不是可以实现带buffer的chan吗？</li>
-<li>需要workqueue的原因不是抛弃chan不用，而是对chan进行包装，因为原生的chan功能太单一，无法实现丰富的场景</li>
-<li>kubernetes的controller众多，而informer也只是事件通知，参考之前的总览图可以，在业务逻辑处理和informer通知事件到来之间，需要一层缓存来解耦业务逻辑和事件通知，不可以让事件通知阻塞在业务逻辑的处理上，因为一般业务逻辑处理可能是比较耗时的。这也是为什么informer的EventHandler的BestPractices是只做简单的对比和入队操作。防止业务逻辑处理拉胯掉informer的事件通知。</li>
-</ol>
-          <!--noindex-->
-            <div class="post-button">
-              <a class="btn" href="/2020/06/08/kubernetes/kube-controller-manager/workqueue/#more" rel="contents">
-                阅读全文 &raquo;
-              </a>
-            </div>
-          <!--/noindex-->
-        
-      
-    </div>
-
-    
-    
-    
-      <footer class="post-footer">
-        <div class="post-eof"></div>
-      </footer>
-  </article>
-  
-  
-  
-
 
   
   <nav class="pagination">
@@ -1118,7 +1075,7 @@
       <div class="site-state-item site-state-posts">
           <a href="/archives/">
         
-          <span class="site-state-item-count">43</span>
+          <span class="site-state-item-count">50</span>
           <span class="site-state-item-name">日志</span>
         </a>
       </div>
