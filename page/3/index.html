@@ -154,6 +154,345 @@
   
   
   <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="https://qmloong.github.io/2020/06/08/kubernetes/kube-controller-manager/workqueue/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.gif">
+      <meta itemprop="name" content="menglong">
+      <meta itemprop="description" content="Love is a heroic dream in a tired life.🐬">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="qmloong's Blog">
+    </span>
+      <header class="post-header">
+        <h2 class="post-title" itemprop="name headline">
+          
+            <a href="/2020/06/08/kubernetes/kube-controller-manager/workqueue/" class="post-title-link" itemprop="url">kubernetes/kube-controller-manager/workqueue</a>
+        </h2>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-calendar"></i>
+              </span>
+              <span class="post-meta-item-text">发表于</span>
+
+              <time title="创建时间：2020-06-08 01:20:42" itemprop="dateCreated datePublished" datetime="2020-06-08T01:20:42+08:00">2020-06-08</time>
+            </span>
+              <span class="post-meta-item">
+                <span class="post-meta-item-icon">
+                  <i class="far fa-calendar-check"></i>
+                </span>
+                <span class="post-meta-item-text">更新于</span>
+                <time title="修改时间：2020-06-09 00:51:04" itemprop="dateModified" datetime="2020-06-09T00:51:04+08:00">2020-06-09</time>
+              </span>
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-folder"></i>
+              </span>
+              <span class="post-meta-item-text">分类于</span>
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/kubernetes/" itemprop="url" rel="index"><span itemprop="name">kubernetes</span></a>
+                </span>
+            </span>
+
+          
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+          <h1 id="WorkQueue"><a href="#WorkQueue" class="headerlink" title="WorkQueue"></a>WorkQueue</h1><h2 id="为什么需要WokrQueue"><a href="#为什么需要WokrQueue" class="headerlink" title="为什么需要WokrQueue"></a>为什么需要WokrQueue</h2><ol>
+<li>chan不好吗？chan不是可以实现带buffer的chan吗？</li>
+<li>需要workqueue的原因不是抛弃chan不用，而是对chan进行包装，因为原生的chan功能太单一，无法实现丰富的场景</li>
+<li>kubernetes的controller众多，而informer也只是事件通知，参考之前的总览图可以，在业务逻辑处理和informer通知事件到来之间，需要一层缓存来解耦业务逻辑和事件通知，不可以让事件通知阻塞在业务逻辑的处理上，因为一般业务逻辑处理可能是比较耗时的。这也是为什么informer的EventHandler的BestPractices是只做简单的对比和入队操作。防止业务逻辑处理拉胯掉informer的事件通知。</li>
+</ol>
+          <!--noindex-->
+            <div class="post-button">
+              <a class="btn" href="/2020/06/08/kubernetes/kube-controller-manager/workqueue/#more" rel="contents">
+                阅读全文 &raquo;
+              </a>
+            </div>
+          <!--/noindex-->
+        
+      
+    </div>
+
+    
+    
+    
+      <footer class="post-footer">
+        <div class="post-eof"></div>
+      </footer>
+  </article>
+  
+  
+  
+
+      
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="https://qmloong.github.io/2020/06/08/go/concurrency/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.gif">
+      <meta itemprop="name" content="menglong">
+      <meta itemprop="description" content="Love is a heroic dream in a tired life.🐬">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="qmloong's Blog">
+    </span>
+      <header class="post-header">
+        <h2 class="post-title" itemprop="name headline">
+          
+            <a href="/2020/06/08/go/concurrency/" class="post-title-link" itemprop="url">go/concurrency</a>
+        </h2>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-calendar"></i>
+              </span>
+              <span class="post-meta-item-text">发表于</span>
+              
+
+              <time title="创建时间：2020-06-08 00:58:15 / 修改时间：00:58:55" itemprop="dateCreated datePublished" datetime="2020-06-08T00:58:15+08:00">2020-06-08</time>
+            </span>
+
+          
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+          
+      
+    </div>
+
+    
+    
+    
+      <footer class="post-footer">
+        <div class="post-eof"></div>
+      </footer>
+  </article>
+  
+  
+  
+
+      
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="https://qmloong.github.io/2020/06/06/kubernetes/kube-controller-manager/informer/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.gif">
+      <meta itemprop="name" content="menglong">
+      <meta itemprop="description" content="Love is a heroic dream in a tired life.🐬">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="qmloong's Blog">
+    </span>
+      <header class="post-header">
+        <h2 class="post-title" itemprop="name headline">
+          
+            <a href="/2020/06/06/kubernetes/kube-controller-manager/informer/" class="post-title-link" itemprop="url">kubernetes/kube-controller-manager/informer</a>
+        </h2>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-calendar"></i>
+              </span>
+              <span class="post-meta-item-text">发表于</span>
+
+              <time title="创建时间：2020-06-06 21:56:51" itemprop="dateCreated datePublished" datetime="2020-06-06T21:56:51+08:00">2020-06-06</time>
+            </span>
+              <span class="post-meta-item">
+                <span class="post-meta-item-icon">
+                  <i class="far fa-calendar-check"></i>
+                </span>
+                <span class="post-meta-item-text">更新于</span>
+                <time title="修改时间：2020-06-16 00:20:15" itemprop="dateModified" datetime="2020-06-16T00:20:15+08:00">2020-06-16</time>
+              </span>
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-folder"></i>
+              </span>
+              <span class="post-meta-item-text">分类于</span>
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/kubernetes/" itemprop="url" rel="index"><span itemprop="name">kubernetes</span></a>
+                </span>
+            </span>
+
+          
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+          <h1 id="总览"><a href="#总览" class="headerlink" title="总览"></a>总览</h1><p><img src="/2020/06/06/kubernetes/kube-controller-manager/informer/image-20200607193225672.png" alt="sample-controller架构"></p>
+<p><img src="/2020/06/06/kubernetes/kube-controller-manager/informer/16eb55aa6684bff4.jpeg" alt="sample-controller架构"></p>
+          <!--noindex-->
+            <div class="post-button">
+              <a class="btn" href="/2020/06/06/kubernetes/kube-controller-manager/informer/#more" rel="contents">
+                阅读全文 &raquo;
+              </a>
+            </div>
+          <!--/noindex-->
+        
+      
+    </div>
+
+    
+    
+    
+      <footer class="post-footer">
+        <div class="post-eof"></div>
+      </footer>
+  </article>
+  
+  
+  
+
+      
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="https://qmloong.github.io/2020/06/04/mysql/log/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.gif">
+      <meta itemprop="name" content="menglong">
+      <meta itemprop="description" content="Love is a heroic dream in a tired life.🐬">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="qmloong's Blog">
+    </span>
+      <header class="post-header">
+        <h2 class="post-title" itemprop="name headline">
+          
+            <a href="/2020/06/04/mysql/log/" class="post-title-link" itemprop="url">mysql/log</a>
+        </h2>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-calendar"></i>
+              </span>
+              <span class="post-meta-item-text">发表于</span>
+
+              <time title="创建时间：2020-06-04 22:50:05" itemprop="dateCreated datePublished" datetime="2020-06-04T22:50:05+08:00">2020-06-04</time>
+            </span>
+              <span class="post-meta-item">
+                <span class="post-meta-item-icon">
+                  <i class="far fa-calendar-check"></i>
+                </span>
+                <span class="post-meta-item-text">更新于</span>
+                <time title="修改时间：2020-06-05 00:31:49" itemprop="dateModified" datetime="2020-06-05T00:31:49+08:00">2020-06-05</time>
+              </span>
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-folder"></i>
+              </span>
+              <span class="post-meta-item-text">分类于</span>
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/mysql/" itemprop="url" rel="index"><span itemprop="name">mysql</span></a>
+                </span>
+            </span>
+
+          
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+          <h2 id="Mysql模块组成图"><a href="#Mysql模块组成图" class="headerlink" title="Mysql模块组成图"></a>Mysql模块组成图</h2><p><img src="/2020/06/04/mysql/log/image-20200604225909123.png" alt="image-20200604225909123"></p>
+<h2 id="LOG"><a href="#LOG" class="headerlink" title="LOG"></a>LOG</h2><p>WAL： WriteAheadLogging，是一种数据存储的一致性技术，表现是先写日志，后写磁盘</p>
+<ol>
+<li>redo-log： （InnoDB引擎的日志模块）重写日志，每次record来的时候，会先写到redo-log中（这也是磁盘，为什么要先写呢？是因为直接写DB的话会很慢，找到适当的位置，然后然后插入？，但是redo-log可以作为暂存区，先保存好然后一块在空闲的时候写入磁盘），理解为对物理数据页的改动，即物理变化，在InnoDB引擎里面，redo-log是做重做用的，前滚操作，crash的时候，redo-log记录了的，重启后可以再做一次保证（undo-log是做回滚的，记录了的是sql）</li>
+</ol>
+<img src="/2020/06/04/mysql/log/image-20200604225302655.png" alt="image-20200604225302655" style="zoom:33%;" />
+
+<ol start="2">
+<li><p>binlog：在mysql Server层做的日志，做的是逻辑日志，可以简单理解为执行的sql，这是无法做crash恢复用的。因为你也不知道这条sql到底执行成功了没有</p>
+</li>
+<li><p>两阶段提交：</p>
+</li>
+</ol>
+<img src="/2020/06/04/mysql/log/image-20200604233233334.png" alt="image-20200604233233334" style="zoom:33%;" />
+
+
+
+<h2 id="事务的隔离性"><a href="#事务的隔离性" class="headerlink" title="事务的隔离性"></a>事务的隔离性</h2><h3 id="0-什么是事务"><a href="#0-什么是事务" class="headerlink" title="0. 什么是事务"></a>0. 什么是事务</h3><p>事务就是保证sql一系列操作要么成功，要么失败。</p>
+<p>事务必须满足ACID（Atomicity、Consistency、Isolation、Durability，即原子性、一致性、隔离性、持久性</p>
+<p>隔离得越严实，效率就会越低。</p>
+<h4 id="0-1-SQL-标准的事务隔离级别包括："><a href="#0-1-SQL-标准的事务隔离级别包括：" class="headerlink" title="0.1 SQL 标准的事务隔离级别包括："></a>0.1 SQL 标准的事务隔离级别包括：</h4><p>读未提交RU（read uncommitted）、读提交RC（read committed）、可重复读RR（repeatable read）和串行化（serializable ）。</p>
+<p>RR的时候，每次commit，都会切出一个view，每次只读写这个view</p>
+<p>RC的时候，是每次执行命令的时候，会切出个view</p>
+<h3 id="1-事务和视图的关系"><a href="#1-事务和视图的关系" class="headerlink" title="1. 事务和视图的关系"></a>1. 事务和视图的关系</h3><p>每次事务中的写操作都会被记录新视图，而写操作在不断更新的时候，就需要不断保存老的view，</p>
+<img src="/2020/06/04/mysql/log/d9c313809e5ac148fc39feff532f0fee.png" alt="img" style="zoom:50%;" />
+
+
+
+<ol>
+<li>隔离性是取决于用户自己业务的需求而定。</li>
+</ol>
+<figure class="highlight sql"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">show</span> <span class="keyword">variables</span> <span class="keyword">like</span> <span class="string">'transaction_isolation'</span>;</span><br></pre></td></tr></table></figure>
+
+<ol start="2">
+<li><p>长事务有什么危害？</p>
+<p>1) 因为事务在，所以每次对表的update，都需要记录undo-log，以便RR事务进行select的时候获取view，占用存储空间</p>
+<p>2) 占用锁资源</p>
+</li>
+<li><p>MVCC ： 数据库的多版本并发控制，同一条记录应为被更新，会被记录到undo-log里面</p>
+</li>
+</ol>
+
+      
+    </div>
+
+    
+    
+    
+      <footer class="post-footer">
+        <div class="post-eof"></div>
+      </footer>
+  </article>
+  
+  
+  
+
+      
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
     <link itemprop="mainEntityOfPage" href="https://qmloong.github.io/2020/06/03/leetcodes/sort/">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
@@ -602,302 +941,10 @@
   
   
 
-      
-  
-  
-  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
-    <link itemprop="mainEntityOfPage" href="https://qmloong.github.io/2020/05/26/kubernetes/kube-apiserver/install-api/install-apis(3)/">
-
-    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="image" content="/images/avatar.gif">
-      <meta itemprop="name" content="menglong">
-      <meta itemprop="description" content="Love is a heroic dream in a tired life.🐬">
-    </span>
-
-    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="qmloong's Blog">
-    </span>
-      <header class="post-header">
-        <h2 class="post-title" itemprop="name headline">
-          
-            <a href="/2020/05/26/kubernetes/kube-apiserver/install-api/install-apis(3)/" class="post-title-link" itemprop="url">kubernetes/kube-apiserver/install-api/install-apis(3)</a>
-        </h2>
-
-        <div class="post-meta">
-            <span class="post-meta-item">
-              <span class="post-meta-item-icon">
-                <i class="far fa-calendar"></i>
-              </span>
-              <span class="post-meta-item-text">发表于</span>
-
-              <time title="创建时间：2020-05-26 07:50:45" itemprop="dateCreated datePublished" datetime="2020-05-26T07:50:45+08:00">2020-05-26</time>
-            </span>
-              <span class="post-meta-item">
-                <span class="post-meta-item-icon">
-                  <i class="far fa-calendar-check"></i>
-                </span>
-                <span class="post-meta-item-text">更新于</span>
-                <time title="修改时间：2020-06-09 00:51:46" itemprop="dateModified" datetime="2020-06-09T00:51:46+08:00">2020-06-09</time>
-              </span>
-            <span class="post-meta-item">
-              <span class="post-meta-item-icon">
-                <i class="far fa-folder"></i>
-              </span>
-              <span class="post-meta-item-text">分类于</span>
-                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-                  <a href="/categories/kubernetes/" itemprop="url" rel="index"><span itemprop="name">kubernetes</span></a>
-                </span>
-            </span>
-
-          
-
-        </div>
-      </header>
-
-    
-    
-    
-    <div class="post-body" itemprop="articleBody">
-
-      
-          <h1 id="Install-APIS"><a href="#Install-APIS" class="headerlink" title="Install-APIS"></a>Install-APIS</h1><p>在installAPIResource的时候，发现不是拿apiGroupInfo进行注册的，而是先构造了个APIGroupVersion的结构，然后调用APIGroupVersion.InstallREST，看下这块是如何做注册的。</p>
-          <!--noindex-->
-            <div class="post-button">
-              <a class="btn" href="/2020/05/26/kubernetes/kube-apiserver/install-api/install-apis(3)/#more" rel="contents">
-                阅读全文 &raquo;
-              </a>
-            </div>
-          <!--/noindex-->
-        
-      
-    </div>
-
-    
-    
-    
-      <footer class="post-footer">
-        <div class="post-eof"></div>
-      </footer>
-  </article>
-  
-  
-  
-
-      
-  
-  
-  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
-    <link itemprop="mainEntityOfPage" href="https://qmloong.github.io/2020/05/25/kubernetes/cluster-autoscaler/cluster-autoscaler/">
-
-    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="image" content="/images/avatar.gif">
-      <meta itemprop="name" content="menglong">
-      <meta itemprop="description" content="Love is a heroic dream in a tired life.🐬">
-    </span>
-
-    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="qmloong's Blog">
-    </span>
-      <header class="post-header">
-        <h2 class="post-title" itemprop="name headline">
-          
-            <a href="/2020/05/25/kubernetes/cluster-autoscaler/cluster-autoscaler/" class="post-title-link" itemprop="url">kubernetes/cluster-autoscaler/cluster-autoscaler</a>
-        </h2>
-
-        <div class="post-meta">
-            <span class="post-meta-item">
-              <span class="post-meta-item-icon">
-                <i class="far fa-calendar"></i>
-              </span>
-              <span class="post-meta-item-text">发表于</span>
-              
-
-              <time title="创建时间：2020-05-25 11:50:30 / 修改时间：11:51:07" itemprop="dateCreated datePublished" datetime="2020-05-25T11:50:30+08:00">2020-05-25</time>
-            </span>
-            <span class="post-meta-item">
-              <span class="post-meta-item-icon">
-                <i class="far fa-folder"></i>
-              </span>
-              <span class="post-meta-item-text">分类于</span>
-                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-                  <a href="/categories/kubernetes/" itemprop="url" rel="index"><span itemprop="name">kubernetes</span></a>
-                </span>
-            </span>
-
-          
-
-        </div>
-      </header>
-
-    
-    
-    
-    <div class="post-body" itemprop="articleBody">
-
-      
-          <h1 id="cluster-autoscaler"><a href="#cluster-autoscaler" class="headerlink" title="cluster-autoscaler"></a>cluster-autoscaler</h1>
-      
-    </div>
-
-    
-    
-    
-      <footer class="post-footer">
-        <div class="post-eof"></div>
-      </footer>
-  </article>
-  
-  
-  
-
-      
-  
-  
-  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
-    <link itemprop="mainEntityOfPage" href="https://qmloong.github.io/2020/05/24/kubernetes/kube-apiserver/install-api/install-apis(2)/">
-
-    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="image" content="/images/avatar.gif">
-      <meta itemprop="name" content="menglong">
-      <meta itemprop="description" content="Love is a heroic dream in a tired life.🐬">
-    </span>
-
-    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="qmloong's Blog">
-    </span>
-      <header class="post-header">
-        <h2 class="post-title" itemprop="name headline">
-          
-            <a href="/2020/05/24/kubernetes/kube-apiserver/install-api/install-apis(2)/" class="post-title-link" itemprop="url">kubernetes/kube-apiserver/install-api/install-apis(2)</a>
-        </h2>
-
-        <div class="post-meta">
-            <span class="post-meta-item">
-              <span class="post-meta-item-icon">
-                <i class="far fa-calendar"></i>
-              </span>
-              <span class="post-meta-item-text">发表于</span>
-
-              <time title="创建时间：2020-05-24 18:31:42" itemprop="dateCreated datePublished" datetime="2020-05-24T18:31:42+08:00">2020-05-24</time>
-            </span>
-              <span class="post-meta-item">
-                <span class="post-meta-item-icon">
-                  <i class="far fa-calendar-check"></i>
-                </span>
-                <span class="post-meta-item-text">更新于</span>
-                <time title="修改时间：2020-05-26 09:11:40" itemprop="dateModified" datetime="2020-05-26T09:11:40+08:00">2020-05-26</time>
-              </span>
-            <span class="post-meta-item">
-              <span class="post-meta-item-icon">
-                <i class="far fa-folder"></i>
-              </span>
-              <span class="post-meta-item-text">分类于</span>
-                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-                  <a href="/categories/kubernetes/" itemprop="url" rel="index"><span itemprop="name">kubernetes</span></a>
-                </span>
-            </span>
-
-          
-
-        </div>
-      </header>
-
-    
-    
-    
-    <div class="post-body" itemprop="articleBody">
-
-      
-          <h1 id="API-Request-link"><a href="#API-Request-link" class="headerlink" title="API Request link"></a>API Request link</h1><p>install-apis捋清楚之后，发现一些重要的结构体，从结构体看他们是一条路这样走下去的</p>
-<p>ApiGroupInfo</p>
-<p>RESTStorageProvider</p>
-<p>Storage</p>
-<p>REST</p>
-<p>APIGroupVersion</p>
-          <!--noindex-->
-            <div class="post-button">
-              <a class="btn" href="/2020/05/24/kubernetes/kube-apiserver/install-api/install-apis(2)/#more" rel="contents">
-                阅读全文 &raquo;
-              </a>
-            </div>
-          <!--/noindex-->
-        
-      
-    </div>
-
-    
-    
-    
-      <footer class="post-footer">
-        <div class="post-eof"></div>
-      </footer>
-  </article>
-  
-  
-  
-
-      
-  
-  
-  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
-    <link itemprop="mainEntityOfPage" href="https://qmloong.github.io/2020/05/23/kubernetes/proposal/aggregated-api-servers/">
-
-    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="image" content="/images/avatar.gif">
-      <meta itemprop="name" content="menglong">
-      <meta itemprop="description" content="Love is a heroic dream in a tired life.🐬">
-    </span>
-
-    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="qmloong's Blog">
-    </span>
-      <header class="post-header">
-        <h2 class="post-title" itemprop="name headline">
-          
-            <a href="/2020/05/23/kubernetes/proposal/aggregated-api-servers/" class="post-title-link" itemprop="url">kubernetes/proposal/aggregated-api-servers</a>
-        </h2>
-
-        <div class="post-meta">
-            <span class="post-meta-item">
-              <span class="post-meta-item-icon">
-                <i class="far fa-calendar"></i>
-              </span>
-              <span class="post-meta-item-text">发表于</span>
-              
-
-              <time title="创建时间：2020-05-23 22:27:06 / 修改时间：22:27:45" itemprop="dateCreated datePublished" datetime="2020-05-23T22:27:06+08:00">2020-05-23</time>
-            </span>
-
-          
-
-        </div>
-      </header>
-
-    
-    
-    
-    <div class="post-body" itemprop="articleBody">
-
-      
-          <h1 id="Aggregated-API-Server"><a href="#Aggregated-API-Server" class="headerlink" title="Aggregated API Server"></a>Aggregated API Server</h1>
-      
-    </div>
-
-    
-    
-    
-      <footer class="post-footer">
-        <div class="post-eof"></div>
-      </footer>
-  </article>
-  
-  
-  
-
 
   
   <nav class="pagination">
-    <a class="extend prev" rel="prev" href="/page/2/"><i class="fa fa-angle-left" aria-label="上一页"></i></a><a class="page-number" href="/">1</a><a class="page-number" href="/page/2/">2</a><span class="page-number current">3</span><a class="page-number" href="/page/4/">4</a><a class="page-number" href="/page/5/">5</a><a class="extend next" rel="next" href="/page/4/"><i class="fa fa-angle-right" aria-label="下一页"></i></a>
+    <a class="extend prev" rel="prev" href="/page/2/"><i class="fa fa-angle-left" aria-label="上一页"></i></a><a class="page-number" href="/">1</a><a class="page-number" href="/page/2/">2</a><span class="page-number current">3</span><a class="page-number" href="/page/4/">4</a><span class="space">&hellip;</span><a class="page-number" href="/page/6/">6</a><a class="extend next" rel="next" href="/page/4/"><i class="fa fa-angle-right" aria-label="下一页"></i></a>
   </nav>
 
 
@@ -963,7 +1010,7 @@
       <div class="site-state-item site-state-posts">
           <a href="/archives/">
         
-          <span class="site-state-item-count">50</span>
+          <span class="site-state-item-count">54</span>
           <span class="site-state-item-name">日志</span>
         </a>
       </div>

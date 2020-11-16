@@ -20,15 +20,15 @@
     var CONFIG = {"hostname":"qmloong.github.io","root":"/","scheme":"Pisces","version":"8.0.0-rc.2","exturl":false,"sidebar":{"position":"left","display":"post","padding":18,"offset":12,"onmobile":false},"copycode":{"enable":true,"show_result":false,"style":"mac"},"back2top":{"enable":true,"sidebar":true,"scrollpercent":true},"bookmark":{"enable":true,"color":"#222","save":"manual"},"fancybox":false,"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"algolia":{"hits":{"per_page":10},"labels":{"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}},"localsearch":{"enable":false,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false},"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}}};
   </script>
 
-  <meta name="description" content="SSH &amp; Proxy &amp; 隧道经常用ssh，但是从来没有好好的研究过ssh的协议原理，周末太无聊了，就看下这块叭。 ssh是一种能够在非安全的网络链路上，实现信息的加密、完整可靠传输。 ssh以非对称加密实现身份的验证，通常可以用密码登录和密钥登录。 ssh在tcp之下，这也是为什么ssh可以做转发隧道的原因，可以包装tcp&#x2F;udp协议。 SSH的-L&#x2F;-R&#x2F;-D参数-L [bi">
+  <meta name="description" content="SSH &amp; Proxy &amp; 隧道经常用ssh，但是从来没有好好的研究过ssh的协议原理，周末太无聊了，就看下这块叭。 ssh是一种能够在非安全的网络链路上，实现信息的加密、完整可靠传输。 ssh以非对称加密实现身份的验证，通常可以用密码登录和密钥登录。 ssh在tcp之下，这也是为什么ssh可以做转发隧道的原因，可以包装tcp&#x2F;udp协议。 SSH的-L&#x2F;-R&#x2F;-D参数-L 和 -">
 <meta property="og:type" content="article">
 <meta property="og:title" content="network&#x2F;ssh">
 <meta property="og:url" content="https://qmloong.github.io/2020/09/12/network/ssh/index.html">
 <meta property="og:site_name" content="qmloong&#39;s Blog">
-<meta property="og:description" content="SSH &amp; Proxy &amp; 隧道经常用ssh，但是从来没有好好的研究过ssh的协议原理，周末太无聊了，就看下这块叭。 ssh是一种能够在非安全的网络链路上，实现信息的加密、完整可靠传输。 ssh以非对称加密实现身份的验证，通常可以用密码登录和密钥登录。 ssh在tcp之下，这也是为什么ssh可以做转发隧道的原因，可以包装tcp&#x2F;udp协议。 SSH的-L&#x2F;-R&#x2F;-D参数-L [bi">
+<meta property="og:description" content="SSH &amp; Proxy &amp; 隧道经常用ssh，但是从来没有好好的研究过ssh的协议原理，周末太无聊了，就看下这块叭。 ssh是一种能够在非安全的网络链路上，实现信息的加密、完整可靠传输。 ssh以非对称加密实现身份的验证，通常可以用密码登录和密钥登录。 ssh在tcp之下，这也是为什么ssh可以做转发隧道的原因，可以包装tcp&#x2F;udp协议。 SSH的-L&#x2F;-R&#x2F;-D参数-L 和 -">
 <meta property="og:locale" content="zh_CN">
 <meta property="article:published_time" content="2020-09-12T08:41:54.603Z">
-<meta property="article:modified_time" content="2020-09-12T13:16:52.319Z">
+<meta property="article:modified_time" content="2020-11-11T16:10:25.292Z">
 <meta property="article:author" content="menglong">
 <meta name="twitter:card" content="summary">
 
@@ -179,10 +179,16 @@
                 <i class="far fa-calendar"></i>
               </span>
               <span class="post-meta-item-text">发表于</span>
-              
 
-              <time title="创建时间：2020-09-12 16:41:54 / 修改时间：21:16:52" itemprop="dateCreated datePublished" datetime="2020-09-12T16:41:54+08:00">2020-09-12</time>
+              <time title="创建时间：2020-09-12 16:41:54" itemprop="dateCreated datePublished" datetime="2020-09-12T16:41:54+08:00">2020-09-12</time>
             </span>
+              <span class="post-meta-item">
+                <span class="post-meta-item-icon">
+                  <i class="far fa-calendar-check"></i>
+                </span>
+                <span class="post-meta-item-text">更新于</span>
+                <time title="修改时间：2020-11-12 00:10:25" itemprop="dateModified" datetime="2020-11-12T00:10:25+08:00">2020-11-12</time>
+              </span>
 
           
             <span class="post-meta-item" title="阅读次数" id="busuanzi_container_page_pv" style="display: none;">
@@ -206,17 +212,17 @@
 <p>ssh是一种能够在非安全的网络链路上，实现信息的加密、完整可靠传输。</p>
 <p>ssh以非对称加密实现身份的验证，通常可以用密码登录和密钥登录。</p>
 <p>ssh在tcp之下，这也是为什么ssh可以做转发隧道的原因，可以包装tcp/udp协议。</p>
-<h2 id="SSH的-L-R-D参数"><a href="#SSH的-L-R-D参数" class="headerlink" title="SSH的-L/-R/-D参数"></a>SSH的-L/-R/-D参数</h2><h3 id="L-bind-address-port-host-hostport"><a href="#L-bind-address-port-host-hostport" class="headerlink" title="-L [bind_address:]port:host:hostport"></a>-L [bind_address:]port:host:hostport</h3><blockquote>
+<h2 id="SSH的-L-R-D参数"><a href="#SSH的-L-R-D参数" class="headerlink" title="SSH的-L/-R/-D参数"></a>SSH的-L/-R/-D参数</h2><p>-L 和 -R 其实是属于端口转发，而不属于代理的范畴。所谓正向代理和反向代理，其实更准确一点说应该是取决于你代理的agent是在服务端还是客户端，如果是在客户端的代理，叫做正向的代理，如果是在server端的代理，叫做反向代理，反向代理可以联想到nginx作为server的反向代理。</p>
+<p>而-D参数则是属于socket代理，属于一种正向的socket代理</p>
+<h3 id="L-bind-address-port-host-hostport"><a href="#L-bind-address-port-host-hostport" class="headerlink" title="-L [bind_address:]port:host:hostport"></a>-L [bind_address:]port:host:hostport</h3><blockquote>
 <p>Specifies that the given port on the local (client) host is to be forwarded to the given host and port on the remote side.</p>
 </blockquote>
 <p>正向代理，本地绑定一个端口，再指定一个host:hostport，所有访问本地这个port的流量都会通过这个ssh链接转发到对端的host:hostport上。</p>
-<p>-R [bind_address:]port:host:hostport</p>
-<blockquote>
+<h3 id="R-bind-address-port-host-hostport"><a href="#R-bind-address-port-host-hostport" class="headerlink" title="-R [bind_address:]port:host:hostport"></a>-R [bind_address:]port:host:hostport</h3><blockquote>
 <p> Specifies that the given port on the remote (server) host is to be forwarded to the given host and port on the local side.This works by allocating a socket to listen to port on the remote side, and whenever a connection is made to this port, the connection is forwarded over the secure channel,  and a connection is made to host port hostport from the local machine.</p>
 </blockquote>
 <p>反向代理，指定对端port，host和hostport是本地可以访问的一个地址，那么链接建立完毕之后，对端主机访问这个port的流量就相当于转发到本地能够访问的host:hostport上。<strong>这是一种内网穿透技术，比如内网主机A和B和公网主机C，只有A可以访问公网，B不可以，如果B上有敏感数据的话，在A上进行-R把B的某些内网服务端口暴露给了C上的某个端口，那么外网就可以自由自在的进行访问B的内网服务了</strong></p>
-<p>-D  [bind_address:]port</p>
-<blockquote>
+<h3 id="D-bind-address-port"><a href="#D-bind-address-port" class="headerlink" title="-D  [bind_address:]port"></a>-D  [bind_address:]port</h3><blockquote>
 <p>Specifies a local ``dynamic’’ application-level port forwarding.  This works by allocating a socket to listen to port on the local side, optionally  bound to the specified bind_address.  Whenever a connection is made to this port, the connection is forwarded over the secure channel, and the application protocol is then used to determine where to connect to from the remote machine.  Currently the SOCKS4 and SOCKS5 protocols are supported, and ssh will act as a SOCKS server.  Only root can forward privileged ports.  Dynamic port forwardings can also be specified in the configuration file.</p>
 </blockquote>
 <p>socks5代理，相当于本地起一个socks5代理。所有流量配置了socks5代理转发到本地的这个端口，都会被当做是在remote主机上进行发包一样。</p>
@@ -224,8 +230,8 @@
 <p><strong>socks5和http代理的区别？</strong></p>
 <p>socks是一种协议是SOCKetS的缩写，位于会话层和传输层之间，socks5是发展过来是一个版本，socks5的代理是基于tcp的，简历</p>
 </blockquote>
-<h2 id="proxy"><a href="#proxy" class="headerlink" title="proxy"></a>proxy</h2><p>ssh的-L/-R/-D只是简单的提供了代理机制，ssh反向链接会因为超时而关闭。</p>
-<p>想了想用golang写一个代理会不会很简单呢？查查资料看看咋搞的。</p>
+<h2 id="proxy"><a href="#proxy" class="headerlink" title="proxy"></a>proxy</h2><p>所谓的proxy，才是真正的代理，正方向代理</p>
+<p>常见的正向代理有proxfier、shadowsocks</p>
 <h2 id="隧道"><a href="#隧道" class="headerlink" title="隧道"></a>隧道</h2>
     </div>
 
@@ -244,7 +250,10 @@
     <a href="/2020/09/10/cloud-native/istio/" rel="prev" title="cloud-native/istio">
       <i class="fa fa-chevron-left"></i> cloud-native/istio
     </a></div>
-      <div class="post-nav-item"></div>
+      <div class="post-nav-item">
+    <a href="/2020/09/24/logic/guess-birthday/" rel="next" title="logic/guess-birthday">
+      logic/guess-birthday <i class="fa fa-chevron-right"></i>
+    </a></div>
     </div>
       </footer>
     
@@ -303,7 +312,7 @@
 
       <!--noindex-->
       <div class="post-toc-wrap sidebar-panel">
-          <div class="post-toc motion-element"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#SSH-amp-Proxy-amp-隧道"><span class="nav-number">1.</span> <span class="nav-text">SSH &amp; Proxy &amp; 隧道</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#SSH的-L-R-D参数"><span class="nav-number">1.1.</span> <span class="nav-text">SSH的-L&#x2F;-R&#x2F;-D参数</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#L-bind-address-port-host-hostport"><span class="nav-number">1.1.1.</span> <span class="nav-text">-L [bind_address:]port:host:hostport</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#proxy"><span class="nav-number">1.2.</span> <span class="nav-text">proxy</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#隧道"><span class="nav-number">1.3.</span> <span class="nav-text">隧道</span></a></li></ol></li></ol></div>
+          <div class="post-toc motion-element"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#SSH-amp-Proxy-amp-隧道"><span class="nav-number">1.</span> <span class="nav-text">SSH &amp; Proxy &amp; 隧道</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#SSH的-L-R-D参数"><span class="nav-number">1.1.</span> <span class="nav-text">SSH的-L&#x2F;-R&#x2F;-D参数</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#L-bind-address-port-host-hostport"><span class="nav-number">1.1.1.</span> <span class="nav-text">-L [bind_address:]port:host:hostport</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#R-bind-address-port-host-hostport"><span class="nav-number">1.1.2.</span> <span class="nav-text">-R [bind_address:]port:host:hostport</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#D-bind-address-port"><span class="nav-number">1.1.3.</span> <span class="nav-text">-D  [bind_address:]port</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#proxy"><span class="nav-number">1.2.</span> <span class="nav-text">proxy</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#隧道"><span class="nav-number">1.3.</span> <span class="nav-text">隧道</span></a></li></ol></li></ol></div>
       </div>
       <!--/noindex-->
 
@@ -317,7 +326,7 @@
       <div class="site-state-item site-state-posts">
           <a href="/archives/">
         
-          <span class="site-state-item-count">50</span>
+          <span class="site-state-item-count">54</span>
           <span class="site-state-item-name">日志</span>
         </a>
       </div>
