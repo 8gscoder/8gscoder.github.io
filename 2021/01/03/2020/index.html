@@ -1,0 +1,439 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=2">
+<meta name="theme-color" content="#222">
+<meta name="generator" content="Hexo 4.2.0">
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png">
+  <link rel="mask-icon" href="/images/logo.svg" color="#222">
+
+<link rel="stylesheet" href="/css/main.css">
+
+
+<link rel="stylesheet" href="/lib/font-awesome/css/all.min.css">
+
+<script id="hexo-configurations">
+    var NexT = window.NexT || {};
+    var CONFIG = {"hostname":"qmloong.github.io","root":"/","scheme":"Pisces","version":"8.0.0-rc.2","exturl":false,"sidebar":{"position":"left","display":"post","padding":18,"offset":12,"onmobile":false},"copycode":{"enable":true,"show_result":false,"style":"mac"},"back2top":{"enable":true,"sidebar":true,"scrollpercent":true},"bookmark":{"enable":true,"color":"#222","save":"manual"},"fancybox":false,"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"algolia":{"hits":{"per_page":10},"labels":{"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}},"localsearch":{"enable":false,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false},"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}}};
+  </script>
+
+  <meta name="description" content="2020​    2020算是完完整整的过了一年打工人的一年，心态上也成熟了许多，从埋头苦干到漂浮不定到踏踏实实。 ​    回首2019H2、2020H1，开新区、和运维扯皮、半夜处理工单，来了先处理了半年的helper问题，然后又是半年集群杂七杂八的事情，忙的自己焦头烂额，还没产出。但是一直却没有意识到，就知道好累呀，不过也没有心态上的变化，就埋头苦干，处理了无数的工单，后来gary招了外包妹">
+<meta property="og:type" content="article">
+<meta property="og:title" content="2020">
+<meta property="og:url" content="https://qmloong.github.io/2021/01/03/2020/index.html">
+<meta property="og:site_name" content="qmloong&#39;s Blog">
+<meta property="og:description" content="2020​    2020算是完完整整的过了一年打工人的一年，心态上也成熟了许多，从埋头苦干到漂浮不定到踏踏实实。 ​    回首2019H2、2020H1，开新区、和运维扯皮、半夜处理工单，来了先处理了半年的helper问题，然后又是半年集群杂七杂八的事情，忙的自己焦头烂额，还没产出。但是一直却没有意识到，就知道好累呀，不过也没有心态上的变化，就埋头苦干，处理了无数的工单，后来gary招了外包妹">
+<meta property="og:locale" content="zh_CN">
+<meta property="article:published_time" content="2021-01-03T02:31:52.388Z">
+<meta property="article:modified_time" content="2021-01-03T03:46:54.691Z">
+<meta property="article:author" content="menglong">
+<meta name="twitter:card" content="summary">
+
+<link rel="canonical" href="https://qmloong.github.io/2021/01/03/2020/">
+
+
+<script id="page-configurations">
+  // https://hexo.io/docs/variables.html
+  CONFIG.page = {
+    sidebar: "",
+    isHome : false,
+    isPost : true,
+    lang   : 'zh-CN'
+  };
+</script>
+
+  <title>2020 | qmloong's Blog</title>
+  
+
+
+
+
+
+
+  <noscript>
+  <style>
+  .use-motion .brand,
+  .use-motion .menu-item,
+  .sidebar-inner,
+  .use-motion .post-block,
+  .use-motion .pagination,
+  .use-motion .comments,
+  .use-motion .post-header,
+  .use-motion .post-body,
+  .use-motion .collection-header { opacity: initial; }
+
+  .use-motion .site-title,
+  .use-motion .site-subtitle {
+    opacity: initial;
+    top: initial;
+  }
+
+  .use-motion .logo-line-before i { left: initial; }
+  .use-motion .logo-line-after i { right: initial; }
+  </style>
+</noscript>
+
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage">
+  <div class="container use-motion">
+    <div class="headband"></div>
+
+    <header class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-container">
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="切换导航栏">
+        <span class="toggle-line toggle-line-first"></span>
+        <span class="toggle-line toggle-line-middle"></span>
+        <span class="toggle-line toggle-line-last"></span>
+    </div>
+  </div>
+
+  <div class="site-meta">
+
+    <a href="/" class="brand" rel="start">
+      <span class="logo-line-before"><i></i></span>
+      <h1 class="site-title">qmloong's Blog</h1>
+      <span class="logo-line-after"><i></i></span>
+    </a>
+  </div>
+
+  <div class="site-nav-right">
+    <div class="toggle popup-trigger">
+    </div>
+  </div>
+</div>
+
+
+
+<nav class="site-nav">
+  <ul id="menu" class="main-menu menu">
+        <li class="menu-item menu-item-home">
+
+    <a href="/" rel="section"><i class="fa fa-home fa-fw"></i>首页</a>
+
+  </li>
+        <li class="menu-item menu-item-tags">
+
+    <a href="/tags/" rel="section"><i class="fa fa-tags fa-fw"></i>标签</a>
+
+  </li>
+        <li class="menu-item menu-item-categories">
+
+    <a href="/categories/" rel="section"><i class="fa fa-th fa-fw"></i>分类</a>
+
+  </li>
+        <li class="menu-item menu-item-archives">
+
+    <a href="/archives/" rel="section"><i class="fa fa-archive fa-fw"></i>归档</a>
+
+  </li>
+  </ul>
+</nav>
+
+
+
+
+</div>
+    </header>
+
+    
+  <div class="reading-progress-bar"></div>
+  <a role="button" class="book-mark-link book-mark-link-fixed"></a>
+
+
+    <main class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          
+
+          <div class="content post posts-expand">
+            
+
+    
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="https://qmloong.github.io/2021/01/03/2020/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.gif">
+      <meta itemprop="name" content="menglong">
+      <meta itemprop="description" content="Love is a heroic dream in a tired life.🐬">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="qmloong's Blog">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          2020
+        </h1>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-calendar"></i>
+              </span>
+              <span class="post-meta-item-text">发表于</span>
+              
+
+              <time title="创建时间：2021-01-03 10:31:52 / 修改时间：11:46:54" itemprop="dateCreated datePublished" datetime="2021-01-03T10:31:52+08:00">2021-01-03</time>
+            </span>
+
+          
+            <span class="post-meta-item" title="阅读次数" id="busuanzi_container_page_pv" style="display: none;">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-eye"></i>
+              </span>
+              <span class="post-meta-item-text">阅读次数：</span>
+              <span id="busuanzi_value_page_pv"></span>
+            </span>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+        <h1 id="2020"><a href="#2020" class="headerlink" title="2020"></a>2020</h1><p>​    2020算是完完整整的过了一年打工人的一年，心态上也成熟了许多，从埋头苦干到漂浮不定到踏踏实实。</p>
+<p>​    回首2019H2、2020H1，开新区、和运维扯皮、半夜处理工单，来了先处理了半年的helper问题，然后又是半年集群杂七杂八的事情，忙的自己焦头烂额，还没产出。但是一直却没有意识到，就知道好累呀，不过也没有心态上的变化，就埋头苦干，处理了无数的工单，后来gary招了外包妹子之后，只能说稍微好一点点点吧..这一点点还不是在工作上的转变，是心态上的转变，因为自己可能觉得自己也不是个freshman了，也可以带带人了，可以把自己半年被各种乱七八糟七零八落的团队业务知识输出，一方面在指导新人的时候有成就感，一方面也会发现自己对团队也有很深的理解。之前安慰自己处理现网问题可以让我更加理解业务，在这里也算是「自证预言」了。</p>
+<p>​    但是2020H1结束的时候，心态上有一些变化，因为2020H1甚至2020H2前期，我仍然是在处理现网问题，不停的处理工单、回答问题，让我真的很疲累，已经没有了刚来时候的那些成就感，发现自己还是在处理重复的问题。再加上新来的毕业生，没有接替我的工作，让我心里觉得很不平衡，自我预言crash掉了，而且自己也没有刚来时候的那么fresh了， 发现运维一些现象自己特别不爽也是直接怼，有一次真的是被运维气的头晕，气的我直接8点下班了。在这种工作内容重复、合作伙伴扯皮、内心的不平衡以及得不到老板的认可的情况下，经常会觉得这个团队不想呆了不想呆，经常有时候很气的时候就抱着电脑下班回去刷题刷到夜里。</p>
+<p>​    后来也不知道具体是因为什么，突然自己的心态就得到了“质变”，自己之前一直想去搞新东西，比如Knative，etcd产品化，不想维护集群这坨shit了，但是在一次etcd的评审会上，gary并不想让我牵扯到etcd中去，knative也只搞了个需求，跟TCB的会上也无从下手，这个一方面是simo没有交接过来，一方面是TCB还没有完全信任knative。最后H2的组织架构调整，彻底打散了我想逃的想法，容器团队按组分变成按业务分，我还是被化到了负责集群这块，我猜测也正是因为这样，我的心也定了下来吧，开始去思考如何把集群这块“做大做强，再创辉煌”，开玩笑，是想办法去收敛问题，之前的一句现网问题收敛，在工作了一年之后才有了真的体会，开始着手思考如何去提升TKE集群这个核心模块的质量了。开始主动拉例会讨论集群专项，张罗张罗新人对shit进行重构。整理输出集群质量周报，有针对性的进行分析现网问题。而且2020H2这最后一两个月，也全身心的开始投入到工作中，最最重要的是gary也鼓励了我做重构的事情，虽然在方案上狠狠吊了我，但是不要紧，因为起码大方向是对我认可的。</p>
+<p>​    还记得在学校的时候，gary就和我聊天，说现在团队里各个模块都确认，你现在早点再来实习，可以选择的机会也特别的多，当时的我顾着在学校和同学玩婉拒了，如果我现在能回到2019年H1绝对会去给自己来一嘴巴子，其实我个人对网络那块比较感兴趣，唉算了，既来之则安之，搞集群这块就把他搞的服服帖帖！搞！</p>
+
+    </div>
+
+    
+    
+    
+
+      <footer class="post-footer">
+
+        
+
+
+        
+    <div class="post-nav">
+      <div class="post-nav-item">
+    <a href="/2020/11/10/life/friendship/" rel="prev" title="life/friendship">
+      <i class="fa fa-chevron-left"></i> life/friendship
+    </a></div>
+      <div class="post-nav-item">
+    <a href="/2021/04/30/kubernetes/cluster-autoscaler/clusterautoscaler-handover/" rel="next" title="kubernetes/cluster-autoscaler/clusterautoscaler-handover">
+      kubernetes/cluster-autoscaler/clusterautoscaler-handover <i class="fa fa-chevron-right"></i>
+    </a></div>
+    </div>
+      </footer>
+    
+  </article>
+  
+  
+  
+
+
+
+          </div>
+          
+
+<script>
+  window.addEventListener('tabs:register', () => {
+    let { activeClass } = CONFIG.comments;
+    if (CONFIG.comments.storage) {
+      activeClass = localStorage.getItem('comments_active') || activeClass;
+    }
+    if (activeClass) {
+      let activeTab = document.querySelector(`a[href="#comment-${activeClass}"]`);
+      if (activeTab) {
+        activeTab.click();
+      }
+    }
+  });
+  if (CONFIG.comments.storage) {
+    window.addEventListener('tabs:click', event => {
+      if (!event.target.matches('.tabs-comment .tab-content .tab-pane')) return;
+      let commentClass = event.target.classList[1];
+      localStorage.setItem('comments_active', commentClass);
+    });
+  }
+</script>
+
+        </div>
+          
+  
+  <div class="toggle sidebar-toggle">
+    <span class="toggle-line toggle-line-first"></span>
+    <span class="toggle-line toggle-line-middle"></span>
+    <span class="toggle-line toggle-line-last"></span>
+  </div>
+
+  <aside class="sidebar">
+    <div class="sidebar-inner">
+
+      <ul class="sidebar-nav motion-element">
+        <li class="sidebar-nav-toc">
+          文章目录
+        </li>
+        <li class="sidebar-nav-overview">
+          站点概览
+        </li>
+      </ul>
+
+      <!--noindex-->
+      <div class="post-toc-wrap sidebar-panel">
+          <div class="post-toc motion-element"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#2020"><span class="nav-number">1.</span> <span class="nav-text">2020</span></a></li></ol></div>
+      </div>
+      <!--/noindex-->
+
+      <div class="site-overview-wrap sidebar-panel">
+        <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+  <p class="site-author-name" itemprop="name">menglong</p>
+  <div class="site-description" itemprop="description">Love is a heroic dream in a tired life.🐬</div>
+</div>
+<div class="site-state-wrap motion-element">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+          <a href="/archives/">
+        
+          <span class="site-state-item-count">56</span>
+          <span class="site-state-item-name">日志</span>
+        </a>
+      </div>
+      <div class="site-state-item site-state-categories">
+            <a href="/categories/">
+          
+        <span class="site-state-item-count">9</span>
+        <span class="site-state-item-name">分类</span></a>
+      </div>
+      <div class="site-state-item site-state-tags">
+            <a href="/tags/">
+          
+        <span class="site-state-item-count">24</span>
+        <span class="site-state-item-name">标签</span></a>
+      </div>
+  </nav>
+</div>
+  <div class="links-of-author motion-element">
+      <span class="links-of-author-item">
+        <a href="https://github.com/qmloong" title="GitHub → https:&#x2F;&#x2F;github.com&#x2F;qmloong" rel="noopener" target="_blank"><i class="fab fa-github fa-fw"></i>GitHub</a>
+      </span>
+      <span class="links-of-author-item">
+        <a href="mailto:qmlfighting@gmail.com" title="E-Mail → mailto:qmlfighting@gmail.com" rel="noopener" target="_blank"><i class="fa fa-envelope fa-fw"></i>E-Mail</a>
+      </span>
+  </div>
+
+
+
+      </div>
+        <div class="back-to-top motion-element">
+          <i class="fa fa-arrow-up"></i>
+          <span>0%</span>
+        </div>
+
+    </div>
+  </aside>
+  <div id="sidebar-dimmer"></div>
+
+
+      </div>
+    </main>
+
+    <footer class="footer">
+      <div class="footer-inner">
+        
+
+        
+
+<div class="copyright">
+  
+  &copy; 
+  <span itemprop="copyrightYear">2021</span>
+  <span class="with-love">
+    <i class="fa fa-heart"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">menglong</span>
+</div>
+  <div class="powered-by">由 <a href="https://hexo.io/" class="theme-link" rel="noopener" target="_blank">Hexo</a> & <a href="https://theme-next.js.org/pisces/" class="theme-link" rel="noopener" target="_blank">NexT.Pisces</a> 强力驱动
+  </div>
+
+        
+<div class="busuanzi-count">
+  <script async src="https://busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+    <span class="post-meta-item" id="busuanzi_container_site_uv" style="display: none;">
+      <span class="post-meta-item-icon">
+        <i class="fa fa-user"></i>
+      </span>
+      <span class="site-uv" title="总访客量">
+        <span id="busuanzi_value_site_uv"></span>
+      </span>
+    </span>
+    <span class="post-meta-divider">|</span>
+    <span class="post-meta-item" id="busuanzi_container_site_pv" style="display: none;">
+      <span class="post-meta-item-icon">
+        <i class="fa fa-eye"></i>
+      </span>
+      <span class="site-pv" title="总访问量">
+        <span id="busuanzi_value_site_pv"></span>
+      </span>
+    </span>
+</div>
+
+
+
+
+
+
+
+
+      </div>
+    </footer>
+  </div>
+
+  
+  <script src="/lib/anime.min.js"></script>
+  <script src="/lib/velocity/velocity.min.js"></script>
+  <script src="/lib/velocity/velocity.ui.min.js"></script>
+
+<script src="/js/utils.js"></script>
+
+<script src="/js/motion.js"></script>
+
+
+<script src="/js/schemes/pisces.js"></script>
+
+
+<script src="/js/next-boot.js"></script>
+
+<script src="/js/bookmark.js"></script>
+
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+  
+
+</body>
+</html>
